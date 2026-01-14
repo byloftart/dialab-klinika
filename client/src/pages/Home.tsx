@@ -1,25 +1,50 @@
-import { Button } from "@/components/ui/button";
-import { Loader2 } from "lucide-react";
-import { Streamdown } from 'streamdown';
-
 /**
- * All content in this page are only for example, replace with your own feature implementation
- * When building pages, remember your instructions in Frontend Best Practices, Design Guide and Common Pitfalls
+ * Home Page - DIALAB Klinika
+ * Design Philosophy: "Presizion Tibb" - Swiss Design + Subtle 3D Depth
+ * 
+ * Features:
+ * - Sticky header with hover glow effects
+ * - Full-width parallax hero slider
+ * - Accordion laboratory section with 3D tiles
+ * - Vertical tabs diagnostics with 3D info cards
+ * - Booking form with virtual assistant
+ * - Footer with FAQ and interactive map
  */
-export default function Home() {
-  // If theme is switchable in App.tsx, we can implement theme toggling like this:
-  // const { theme, toggleTheme } = useTheme();
 
+import Header from '@/components/Header';
+import HeroSection from '@/components/HeroSection';
+import LaboratorySection from '@/components/LaboratorySection';
+import DiagnosticsSection from '@/components/DiagnosticsSection';
+import AppointmentSection from '@/components/AppointmentSection';
+import Footer from '@/components/Footer';
+import VirtualAssistant from '@/components/VirtualAssistant';
+
+export default function Home() {
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen bg-white">
+      {/* Sticky Header with Navigation */}
+      <Header />
+      
+      {/* Main Content */}
       <main>
-        {/* Example: lucide-react for icons */}
-        <Loader2 className="animate-spin" />
-        Example Page
-        {/* Example: Streamdown for markdown rendering */}
-        <Streamdown>Any **markdown** content</Streamdown>
-        <Button variant="default">Example Button</Button>
+        {/* Hero Section - Full width parallax slider */}
+        <HeroSection />
+        
+        {/* Laboratory Section - Accordion with 3D tiles */}
+        <LaboratorySection />
+        
+        {/* Diagnostics Section - Vertical tabs with 3D cards */}
+        <DiagnosticsSection />
+        
+        {/* Appointment Section - Booking form */}
+        <AppointmentSection />
       </main>
+      
+      {/* Footer - FAQ and Map */}
+      <Footer />
+      
+      {/* Floating Virtual Assistant */}
+      <VirtualAssistant />
     </div>
   );
 }
