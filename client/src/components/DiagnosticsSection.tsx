@@ -1,7 +1,9 @@
 /**
- * Diagnostics Section - DIALAB Klinika
- * Design: Vertical slide-in transition, accordion with 6 vertical tabs
- * Features: 3D info cards with doctor photos, smooth animations
+ * Diagnostics Section - DIALAB Klinika (Section 4)
+ * Design: Vertical tabs with expanding 3D info cards
+ * Features: Doctor photos, service descriptions, hover animations
+ * Color: Dark background with green/blue accents
+ * Content: From Websiteserviceslist.pdf
  */
 
 import { useState, useRef } from 'react';
@@ -22,7 +24,7 @@ const diagnosticsServices = [
     id: 'usm',
     title: 'Ultrasəs Müayinəsi (USM)',
     icon: Activity,
-    color: 'from-teal-500 to-cyan-500',
+    color: '#00b982',
     image: '/images/diagnostics-ultrasound.jpg',
     description: 'Ən müasir USM cihazları ilə daxili orqanların, kiçik çanaq üzvlərinin və hamiləliyin müayinəsi.',
     services: [
@@ -42,7 +44,7 @@ const diagnosticsServices = [
     id: 'cardio',
     title: 'Kardioloji Diaqnostika',
     icon: Heart,
-    color: 'from-rose-500 to-red-500',
+    color: '#ef4444',
     image: '/images/doctor-consultation.jpg',
     description: 'Ürək-damar sisteminin hərtərəfli müayinəsi və diaqnostikası.',
     services: [
@@ -62,7 +64,7 @@ const diagnosticsServices = [
     id: 'neuro',
     title: 'Nevroloji Müayinə',
     icon: Brain,
-    color: 'from-violet-500 to-purple-500',
+    color: '#8b5cf6',
     image: '/images/lab-analysis.jpg',
     description: 'Sinir sisteminin müayinəsi və nevroloji xəstəliklərin diaqnostikası.',
     services: [
@@ -82,7 +84,7 @@ const diagnosticsServices = [
     id: 'gyneco',
     title: 'Ginekoloji Müayinə',
     icon: Baby,
-    color: 'from-pink-500 to-rose-500',
+    color: '#ec4899',
     image: '/images/diagnostics-ultrasound.jpg',
     description: 'Qadın sağlamlığı üçün hərtərəfli ginekoloji müayinə və diaqnostika.',
     services: [
@@ -102,7 +104,7 @@ const diagnosticsServices = [
     id: 'ent',
     title: 'LOR Müayinəsi',
     icon: Ear,
-    color: 'from-amber-500 to-orange-500',
+    color: '#f59e0b',
     image: '/images/doctor-consultation.jpg',
     description: 'Qulaq, burun və boğaz xəstəliklərinin müayinəsi və müalicəsi.',
     services: [
@@ -122,7 +124,7 @@ const diagnosticsServices = [
     id: 'general',
     title: 'Ümumi Həkim Məsləhəti',
     icon: Stethoscope,
-    color: 'from-emerald-500 to-teal-500',
+    color: '#14b8a6',
     image: '/images/doctor-consultation.jpg',
     description: 'Təcrübəli mütəxəssislərdən fərdi yanaşma və peşəkar məsləhət.',
     services: [
@@ -160,16 +162,19 @@ export default function DiagnosticsSection() {
       id="diagnostics"
       ref={sectionRef}
       style={{ y: slideY, opacity }}
-      className="py-24 bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 relative overflow-hidden"
+      className="py-24 lg:py-32 bg-[#0f1012] relative overflow-hidden"
     >
       {/* Background Effects */}
       <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-1/4 left-0 w-96 h-96 bg-teal-500/10 rounded-full blur-3xl" />
-        <div className="absolute bottom-1/4 right-0 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl" />
-        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iMC4wMiI+PGNpcmNsZSBjeD0iMzAiIGN5PSIzMCIgcj0iMiIvPjwvZz48L2c+PC9zdmc+')] opacity-50" />
+        <div className="absolute top-1/4 left-0 w-96 h-96 bg-[#00b982]/10 rounded-full blur-3xl" />
+        <div className="absolute bottom-1/4 right-0 w-96 h-96 bg-[#14b8a6]/10 rounded-full blur-3xl" />
+        <div className="absolute inset-0 opacity-5" style={{
+          backgroundImage: `radial-gradient(circle at 2px 2px, white 1px, transparent 0)`,
+          backgroundSize: '40px 40px'
+        }} />
       </div>
 
-      <div className="container relative z-10">
+      <div className="container mx-auto px-4 lg:px-8 relative z-10">
         {/* Section Header */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -182,14 +187,14 @@ export default function DiagnosticsSection() {
             initial={{ opacity: 0, scale: 0.9 }}
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
-            className="inline-block px-4 py-2 rounded-full bg-teal-500/20 text-teal-400 font-semibold text-sm mb-4 border border-teal-500/30"
+            className="inline-block px-4 py-2 rounded-full bg-[#00b982]/20 text-[#00b982] font-semibold text-sm mb-4 border border-[#00b982]/30"
           >
             Diaqnostika Xidmətləri
           </motion.span>
-          <h2 className="font-heading font-extrabold text-4xl md:text-5xl text-white mb-4">
-            Tibbi <span className="text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-cyan-400">Diaqnostika</span> və Müalicə
+          <h2 className="font-extrabold text-3xl md:text-4xl lg:text-5xl text-white mb-4">
+            Tibbi <span className="text-[#00b982]">Diaqnostika</span> və Müalicə
           </h2>
-          <p className="text-slate-400 text-lg max-w-2xl mx-auto">
+          <p className="text-gray-400 text-lg max-w-2xl mx-auto">
             Müasir avadanlıqlar və təcrübəli mütəxəssislərlə dəqiq diaqnostika
           </p>
         </motion.div>
@@ -210,7 +215,7 @@ export default function DiagnosticsSection() {
                 onMouseLeave={() => setHoveredTab(null)}
                 className={`w-full text-left p-4 rounded-xl transition-all duration-300 group relative overflow-hidden ${
                   activeTab === index
-                    ? 'bg-gradient-to-r from-teal-500/20 to-cyan-500/20 border border-teal-500/30'
+                    ? 'bg-white/10 border border-[#00b982]/50'
                     : 'bg-white/5 border border-white/10 hover:bg-white/10 hover:border-white/20'
                 }`}
               >
@@ -218,24 +223,32 @@ export default function DiagnosticsSection() {
                 {(hoveredTab === index || activeTab === index) && (
                   <motion.div
                     layoutId="tabGlow"
-                    className="absolute inset-0 bg-gradient-to-r from-teal-500/10 to-cyan-500/10"
+                    className="absolute inset-0"
+                    style={{ background: `linear-gradient(135deg, ${service.color}15 0%, transparent 100%)` }}
                     transition={{ type: 'spring', stiffness: 300, damping: 30 }}
                   />
                 )}
                 
                 <div className="relative z-10 flex items-center gap-4">
-                  <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${service.color} flex items-center justify-center shadow-lg transition-transform duration-300 ${activeTab === index ? 'scale-110' : 'group-hover:scale-105'}`}>
-                    <service.icon className="w-6 h-6 text-white" />
-                  </div>
+                  <motion.div 
+                    className="w-12 h-12 rounded-xl flex items-center justify-center shadow-lg transition-transform duration-300"
+                    style={{ 
+                      backgroundColor: `${service.color}20`,
+                      boxShadow: activeTab === index ? `0 8px 20px -8px ${service.color}60` : 'none'
+                    }}
+                    animate={{ scale: activeTab === index ? 1.1 : 1 }}
+                  >
+                    <service.icon className="w-6 h-6" style={{ color: service.color }} />
+                  </motion.div>
                   <div className="flex-1">
-                    <h3 className={`font-heading font-bold text-base transition-colors ${activeTab === index ? 'text-teal-400' : 'text-white group-hover:text-teal-300'}`}>
+                    <h3 className={`font-bold text-base transition-colors ${activeTab === index ? 'text-[#00b982]' : 'text-white group-hover:text-[#00b982]'}`}>
                       {service.title}
                     </h3>
-                    <p className="text-slate-500 text-sm line-clamp-1">
+                    <p className="text-gray-500 text-sm line-clamp-1">
                       {service.services.length} xidmət
                     </p>
                   </div>
-                  <ArrowRight className={`w-5 h-5 transition-all duration-300 ${activeTab === index ? 'text-teal-400 translate-x-0' : 'text-slate-600 -translate-x-2 opacity-0 group-hover:translate-x-0 group-hover:opacity-100'}`} />
+                  <ArrowRight className={`w-5 h-5 transition-all duration-300 ${activeTab === index ? 'text-[#00b982] translate-x-0' : 'text-gray-600 -translate-x-2 opacity-0 group-hover:translate-x-0 group-hover:opacity-100'}`} />
                 </div>
               </motion.button>
             ))}
@@ -254,11 +267,10 @@ export default function DiagnosticsSection() {
                 style={{ perspective: '1000px' }}
               >
                 <motion.div
-                  className="bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-md rounded-3xl border border-white/10 overflow-hidden shadow-2xl"
+                  className="bg-white/5 backdrop-blur-md rounded-3xl border border-white/10 overflow-hidden shadow-2xl"
                   whileHover={{ 
                     rotateY: 2,
                     rotateX: -2,
-                    translateZ: 20,
                   }}
                   transition={{ duration: 0.4 }}
                   style={{ transformStyle: 'preserve-3d' }}
@@ -274,7 +286,7 @@ export default function DiagnosticsSection() {
                       alt={activeService.title}
                       className="w-full h-full object-cover"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/50 to-transparent" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#0f1012] via-[#0f1012]/50 to-transparent" />
                     
                     {/* Floating Badge */}
                     <motion.div
@@ -288,7 +300,10 @@ export default function DiagnosticsSection() {
 
                     {/* Title Overlay */}
                     <div className="absolute bottom-0 left-0 right-0 p-6">
-                      <div className={`inline-flex items-center gap-3 px-4 py-2 rounded-xl bg-gradient-to-r ${activeService.color} mb-3`}>
+                      <div 
+                        className="inline-flex items-center gap-3 px-4 py-2 rounded-xl mb-3"
+                        style={{ backgroundColor: activeService.color }}
+                      >
                         <activeService.icon className="w-5 h-5 text-white" />
                         <span className="text-white font-semibold">{activeService.title}</span>
                       </div>
@@ -298,7 +313,7 @@ export default function DiagnosticsSection() {
                   {/* Content */}
                   <div className="p-6 space-y-6">
                     {/* Description */}
-                    <p className="text-slate-300 text-lg leading-relaxed">
+                    <p className="text-gray-300 text-lg leading-relaxed">
                       {activeService.description}
                     </p>
 
@@ -312,8 +327,11 @@ export default function DiagnosticsSection() {
                           transition={{ delay: 0.1 + index * 0.05 }}
                           className="flex items-center gap-3 p-3 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 transition-colors"
                         >
-                          <div className={`w-2 h-2 rounded-full bg-gradient-to-r ${activeService.color}`} />
-                          <span className="text-slate-300 text-sm">{service}</span>
+                          <div 
+                            className="w-2 h-2 rounded-full"
+                            style={{ backgroundColor: activeService.color }}
+                          />
+                          <span className="text-gray-300 text-sm">{service}</span>
                         </motion.div>
                       ))}
                     </div>
@@ -323,24 +341,39 @@ export default function DiagnosticsSection() {
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: 0.4 }}
-                      className="flex items-center gap-4 p-4 rounded-xl bg-gradient-to-r from-teal-500/10 to-cyan-500/10 border border-teal-500/20"
+                      className="flex flex-col sm:flex-row items-center gap-4 p-4 rounded-xl border border-white/10"
+                      style={{ background: `linear-gradient(135deg, ${activeService.color}15 0%, transparent 100%)` }}
                     >
-                      <div className="w-16 h-16 rounded-full bg-gradient-to-br from-teal-500 to-cyan-500 flex items-center justify-center shadow-lg shadow-teal-500/30">
+                      <div 
+                        className="w-16 h-16 rounded-full flex items-center justify-center shadow-lg"
+                        style={{ 
+                          backgroundColor: activeService.color,
+                          boxShadow: `0 8px 20px -8px ${activeService.color}60`
+                        }}
+                      >
                         <User className="w-8 h-8 text-white" />
                       </div>
-                      <div>
-                        <h4 className="font-heading font-bold text-white">{activeService.doctor.name}</h4>
-                        <p className="text-teal-400 text-sm">{activeService.doctor.specialty}</p>
-                        <p className="text-slate-500 text-sm">{activeService.doctor.experience}</p>
+                      <div className="text-center sm:text-left">
+                        <h4 className="font-bold text-white">{activeService.doctor.name}</h4>
+                        <p className="text-sm" style={{ color: activeService.color }}>{activeService.doctor.specialty}</p>
+                        <p className="text-gray-500 text-sm">{activeService.doctor.experience}</p>
                       </div>
                       <motion.button
-                        whileHover={{ scale: 1.05 }}
+                        whileHover={{ scale: 1.05, y: -2 }}
                         whileTap={{ scale: 0.98 }}
                         onClick={() => {
                           const element = document.getElementById('appointment');
-                          if (element) element.scrollIntoView({ behavior: 'smooth' });
+                          if (element) {
+                            const headerHeight = 80;
+                            const elementPosition = element.getBoundingClientRect().top + window.scrollY;
+                            window.scrollTo({ top: elementPosition - headerHeight, behavior: 'smooth' });
+                          }
                         }}
-                        className="ml-auto px-6 py-3 bg-gradient-to-r from-teal-500 to-cyan-500 text-white font-semibold rounded-xl shadow-lg shadow-teal-500/30 hover:shadow-teal-500/50 transition-all"
+                        className="sm:ml-auto px-6 py-3 text-white font-semibold rounded-xl shadow-lg transition-all"
+                        style={{ 
+                          background: `linear-gradient(135deg, ${activeService.color}, ${activeService.color}cc)`,
+                          boxShadow: `0 10px 30px -10px ${activeService.color}60`
+                        }}
                       >
                         Randevu Al
                       </motion.button>
@@ -349,7 +382,10 @@ export default function DiagnosticsSection() {
                 </motion.div>
 
                 {/* 3D Shadow Effect */}
-                <div className="absolute -inset-4 bg-gradient-to-r from-teal-500/20 to-cyan-500/20 rounded-3xl blur-2xl -z-10 opacity-50" />
+                <div 
+                  className="absolute -inset-4 rounded-3xl blur-2xl -z-10 opacity-30"
+                  style={{ background: `linear-gradient(135deg, ${activeService.color}40 0%, transparent 100%)` }}
+                />
               </motion.div>
             </AnimatePresence>
           </div>

@@ -2,6 +2,7 @@
  * Virtual Assistant - DIALAB Klinika
  * Design: Floating button with expandable chat-like interface
  * Features: Persistent across site, WhatsApp/call options, smooth animations
+ * Color: Green/teal accent colors
  */
 
 import { useState } from 'react';
@@ -29,7 +30,7 @@ const quickActions = [
     icon: Phone,
     label: 'Zəng Edin',
     description: '+994 12 345 67 89',
-    color: 'from-teal-500 to-cyan-500',
+    color: 'from-[#00b982] to-[#14b8a6]',
     href: 'tel:+994123456789',
   },
   {
@@ -37,7 +38,7 @@ const quickActions = [
     icon: Calendar,
     label: 'Randevu Alın',
     description: 'Onlayn qeydiyyat',
-    color: 'from-violet-500 to-purple-500',
+    color: 'from-[#8b5cf6] to-[#a855f7]',
     action: 'scroll-to-appointment',
   },
   {
@@ -45,7 +46,7 @@ const quickActions = [
     icon: HelpCircle,
     label: 'Tez-tez Verilən Suallar',
     description: 'Cavabları tapın',
-    color: 'from-amber-500 to-orange-500',
+    color: 'from-[#f59e0b] to-[#f97316]',
     action: 'scroll-to-faq',
   },
 ];
@@ -58,11 +59,19 @@ export default function VirtualAssistant() {
       window.open(action.href, '_blank');
     } else if (action.action === 'scroll-to-appointment') {
       const element = document.getElementById('appointment');
-      if (element) element.scrollIntoView({ behavior: 'smooth' });
+      if (element) {
+        const headerHeight = 80;
+        const elementPosition = element.getBoundingClientRect().top + window.scrollY;
+        window.scrollTo({ top: elementPosition - headerHeight, behavior: 'smooth' });
+      }
       setIsOpen(false);
     } else if (action.action === 'scroll-to-faq') {
-      const element = document.getElementById('faq');
-      if (element) element.scrollIntoView({ behavior: 'smooth' });
+      const element = document.getElementById('appointment');
+      if (element) {
+        const headerHeight = 80;
+        const elementPosition = element.getBoundingClientRect().top + window.scrollY;
+        window.scrollTo({ top: elementPosition - headerHeight, behavior: 'smooth' });
+      }
       setIsOpen(false);
     }
   };
@@ -76,17 +85,17 @@ export default function VirtualAssistant() {
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.8, y: 20 }}
             transition={{ type: 'spring', stiffness: 300, damping: 25 }}
-            className="absolute bottom-20 right-0 w-80 bg-white rounded-2xl shadow-2xl shadow-slate-300/50 border border-slate-100 overflow-hidden"
+            className="absolute bottom-20 right-0 w-80 bg-white rounded-2xl shadow-2xl shadow-black/10 border border-gray-100 overflow-hidden"
           >
             {/* Header */}
-            <div className="bg-gradient-to-r from-teal-500 to-cyan-500 p-4">
+            <div className="bg-gradient-to-r from-[#00b982] to-[#14b8a6] p-4">
               <div className="flex items-center gap-3">
                 <div className="w-12 h-12 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center">
                   <img src="/images/dia_logo_symbol.png" alt="DIALAB" className="w-8 h-8 object-contain" />
                 </div>
                 <div>
-                  <h3 className="font-heading font-bold text-white">DIALAB Klinika</h3>
-                  <p className="text-teal-100 text-sm">Sizə necə kömək edə bilərik?</p>
+                  <h3 className="font-bold text-white">DIALAB Klinika</h3>
+                  <p className="text-white/80 text-sm">Sizə necə kömək edə bilərik?</p>
                 </div>
               </div>
             </div>
@@ -100,23 +109,23 @@ export default function VirtualAssistant() {
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: index * 0.1 }}
                   onClick={() => handleAction(action)}
-                  className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors group"
+                  className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 transition-colors group"
                 >
                   <div className={`w-10 h-10 rounded-lg bg-gradient-to-br ${action.color} flex items-center justify-center shadow-md`}>
                     <action.icon className="w-5 h-5 text-white" />
                   </div>
                   <div className="flex-1 text-left">
-                    <p className="font-medium text-slate-900 group-hover:text-teal-600 transition-colors">{action.label}</p>
-                    <p className="text-slate-500 text-sm">{action.description}</p>
+                    <p className="font-medium text-gray-900 group-hover:text-[#00b982] transition-colors">{action.label}</p>
+                    <p className="text-gray-500 text-sm">{action.description}</p>
                   </div>
-                  <ArrowRight className="w-4 h-4 text-slate-400 group-hover:text-teal-500 group-hover:translate-x-1 transition-all" />
+                  <ArrowRight className="w-4 h-4 text-gray-400 group-hover:text-[#00b982] group-hover:translate-x-1 transition-all" />
                 </motion.button>
               ))}
             </div>
 
             {/* Footer */}
             <div className="px-4 pb-4">
-              <p className="text-center text-slate-400 text-xs">
+              <p className="text-center text-gray-400 text-xs">
                 İş saatları: B.e - Cümə 09:00-18:00
               </p>
             </div>
@@ -129,11 +138,11 @@ export default function VirtualAssistant() {
         onClick={() => setIsOpen(!isOpen)}
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.95 }}
-        className="relative w-16 h-16 rounded-full bg-gradient-to-r from-teal-500 to-cyan-500 shadow-lg shadow-teal-500/40 flex items-center justify-center group"
+        className="relative w-16 h-16 rounded-full bg-gradient-to-r from-[#00b982] to-[#14b8a6] shadow-lg shadow-[#00b982]/40 flex items-center justify-center group"
       >
         {/* Pulse Animation */}
         <motion.div
-          className="absolute inset-0 rounded-full bg-teal-500"
+          className="absolute inset-0 rounded-full bg-[#00b982]"
           animate={{
             scale: [1, 1.2, 1],
             opacity: [0.5, 0, 0.5],

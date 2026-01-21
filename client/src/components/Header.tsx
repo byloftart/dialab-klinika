@@ -1,25 +1,28 @@
 /**
  * Header Component - DIALAB Klinika
- * Design: Swiss Design + 3D Depth
- * Features: Sticky navigation, logo hover effect, soft teal/blue glow on nav items
+ * Design: Modern medical with 3D depth effects
+ * Features: Sticky navigation, logo hover effect, soft green/blue glow on nav items
+ * Sections: 6 distinct sections with smooth scroll
  */
 
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Menu, X, Phone } from 'lucide-react';
+import { Menu, X, Phone, Calendar } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 const navItems = [
-  { id: 'home', label: 'Ana Səhifə', href: '#home' },
+  { id: 'hero', label: 'Ana Səhifə', href: '#hero' },
+  { id: 'gallery', label: 'Haqqımızda', href: '#gallery' },
   { id: 'laboratory', label: 'Laboratoriya', href: '#laboratory' },
   { id: 'diagnostics', label: 'Diaqnostika', href: '#diagnostics' },
-  { id: 'appointment', label: 'Randevu Al', href: '#appointment' },
+  { id: 'appointment', label: 'Randevu', href: '#appointment' },
+  { id: 'contact', label: 'Əlaqə', href: '#contact' },
 ];
 
 export default function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [activeSection, setActiveSection] = useState('home');
+  const [activeSection, setActiveSection] = useState('hero');
 
   useEffect(() => {
     const handleScroll = () => {
@@ -46,27 +49,29 @@ export default function Header() {
   const scrollToSection = (href: string) => {
     const element = document.querySelector(href);
     if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
+      const headerHeight = 80;
+      const elementPosition = element.getBoundingClientRect().top + window.scrollY;
+      window.scrollTo({ top: elementPosition - headerHeight, behavior: 'smooth' });
     }
     setIsMobileMenuOpen(false);
   };
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
         isScrolled
-          ? 'bg-white/95 backdrop-blur-md shadow-lg shadow-teal-500/5'
-          : 'bg-transparent'
+          ? 'bg-white/95 backdrop-blur-md shadow-lg shadow-black/5'
+          : 'bg-white/80 backdrop-blur-sm'
       }`}
     >
-      <div className="container">
+      <div className="container mx-auto px-4 lg:px-8">
         <div className="flex items-center justify-between h-20">
           {/* Logo */}
           <motion.a
-            href="#home"
+            href="#hero"
             onClick={(e) => {
               e.preventDefault();
-              scrollToSection('#home');
+              scrollToSection('#hero');
             }}
             className="flex items-center gap-3 group"
             whileHover={{ scale: 1.02 }}
@@ -78,24 +83,24 @@ export default function Header() {
                 alt="DIALAB Logo"
                 className="h-12 w-12 object-contain"
                 whileHover={{ 
-                  filter: 'drop-shadow(0 0 12px rgba(20, 184, 166, 0.6))',
+                  filter: 'drop-shadow(0 0 12px rgba(0, 185, 130, 0.6))',
                 }}
                 transition={{ duration: 0.3 }}
               />
-              <div className="absolute inset-0 bg-teal-400/20 rounded-full blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+              <div className="absolute inset-0 bg-[#00b982]/20 rounded-full blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
             </div>
             <div className="flex flex-col">
-              <span className="font-heading font-extrabold text-xl text-[#F87171] leading-tight tracking-tight">
+              <span className="font-extrabold text-xl text-[#dc2626] leading-tight tracking-tight">
                 DIALAB
               </span>
-              <span className="font-heading font-semibold text-sm text-teal-600 -mt-0.5">
+              <span className="font-semibold text-sm text-[#14b8a6] -mt-0.5">
                 KLİNİKA
               </span>
             </div>
           </motion.a>
 
           {/* Desktop Navigation */}
-          <nav className="hidden lg:flex items-center gap-1">
+          <nav className="hidden lg:flex items-center gap-0.5">
             {navItems.map((item) => (
               <motion.a
                 key={item.id}
@@ -104,21 +109,21 @@ export default function Header() {
                   e.preventDefault();
                   scrollToSection(item.href);
                 }}
-                className={`relative px-5 py-2.5 rounded-xl font-medium text-sm transition-all duration-300 ${
+                className={`relative px-4 py-2 rounded-lg font-medium text-sm transition-all duration-300 ${
                   activeSection === item.id
-                    ? 'text-teal-700'
-                    : 'text-slate-600 hover:text-teal-600'
+                    ? 'text-[#00b982]'
+                    : 'text-gray-600 hover:text-[#00b982]'
                 }`}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.98 }}
               >
                 {/* Glow background on hover */}
                 <motion.div
-                  className="absolute inset-0 rounded-xl bg-gradient-to-r from-teal-500/10 to-cyan-500/10"
+                  className="absolute inset-0 rounded-lg bg-gradient-to-r from-[#00b982]/10 to-[#14b8a6]/10"
                   initial={{ opacity: 0 }}
                   whileHover={{ 
                     opacity: 1,
-                    boxShadow: '0 0 20px rgba(20, 184, 166, 0.2), inset 0 0 20px rgba(20, 184, 166, 0.05)'
+                    boxShadow: '0 0 20px rgba(0, 185, 130, 0.15)'
                   }}
                   transition={{ duration: 0.3 }}
                 />
@@ -126,8 +131,7 @@ export default function Header() {
                 {activeSection === item.id && (
                   <motion.div
                     layoutId="activeNav"
-                    className="absolute inset-0 rounded-xl bg-teal-50 border border-teal-200/50"
-                    style={{ boxShadow: '0 0 15px rgba(20, 184, 166, 0.15)' }}
+                    className="absolute inset-0 rounded-lg bg-[#00b982]/10 border border-[#00b982]/20"
                     transition={{ type: 'spring', stiffness: 380, damping: 30 }}
                   />
                 )}
@@ -140,19 +144,22 @@ export default function Header() {
           <div className="hidden lg:flex items-center gap-4">
             <a 
               href="tel:+994123456789" 
-              className="flex items-center gap-2 text-slate-600 hover:text-teal-600 transition-colors"
+              className="flex items-center gap-2 text-gray-600 hover:text-[#00b982] transition-colors"
             >
-              <Phone className="w-4 h-4" />
+              <div className="w-8 h-8 rounded-full bg-[#00b982]/10 flex items-center justify-center">
+                <Phone className="w-4 h-4 text-[#00b982]" />
+              </div>
               <span className="font-medium text-sm">+994 12 345 67 89</span>
             </a>
             <motion.div
-              whileHover={{ scale: 1.05 }}
+              whileHover={{ scale: 1.05, y: -2 }}
               whileTap={{ scale: 0.98 }}
             >
               <Button
                 onClick={() => scrollToSection('#appointment')}
-                className="bg-gradient-to-r from-teal-500 to-teal-600 hover:from-teal-600 hover:to-teal-700 text-white font-semibold px-6 py-2.5 rounded-xl shadow-lg shadow-teal-500/25 hover:shadow-teal-500/40 transition-all duration-300"
+                className="bg-gradient-to-r from-[#00b982] to-[#14b8a6] hover:from-[#00a070] hover:to-[#12a090] text-white font-semibold px-5 py-2.5 rounded-lg shadow-lg shadow-[#00b982]/25 hover:shadow-[#00b982]/40 transition-all duration-300 flex items-center gap-2"
               >
+                <Calendar className="w-4 h-4" />
                 Randevu Al
               </Button>
             </motion.div>
@@ -160,7 +167,7 @@ export default function Header() {
 
           {/* Mobile Menu Button */}
           <motion.button
-            className="lg:hidden p-2 rounded-xl text-slate-600 hover:text-teal-600 hover:bg-teal-50 transition-colors"
+            className="lg:hidden p-2 rounded-lg text-gray-600 hover:text-[#00b982] hover:bg-[#00b982]/10 transition-colors"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             whileTap={{ scale: 0.95 }}
           >
@@ -177,9 +184,9 @@ export default function Header() {
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
             transition={{ duration: 0.3 }}
-            className="lg:hidden bg-white/95 backdrop-blur-md border-t border-teal-100"
+            className="lg:hidden bg-white/95 backdrop-blur-md border-t border-gray-100"
           >
-            <nav className="container py-4 flex flex-col gap-2">
+            <nav className="container mx-auto px-4 py-4 flex flex-col gap-2">
               {navItems.map((item, index) => (
                 <motion.a
                   key={item.id}
@@ -190,11 +197,11 @@ export default function Header() {
                   }}
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: index * 0.1 }}
-                  className={`px-4 py-3 rounded-xl font-medium transition-all ${
+                  transition={{ delay: index * 0.05 }}
+                  className={`px-4 py-3 rounded-lg font-medium transition-all ${
                     activeSection === item.id
-                      ? 'bg-teal-50 text-teal-700 shadow-sm'
-                      : 'text-slate-600 hover:bg-teal-50 hover:text-teal-600'
+                      ? 'bg-[#00b982]/10 text-[#00b982]'
+                      : 'text-gray-600 hover:bg-gray-50 hover:text-[#00b982]'
                   }`}
                 >
                   {item.label}
@@ -203,13 +210,21 @@ export default function Header() {
               <motion.div
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.4 }}
-                className="pt-2"
+                transition={{ delay: 0.3 }}
+                className="pt-2 flex flex-col gap-3"
               >
+                <a 
+                  href="tel:+994123456789" 
+                  className="flex items-center gap-3 px-4 py-3 rounded-lg bg-gray-50 text-gray-700"
+                >
+                  <Phone className="w-5 h-5 text-[#00b982]" />
+                  <span className="font-medium">+994 12 345 67 89</span>
+                </a>
                 <Button
                   onClick={() => scrollToSection('#appointment')}
-                  className="w-full bg-gradient-to-r from-teal-500 to-teal-600 hover:from-teal-600 hover:to-teal-700 text-white font-semibold py-3 rounded-xl"
+                  className="w-full bg-gradient-to-r from-[#00b982] to-[#14b8a6] text-white font-semibold py-3 rounded-lg flex items-center justify-center gap-2"
                 >
+                  <Calendar className="w-5 h-5" />
                   Randevu Al
                 </Button>
               </motion.div>

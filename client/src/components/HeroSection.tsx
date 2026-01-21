@@ -1,356 +1,339 @@
 /**
- * Hero Section - DIALAB Klinika
- * Design: Full-width parallax hero with 3D slider effect
- * Features: Parallax background, animated text, floating elements
+ * Hero Section - DIALAB Klinika (Section 1)
+ * Design: High-impact visual with value proposition
+ * Features: About Us block, credentials, trust indicators, Service Search
+ * Animation: Smooth fade-in, parallax effects
+ * Color: White background with soft green/blue accents
  */
 
-import { useState, useEffect, useRef } from 'react';
-import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
-import { ChevronLeft, ChevronRight, ArrowRight, Shield, Clock, Award } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { useState, useRef } from 'react';
+import { motion, useScroll, useTransform } from 'framer-motion';
+import { Search, Shield, Clock, Award, Users, ChevronRight, Sparkles, ArrowRight } from 'lucide-react';
 
-const slides = [
-  {
-    id: 1,
-    image: '/images/hero-medical-lab.jpg',
-    title: 'Müasir Laboratoriya',
-    subtitle: 'Testləri',
-    description: 'Ən son texnologiya ilə təchiz olunmuş laboratoriyamızda 500+ növ test aparılır.',
-  },
-  {
-    id: 2,
-    image: '/images/diagnostics-ultrasound.jpg',
-    title: 'Dəqiq Diaqnostika',
-    subtitle: 'Xidmətləri',
-    description: 'USM, EKQ, Exokardioqrafiya və digər müasir diaqnostika metodları.',
-  },
-  {
-    id: 3,
-    image: '/images/doctor-consultation.jpg',
-    title: 'Peşəkar Həkim',
-    subtitle: 'Məsləhətləri',
-    description: 'Təcrübəli mütəxəssislərimizdən fərdi yanaşma və keyfiyyətli müalicə.',
-  },
+const trustIndicators = [
+  { icon: Shield, label: 'Etibarlı Nəticələr', value: '99.9%' },
+  { icon: Clock, label: 'Sürətli Xidmət', value: '24 saat' },
+  { icon: Award, label: 'Təcrübə', value: '15+ il' },
+  { icon: Users, label: 'Xoşbəxt Pasient', value: '50K+' },
 ];
 
-const features = [
-  { icon: Shield, text: 'Etibarlı Nəticələr' },
-  { icon: Clock, text: 'Sürətli Xidmət' },
-  { icon: Award, text: '15+ İl Təcrübə' },
+const popularServices = [
+  'Qanın ümumi analizi',
+  'Hormon testləri',
+  'USM müayinəsi',
+  'EKQ',
+  'Hepatit testləri',
+  'Vitamin D',
+  'Biokimyəvi analizlər',
+  'Onkomarkerlər',
 ];
 
 export default function HeroSection() {
-  const [currentSlide, setCurrentSlide] = useState(0);
-  const [isAutoPlaying, setIsAutoPlaying] = useState(true);
-  const containerRef = useRef<HTMLDivElement>(null);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const sectionRef = useRef<HTMLElement>(null);
   
   const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ['start start', 'end start'],
+    target: sectionRef,
+    offset: ['start start', 'end start']
   });
   
-  const y = useTransform(scrollYProgress, [0, 1], ['0%', '30%']);
+  const backgroundY = useTransform(scrollYProgress, [0, 1], ['0%', '30%']);
   const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
 
-  useEffect(() => {
-    if (!isAutoPlaying) return;
-    
-    const interval = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % slides.length);
-    }, 6000);
-    
-    return () => clearInterval(interval);
-  }, [isAutoPlaying]);
+  const filteredServices = popularServices.filter(service =>
+    service.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
-  const nextSlide = () => {
-    setIsAutoPlaying(false);
-    setCurrentSlide((prev) => (prev + 1) % slides.length);
-  };
-
-  const prevSlide = () => {
-    setIsAutoPlaying(false);
-    setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length);
-  };
-
-  const scrollToAppointment = () => {
-    const element = document.getElementById('appointment');
+  const scrollToSection = (sectionId: string) => {
+    const element = document.getElementById(sectionId);
     if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
+      const headerHeight = 80;
+      const elementPosition = element.getBoundingClientRect().top + window.scrollY;
+      window.scrollTo({ top: elementPosition - headerHeight, behavior: 'smooth' });
     }
+    setShowSuggestions(false);
   };
 
   return (
     <section
-      id="home"
-      ref={containerRef}
-      className="relative min-h-screen overflow-hidden"
+      id="hero"
+      ref={sectionRef}
+      className="relative min-h-screen flex items-center overflow-hidden bg-gradient-to-br from-white via-[#f0fdf4] to-[#e8f4fc]"
     >
-      {/* Parallax Background Slides */}
-      <motion.div className="absolute inset-0" style={{ y }}>
-        <AnimatePresence mode="wait">
-          {slides.map((slide, index) => (
-            index === currentSlide && (
-              <motion.div
-                key={slide.id}
-                initial={{ opacity: 0, scale: 1.1 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.95 }}
-                transition={{ duration: 1, ease: 'easeInOut' }}
-                className="absolute inset-0"
-              >
-                <img
-                  src={slide.image}
-                  alt={slide.title}
-                  className="w-full h-full object-cover"
-                />
-                {/* Gradient Overlay */}
-                <div className="absolute inset-0 bg-gradient-to-r from-slate-900/80 via-slate-900/60 to-transparent" />
-                <div className="absolute inset-0 bg-gradient-to-t from-slate-900/50 via-transparent to-transparent" />
-              </motion.div>
-            )
-          ))}
-        </AnimatePresence>
+      {/* Animated Background Elements */}
+      <motion.div 
+        className="absolute inset-0 pointer-events-none"
+        style={{ y: backgroundY }}
+      >
+        <div className="absolute top-20 right-20 w-96 h-96 bg-[#00b982]/10 rounded-full blur-3xl" />
+        <div className="absolute bottom-20 left-20 w-80 h-80 bg-[#14b8a6]/10 rounded-full blur-3xl" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gradient-to-r from-[#00b982]/5 to-[#1a365d]/5 rounded-full blur-3xl" />
       </motion.div>
 
-      {/* Floating Decorative Elements */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <motion.div
-          className="absolute top-1/4 right-1/4 w-64 h-64 bg-teal-500/10 rounded-full blur-3xl"
-          animate={{
-            scale: [1, 1.2, 1],
-            opacity: [0.3, 0.5, 0.3],
-          }}
-          transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
-        />
-        <motion.div
-          className="absolute bottom-1/4 left-1/4 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl"
-          animate={{
-            scale: [1.2, 1, 1.2],
-            opacity: [0.2, 0.4, 0.2],
-          }}
-          transition={{ duration: 10, repeat: Infinity, ease: 'easeInOut' }}
-        />
-      </div>
-
-      {/* Content */}
-      <motion.div
-        className="relative z-10 container min-h-screen flex items-center pt-20"
-        style={{ opacity }}
-      >
-        <div className="grid lg:grid-cols-2 gap-12 items-center w-full py-12">
+      <div className="container mx-auto px-4 lg:px-8 pt-28 pb-16 relative z-10">
+        <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
           {/* Left Content */}
-          <div className="space-y-8">
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={currentSlide}
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -30 }}
-                transition={{ duration: 0.6 }}
-                className="space-y-6"
-              >
-                {/* Badge */}
+          <motion.div
+            initial={{ opacity: 0, x: -50 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.8, ease: [0.4, 0, 0.2, 1] }}
+            style={{ opacity }}
+          >
+            {/* Badge */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#00b982]/10 text-[#00b982] text-sm font-medium mb-6"
+            >
+              <Sparkles className="w-4 h-4" />
+              DIALAB Tibb Mərkəzi
+            </motion.div>
+
+            {/* Main Heading */}
+            <motion.h1
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3, duration: 0.8 }}
+              className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-[#1a365d] leading-tight mb-6"
+            >
+              Müasir Tibbi
+              <br />
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#00b982] to-[#14b8a6]">
+                Diaqnostika
+              </span>
+              <br />
+              Xidmətləri
+            </motion.h1>
+
+            {/* Description - About Us */}
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.4 }}
+              className="text-lg text-gray-600 mb-8 max-w-lg leading-relaxed"
+            >
+              500+ növ laboratoriya testi və müasir diaqnostika avadanlıqları ilə 
+              sağlamlığınızı dəqiq və etibarlı şəkildə qiymətləndiririk. 15 ildən artıq 
+              təcrübə ilə Azərbaycanda tibbi xidmət standartlarını müəyyən edirik.
+            </motion.p>
+
+            {/* Service Search */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.5 }}
+              className="relative mb-8"
+            >
+              <div className="relative">
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                <input
+                  type="text"
+                  placeholder="Xidmət və ya test axtarın..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  onFocus={() => setShowSuggestions(true)}
+                  onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
+                  className="w-full pl-12 pr-4 py-4 rounded-xl bg-white border-2 border-gray-100 focus:border-[#00b982] focus:ring-4 focus:ring-[#00b982]/10 transition-all duration-300 text-gray-700 placeholder:text-gray-400 shadow-lg shadow-black/5"
+                />
+              </div>
+              
+              {/* Search Suggestions */}
+              {showSuggestions && (
                 <motion.div
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.2 }}
-                  className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-teal-500/20 border border-teal-400/30 backdrop-blur-sm"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="absolute top-full left-0 right-0 mt-2 bg-white rounded-xl shadow-xl border border-gray-100 overflow-hidden z-20"
                 >
-                  <span className="w-2 h-2 rounded-full bg-teal-400 animate-pulse" />
-                  <span className="text-teal-300 font-medium text-sm">DIALAB Tibb Mərkəzi</span>
+                  <div className="p-3 border-b border-gray-100">
+                    <span className="text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Populyar Xidmətlər
+                    </span>
+                  </div>
+                  <div className="p-2 max-h-64 overflow-y-auto">
+                    {filteredServices.map((service, index) => (
+                      <button
+                        key={index}
+                        onClick={() => {
+                          setSearchQuery(service);
+                          scrollToSection('laboratory');
+                        }}
+                        className="w-full text-left px-4 py-3 rounded-lg hover:bg-[#00b982]/10 text-gray-700 hover:text-[#00b982] transition-colors flex items-center justify-between group"
+                      >
+                        <span>{service}</span>
+                        <ChevronRight className="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity" />
+                      </button>
+                    ))}
+                  </div>
                 </motion.div>
-
-                {/* Title */}
-                <h1 className="font-heading font-extrabold text-5xl md:text-6xl lg:text-7xl text-white leading-tight">
-                  {slides[currentSlide].title}
-                  <span className="block text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-cyan-400">
-                    {slides[currentSlide].subtitle}
-                  </span>
-                </h1>
-
-                {/* Description */}
-                <p className="text-lg md:text-xl text-slate-300 max-w-xl leading-relaxed">
-                  {slides[currentSlide].description}
-                </p>
-              </motion.div>
-            </AnimatePresence>
+              )}
+            </motion.div>
 
             {/* CTA Buttons */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.4 }}
+              transition={{ delay: 0.6 }}
               className="flex flex-wrap gap-4"
             >
-              <Button
-                onClick={scrollToAppointment}
-                size="lg"
-                className="bg-gradient-to-r from-teal-500 to-teal-600 hover:from-teal-600 hover:to-teal-700 text-white font-semibold px-8 py-6 rounded-xl shadow-lg shadow-teal-500/30 hover:shadow-teal-500/50 transition-all duration-300 group"
+              <motion.button
+                onClick={() => scrollToSection('appointment')}
+                className="px-8 py-4 bg-gradient-to-r from-[#00b982] to-[#14b8a6] text-white font-semibold rounded-xl shadow-lg shadow-[#00b982]/25 hover:shadow-xl hover:shadow-[#00b982]/30 transition-all duration-300 flex items-center gap-2 group"
+                whileHover={{ scale: 1.05, y: -2 }}
+                whileTap={{ scale: 0.98 }}
               >
                 Randevu Al
-                <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
-              </Button>
-              <Button
-                variant="outline"
-                size="lg"
-                onClick={() => {
-                  const element = document.getElementById('laboratory');
-                  if (element) element.scrollIntoView({ behavior: 'smooth' });
-                }}
-                className="border-2 border-white/30 bg-white/5 backdrop-blur-sm text-white hover:bg-white/10 hover:border-white/50 font-semibold px-8 py-6 rounded-xl transition-all duration-300"
+                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+              </motion.button>
+              <motion.button
+                onClick={() => scrollToSection('laboratory')}
+                className="px-8 py-4 bg-white text-[#1a365d] font-semibold rounded-xl border-2 border-gray-200 hover:border-[#00b982] hover:text-[#00b982] transition-all duration-300"
+                whileHover={{ scale: 1.05, y: -2 }}
+                whileTap={{ scale: 0.98 }}
               >
                 Xidmətlərimiz
-              </Button>
+              </motion.button>
             </motion.div>
 
-            {/* Features */}
+            {/* Trust Indicators - Desktop */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.6 }}
-              className="flex flex-wrap gap-6 pt-4"
+              transition={{ delay: 0.7 }}
+              className="hidden lg:flex items-center gap-6 mt-10 pt-8 border-t border-gray-200"
             >
-              {features.map((feature, index) => (
-                <div key={index} className="flex items-center gap-2 text-slate-300">
-                  <div className="p-2 rounded-lg bg-teal-500/20 text-teal-400">
-                    <feature.icon className="w-4 h-4" />
+              {trustIndicators.map((item, index) => (
+                <div key={index} className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-lg bg-[#00b982]/10 flex items-center justify-center">
+                    <item.icon className="w-5 h-5 text-[#00b982]" />
                   </div>
-                  <span className="font-medium text-sm">{feature.text}</span>
+                  <div>
+                    <div className="font-bold text-[#1a365d]">{item.value}</div>
+                    <div className="text-xs text-gray-500">{item.label}</div>
+                  </div>
                 </div>
               ))}
             </motion.div>
-          </div>
+          </motion.div>
 
-          {/* Right - 3D Card Preview */}
+          {/* Right Content - Hero Image & Stats */}
           <motion.div
             initial={{ opacity: 0, x: 50 }}
             animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.3, duration: 0.8 }}
-            className="hidden lg:block"
+            transition={{ duration: 0.8, delay: 0.3 }}
+            className="relative"
           >
-            <div className="relative">
-              {/* Main 3D Card */}
+            {/* Main Image */}
+            <motion.div
+              className="relative rounded-3xl overflow-hidden shadow-2xl"
+              whileHover={{ scale: 1.02 }}
+              transition={{ duration: 0.4 }}
+            >
+              <img
+                src="/images/hero-medical-lab.jpg"
+                alt="DIALAB Laboratoriya"
+                className="w-full h-[400px] lg:h-[500px] object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#1a365d]/60 via-transparent to-transparent" />
+              
+              {/* Floating Stats Card */}
               <motion.div
-                className="relative bg-white/10 backdrop-blur-md rounded-3xl p-8 border border-white/20 shadow-2xl"
-                style={{
-                  transformStyle: 'preserve-3d',
-                  perspective: '1000px',
-                }}
-                animate={{
-                  rotateY: [-2, 2, -2],
-                  rotateX: [1, -1, 1],
-                }}
-                transition={{
-                  duration: 8,
-                  repeat: Infinity,
-                  ease: 'easeInOut',
-                }}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.8 }}
+                className="absolute bottom-6 left-6 right-6 bg-white/95 backdrop-blur-md rounded-2xl p-6 shadow-xl"
               >
-                <div className="space-y-6">
-                  <div className="flex items-center gap-4">
-                    <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-teal-400 to-teal-600 flex items-center justify-center shadow-lg shadow-teal-500/30">
-                      <img src="/images/dia_logo_symbol.png" alt="DIALAB" className="w-10 h-10 object-contain" />
-                    </div>
-                    <div>
-                      <h3 className="font-heading font-bold text-xl text-white">DIALAB Klinika</h3>
-                      <p className="text-teal-300 text-sm">Laboratoriya & Diaqnostika</p>
-                    </div>
+                <div className="flex items-center gap-4 mb-4">
+                  <div className="w-12 h-12 rounded-xl bg-gradient-to-r from-[#00b982] to-[#14b8a6] flex items-center justify-center">
+                    <img src="/images/dia_logo_symbol.png" alt="Logo" className="w-8 h-8 object-contain" />
                   </div>
-                  
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="bg-white/10 rounded-xl p-4">
-                      <p className="text-3xl font-bold text-white">500+</p>
-                      <p className="text-slate-400 text-sm">Test Növü</p>
-                    </div>
-                    <div className="bg-white/10 rounded-xl p-4">
-                      <p className="text-3xl font-bold text-white">15+</p>
-                      <p className="text-slate-400 text-sm">İl Təcrübə</p>
-                    </div>
-                    <div className="bg-white/10 rounded-xl p-4">
-                      <p className="text-3xl font-bold text-white">50K+</p>
-                      <p className="text-slate-400 text-sm">Xoşbəxt Pasient</p>
-                    </div>
-                    <div className="bg-white/10 rounded-xl p-4">
-                      <p className="text-3xl font-bold text-white">24/7</p>
-                      <p className="text-slate-400 text-sm">Dəstək</p>
-                    </div>
+                  <div>
+                    <h3 className="font-bold text-[#1a365d]">DIALAB Klinika</h3>
+                    <p className="text-sm text-gray-500">Laboratoriya & Diaqnostika</p>
+                  </div>
+                </div>
+                <div className="grid grid-cols-4 gap-4">
+                  <div className="text-center">
+                    <div className="text-xl font-bold text-[#00b982]">500+</div>
+                    <div className="text-xs text-gray-500">Test</div>
+                  </div>
+                  <div className="text-center">
+                    <div className="text-xl font-bold text-[#00b982]">15+</div>
+                    <div className="text-xs text-gray-500">İl</div>
+                  </div>
+                  <div className="text-center">
+                    <div className="text-xl font-bold text-[#00b982]">50K+</div>
+                    <div className="text-xs text-gray-500">Pasient</div>
+                  </div>
+                  <div className="text-center">
+                    <div className="text-xl font-bold text-[#00b982]">24/7</div>
+                    <div className="text-xs text-gray-500">Dəstək</div>
                   </div>
                 </div>
               </motion.div>
+            </motion.div>
 
-              {/* Floating Elements */}
-              <motion.div
-                className="absolute -top-6 -right-6 w-24 h-24 bg-gradient-to-br from-coral-400 to-red-500 rounded-2xl shadow-xl shadow-red-500/30 flex items-center justify-center"
-                animate={{ y: [-5, 5, -5], rotate: [0, 5, 0] }}
-                transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
-              >
-                <span className="text-white font-bold text-2xl">%20</span>
-              </motion.div>
-              
-              <motion.div
-                className="absolute -bottom-4 -left-4 px-4 py-2 bg-white rounded-xl shadow-xl"
-                animate={{ y: [5, -5, 5] }}
-                transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
-              >
-                <p className="text-teal-600 font-semibold text-sm">İlk vizit endirimi!</p>
-              </motion.div>
-            </div>
+            {/* Decorative Elements */}
+            <div className="absolute -top-6 -right-6 w-24 h-24 bg-[#00b982]/20 rounded-full blur-2xl" />
+            <div className="absolute -bottom-6 -left-6 w-32 h-32 bg-[#14b8a6]/20 rounded-full blur-2xl" />
+            
+            {/* Floating Discount Badge */}
+            <motion.div
+              className="absolute -top-4 -right-4 w-20 h-20 bg-gradient-to-br from-[#dc2626] to-[#ef4444] rounded-2xl shadow-xl shadow-red-500/30 flex items-center justify-center"
+              animate={{ y: [-5, 5, -5], rotate: [0, 5, 0] }}
+              transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
+            >
+              <span className="text-white font-bold text-xl">%20</span>
+            </motion.div>
           </motion.div>
         </div>
-      </motion.div>
 
-      {/* Slide Navigation */}
-      <div className="absolute bottom-8 left-0 right-0 z-20">
-        <div className="container flex items-center justify-between">
-          {/* Slide Indicators */}
-          <div className="flex gap-3">
-            {slides.map((_, index) => (
-              <button
+        {/* Trust Indicators - Mobile */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.7 }}
+          className="mt-12 lg:hidden"
+        >
+          <div className="grid grid-cols-2 gap-4">
+            {trustIndicators.map((item, index) => (
+              <motion.div
                 key={index}
-                onClick={() => {
-                  setIsAutoPlaying(false);
-                  setCurrentSlide(index);
-                }}
-                className={`h-2 rounded-full transition-all duration-300 ${
-                  index === currentSlide
-                    ? 'w-8 bg-teal-400'
-                    : 'w-2 bg-white/40 hover:bg-white/60'
-                }`}
-              />
+                className="bg-white rounded-xl p-4 shadow-lg shadow-black/5 flex items-center gap-3"
+                whileHover={{ scale: 1.02, y: -2 }}
+              >
+                <div className="w-10 h-10 rounded-lg bg-[#00b982]/10 flex items-center justify-center">
+                  <item.icon className="w-5 h-5 text-[#00b982]" />
+                </div>
+                <div>
+                  <div className="font-bold text-[#1a365d]">{item.value}</div>
+                  <div className="text-xs text-gray-500">{item.label}</div>
+                </div>
+              </motion.div>
             ))}
           </div>
-
-          {/* Arrow Navigation */}
-          <div className="flex gap-2">
-            <button
-              onClick={prevSlide}
-              className="p-3 rounded-xl bg-white/10 backdrop-blur-sm border border-white/20 text-white hover:bg-white/20 transition-all"
-            >
-              <ChevronLeft className="w-5 h-5" />
-            </button>
-            <button
-              onClick={nextSlide}
-              className="p-3 rounded-xl bg-white/10 backdrop-blur-sm border border-white/20 text-white hover:bg-white/20 transition-all"
-            >
-              <ChevronRight className="w-5 h-5" />
-            </button>
-          </div>
-        </div>
+        </motion.div>
       </div>
 
       {/* Scroll Indicator */}
       <motion.div
-        className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20 hidden md:block"
-        animate={{ y: [0, 10, 0] }}
-        transition={{ duration: 2, repeat: Infinity }}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 1 }}
+        className="absolute bottom-8 left-1/2 -translate-x-1/2"
       >
-        <div className="w-6 h-10 rounded-full border-2 border-white/30 flex justify-center pt-2">
+        <motion.div
+          animate={{ y: [0, 10, 0] }}
+          transition={{ repeat: Infinity, duration: 2 }}
+          className="w-6 h-10 rounded-full border-2 border-[#00b982]/30 flex items-start justify-center p-2"
+        >
           <motion.div
-            className="w-1.5 h-3 rounded-full bg-teal-400"
-            animate={{ y: [0, 12, 0], opacity: [1, 0, 1] }}
-            transition={{ duration: 2, repeat: Infinity }}
+            animate={{ y: [0, 12, 0] }}
+            transition={{ repeat: Infinity, duration: 2 }}
+            className="w-1.5 h-3 bg-[#00b982] rounded-full"
           />
-        </div>
+        </motion.div>
       </motion.div>
     </section>
   );
