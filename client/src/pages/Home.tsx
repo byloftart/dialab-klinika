@@ -1,4 +1,4 @@
-/**
+/*
  * Home Page - DIALAB Klinika
  * Design Philosophy: "Presizion Tibb" - Swiss Design + Subtle 3D Depth
  * 
