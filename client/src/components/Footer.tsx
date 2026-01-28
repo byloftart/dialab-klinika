@@ -53,13 +53,16 @@ export default function Footer() {
       id="contact"
       ref={footerRef}
       style={{ x: slideX, opacity }}
-      className="relative bg-[#0f1012] overflow-hidden"
+      className="relative bg-gradient-to-br from-white via-[#f0fdf4] to-[#e8f4fc] overflow-hidden"
     >
-      {/* Background Effects */}
-      <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-0 left-1/4 w-96 h-96 bg-[#00b982]/5 rounded-full blur-3xl" />
-        <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-[#14b8a6]/5 rounded-full blur-3xl" />
-      </div>
+      {/* Animated Background Elements */}
+      <motion.div 
+        className="absolute inset-0 pointer-events-none"
+      >
+        <div className="absolute top-20 right-20 w-96 h-96 bg-[#00b982]/10 rounded-full blur-3xl" />
+        <div className="absolute bottom-20 left-20 w-80 h-80 bg-[#14b8a6]/10 rounded-full blur-3xl" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gradient-to-r from-[#00b982]/5 to-[#1a365d]/5 rounded-full blur-3xl" />
+      </motion.div>
 
       {/* Main Content */}
       <div className="container mx-auto px-4 lg:px-8 relative z-10 py-16">
@@ -71,7 +74,7 @@ export default function Footer() {
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
-            className="relative h-80 lg:h-auto rounded-2xl overflow-hidden border border-white/10"
+            className="relative h-80 lg:h-auto rounded-2xl overflow-hidden border border-[#00b982]/20"
           >
             <MapView 
               onMapReady={handleMapReady}
@@ -101,37 +104,37 @@ export default function Footer() {
             className="space-y-6"
           >
             <div>
-              <h3 className="font-bold text-2xl text-white mb-6">Əlaqə Məlumatları</h3>
+              <h3 className="font-bold text-2xl text-[#1a365d] mb-6">Əlaqə Məlumatları</h3>
               
               <div className="space-y-4">
-                <a href="tel:+994123456789" className="flex items-center gap-4 p-4 bg-white/5 rounded-xl border border-white/10 hover:bg-white/10 transition-colors group">
+                <a href="tel:+994123456789" className="flex items-center gap-4 p-4 bg-white rounded-xl border border-[#00b982]/20 hover:border-[#00b982]/50 hover:shadow-lg hover:shadow-[#00b982]/10 transition-all group">
                   <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#00b982] to-[#14b8a6] flex items-center justify-center">
                     <Phone className="w-6 h-6 text-white" />
                   </div>
                   <div>
-                    <p className="text-gray-400 text-sm">Telefon</p>
-                    <p className="text-white font-semibold group-hover:text-[#00b982] transition-colors">+994 12 345 67 89</p>
+                    <p className="text-gray-500 text-sm">Telefon</p>
+                    <p className="text-[#1a365d] font-semibold group-hover:text-[#00b982] transition-colors">+994 12 345 67 89</p>
                   </div>
                 </a>
 
-                <a href="mailto:info@dialab.az" className="flex items-center gap-4 p-4 bg-white/5 rounded-xl border border-white/10 hover:bg-white/10 transition-colors group">
+                <a href="mailto:info@dialab.az" className="flex items-center gap-4 p-4 bg-white rounded-xl border border-[#00b982]/20 hover:border-[#00b982]/50 hover:shadow-lg hover:shadow-[#00b982]/10 transition-all group">
                   <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#8b5cf6] to-[#a855f7] flex items-center justify-center">
                     <Mail className="w-6 h-6 text-white" />
                   </div>
                   <div>
-                    <p className="text-gray-400 text-sm">E-poçt</p>
-                    <p className="text-white font-semibold group-hover:text-[#00b982] transition-colors">info@dialab.az</p>
+                    <p className="text-gray-500 text-sm">E-poçt</p>
+                    <p className="text-[#1a365d] font-semibold group-hover:text-[#00b982] transition-colors">info@dialab.az</p>
                   </div>
                 </a>
 
-                <div className="flex items-center gap-4 p-4 bg-white/5 rounded-xl border border-white/10">
+                <div className="flex items-center gap-4 p-4 bg-white rounded-xl border border-[#00b982]/20">
                   <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#f59e0b] to-[#f97316] flex items-center justify-center">
                     <Clock className="w-6 h-6 text-white" />
                   </div>
                   <div>
-                    <p className="text-gray-400 text-sm">İş Saatları</p>
-                    <p className="text-white font-semibold">B.e - Cümə: 09:00-18:00</p>
-                    <p className="text-gray-400 text-sm">Şənbə: 09:00-14:00</p>
+                    <p className="text-gray-500 text-sm">İş Saatları</p>
+                    <p className="text-[#1a365d] font-semibold">B.e - Cümə: 09:00-18:00</p>
+                    <p className="text-gray-500 text-sm">Şənbə: 09:00-14:00</p>
                   </div>
                 </div>
               </div>
@@ -139,7 +142,7 @@ export default function Footer() {
 
             {/* Social Links */}
             <div>
-              <h4 className="font-semibold text-white mb-4">Sosial Şəbəkələr</h4>
+              <h4 className="font-semibold text-[#1a365d] mb-4">Sosial Şəbəkələr</h4>
               <div className="flex gap-3">
                 <a
                   href="https://facebook.com/dialabklinika"

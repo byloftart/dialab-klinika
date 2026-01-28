@@ -113,10 +113,10 @@ export default function MediaGallery() {
           <span className="inline-block px-4 py-2 rounded-full bg-[#00b982]/20 text-[#00b982] text-sm font-medium mb-4">
             Haqqımızda
           </span>
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-extrabold text-white mb-6">
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-extrabold text-[#1a365d] mb-6">
             DIALAB <span className="text-[#00b982]">Tibb Mərkəzi</span>
           </h2>
-          <p className="text-gray-400 max-w-2xl mx-auto text-lg">
+          <p className="text-gray-600 max-w-2xl mx-auto text-lg">
             2009-cu ildən bəri Azərbaycanda tibbi diaqnostika sahəsində xidmət göstəririk
           </p>
         </motion.div>
@@ -208,10 +208,10 @@ export default function MediaGallery() {
               viewport={{ once: true }}
               transition={{ delay: index * 0.1, duration: 0.6 }}
               whileHover={{ y: -8, scale: 1.02 }}
-              className="group relative bg-white/5 backdrop-blur-sm rounded-2xl p-6 border border-white/10 hover:border-[#00b982]/50 transition-all duration-300"
+              className="group relative bg-white rounded-2xl p-6 border border-[#00b982]/20 hover:border-[#00b982]/50 transition-all duration-300 hover:shadow-lg hover:shadow-[#00b982]/10"
             >
               {/* Number */}
-              <span className="absolute top-4 right-4 text-4xl font-bold text-white/5 group-hover:text-[#00b982]/20 transition-colors">
+              <span className="absolute top-4 right-4 text-4xl font-bold text-[#00b982]/10 group-hover:text-[#00b982]/20 transition-colors">
                 {feature.number}
               </span>
               
@@ -221,8 +221,8 @@ export default function MediaGallery() {
               </div>
               
               {/* Content */}
-              <h3 className="text-lg font-bold text-white mb-2">{feature.title}</h3>
-              <p className="text-gray-400 text-sm leading-relaxed">{feature.description}</p>
+              <h3 className="text-lg font-bold text-[#1a365d] mb-2">{feature.title}</h3>
+              <p className="text-gray-600 text-sm leading-relaxed">{feature.description}</p>
               
               {/* Hover Glow */}
               <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-[#00b982]/0 to-[#00b982]/0 group-hover:from-[#00b982]/5 group-hover:to-transparent transition-all duration-300" />
@@ -236,7 +236,7 @@ export default function MediaGallery() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ delay: 0.4, duration: 0.6 }}
-          className="mt-16 grid grid-cols-2 md:grid-cols-4 gap-8 py-8 border-t border-white/10"
+          className="mt-16 grid grid-cols-2 md:grid-cols-4 gap-8 py-8 border-t border-[#00b982]/20"
         >
           {[
             { value: '500+', label: 'Test Növü' },
@@ -246,7 +246,7 @@ export default function MediaGallery() {
           ].map((stat, index) => (
             <div key={index} className="text-center">
               <div className="text-3xl md:text-4xl font-bold text-[#00b982] mb-2">{stat.value}</div>
-              <div className="text-gray-400">{stat.label}</div>
+              <div className="text-gray-600">{stat.label}</div>
             </div>
           ))}
         </motion.div>

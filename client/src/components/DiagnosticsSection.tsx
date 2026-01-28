@@ -190,12 +190,11 @@ export default function DiagnosticsSection() {
             className="inline-block px-4 py-2 rounded-full bg-[#00b982]/20 text-[#00b982] font-semibold text-sm mb-4 border border-[#00b982]/30"
           >
             Diaqnostika Xidmətləri
-          </motion.span>
-          <h2 className="font-extrabold text-3xl md:text-4xl lg:text-5xl text-white mb-4">
+          </motion.span>          <h2 className="font-extrabold text-3xl md:text-4xl lg:text-5xl text-[#1a365d] mb-4">
             Tibbi <span className="text-[#00b982]">Diaqnostika</span> və Müalicə
           </h2>
-          <p className="text-gray-400 text-lg max-w-2xl mx-auto">
-            Müasir avadanlıqlar və təcrübəli mütəxəssislərlə dəqiq diaqnostika
+          <p className="text-gray-600 text-lg max-w-2xl mx-auto">
+            Müasir avadanlıqlar və təcrübəli mütəxəssisrlərlə dəqiq diaqnostika
           </p>
         </motion.div>
 
@@ -215,8 +214,8 @@ export default function DiagnosticsSection() {
                 onMouseLeave={() => setHoveredTab(null)}
                 className={`w-full text-left p-4 rounded-xl transition-all duration-300 group relative overflow-hidden ${
                   activeTab === index
-                    ? 'bg-white/10 border border-[#00b982]/50'
-                    : 'bg-white/5 border border-white/10 hover:bg-white/10 hover:border-white/20'
+                    ? 'bg-white border border-[#00b982]/50 shadow-lg shadow-[#00b982]/10'
+                    : 'bg-white/50 border border-[#00b982]/10 hover:bg-white hover:border-[#00b982]/30'
                 }`}
               >
                 {/* Glow effect on hover */}
@@ -241,14 +240,14 @@ export default function DiagnosticsSection() {
                     <service.icon className="w-6 h-6" style={{ color: service.color }} />
                   </motion.div>
                   <div className="flex-1">
-                    <h3 className={`font-bold text-base transition-colors ${activeTab === index ? 'text-[#00b982]' : 'text-white group-hover:text-[#00b982]'}`}>
+                    <h3 className={`font-bold text-base transition-colors ${activeTab === index ? 'text-[#00b982]' : 'text-[#1a365d] group-hover:text-[#00b982]'}`}>
                       {service.title}
                     </h3>
                     <p className="text-gray-500 text-sm line-clamp-1">
                       {service.services.length} xidmət
                     </p>
                   </div>
-                  <ArrowRight className={`w-5 h-5 transition-all duration-300 ${activeTab === index ? 'text-[#00b982] translate-x-0' : 'text-gray-600 -translate-x-2 opacity-0 group-hover:translate-x-0 group-hover:opacity-100'}`} />
+                  <ArrowRight className={`w-5 h-5 transition-all duration-300 ${activeTab === index ? 'text-[#00b982] translate-x-0' : 'text-gray-400 -translate-x-2 opacity-0 group-hover:translate-x-0 group-hover:opacity-100'}`} />
                 </div>
               </motion.button>
             ))}
@@ -267,7 +266,7 @@ export default function DiagnosticsSection() {
                 style={{ perspective: '1000px' }}
               >
                 <motion.div
-                  className="bg-white/5 backdrop-blur-md rounded-3xl border border-white/10 overflow-hidden shadow-2xl"
+                  className="bg-white rounded-3xl border border-[#00b982]/20 overflow-hidden shadow-2xl shadow-[#00b982]/10"
                   whileHover={{ 
                     rotateY: 2,
                     rotateX: -2,
@@ -286,7 +285,7 @@ export default function DiagnosticsSection() {
                       alt={activeService.title}
                       className="w-full h-full object-cover"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-[#0f1012] via-[#0f1012]/50 to-transparent" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-white/80 via-white/40 to-transparent" />
                     
                     {/* Floating Badge */}
                     <motion.div
@@ -313,7 +312,7 @@ export default function DiagnosticsSection() {
                   {/* Content */}
                   <div className="p-6 space-y-6">
                     {/* Description */}
-                    <p className="text-gray-300 text-lg leading-relaxed">
+                    <p className="text-gray-700 text-lg leading-relaxed">
                       {activeService.description}
                     </p>
 
