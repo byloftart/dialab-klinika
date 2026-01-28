@@ -63,10 +63,6 @@ const faqItems = [
     question: 'Randevuyu ləğv etmək və ya dəyişdirmək mümkündür?',
     answer: 'Bəli, randevuyu müayinədən ən azı 24 saat əvvəl ləğv etdirə və ya dəyişdirə bilərsiniz. Bunun üçün +994 12 345 67 89 nömrəsinə zəng edin.',
   },
-  {
-    question: 'Uşaqlar üçün xüsusi saat var?',
-    answer: 'Bəli, uşaqlar üçün xüsusi randevu saatları mövcuddur. Uşaq həkim müayinəsi üçün əvvəlcədən qeydiyyat etdirməniz tövsiyə olunur.',
-  },
 ];
 
 export default function AppointmentSection() {

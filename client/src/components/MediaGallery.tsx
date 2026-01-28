@@ -111,7 +111,7 @@ export default function MediaGallery() {
         <div className="mb-16 lg:mb-20 flex justify-center">
           <div className="text-center">
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-[#1a365d] mb-3">
-              Haqqu0131mu0131zda
+              Haqqımızda
             </h2>
           </div>
         </div>
