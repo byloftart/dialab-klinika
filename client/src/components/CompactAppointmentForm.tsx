@@ -90,24 +90,24 @@ export default function CompactAppointmentForm() {
       <div className="absolute inset-0 bg-gradient-to-br from-[#00b982]/20 via-[#14b8a6]/15 to-[#00d4aa]/10 rounded-3xl blur-2xl" />
       
       {/* Form Container */}
-      <div className="relative bg-white/95 backdrop-blur-md rounded-3xl shadow-2xl shadow-[#00b982]/30 overflow-hidden border-2 border-[#00b982]/30 p-8 lg:p-10">
+      <div className="relative bg-white/95 backdrop-blur-md rounded-3xl shadow-2xl shadow-[#00b982]/30 overflow-hidden border-2 border-[#00b982]/30 p-6 lg:p-8">
         {/* Decorative Top Border */}
         <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-[#00b982] to-transparent" />
         
         {/* Form Header */}
-        <div className="mb-8">
+        <div className="mb-6">
           <motion.div
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="flex items-center gap-3 mb-4"
+            className="flex items-center gap-3 mb-3"
           >
-            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#00b982] to-[#14b8a6] flex items-center justify-center">
-              <Calendar className="w-6 h-6 text-white" />
+            <div className="w-11 h-11 rounded-lg bg-gradient-to-br from-[#00b982] to-[#14b8a6] flex items-center justify-center">
+              <Calendar className="w-5 h-5 text-white" />
             </div>
             <div>
-              <h3 className="font-bold text-2xl lg:text-3xl text-[#1a365d]">Qəbula yazıl</h3>
-              <p className="text-gray-600 text-sm">Bir neçə klikdə randevu alın</p>
+              <h3 className="font-bold text-xl lg:text-2xl text-[#1a365d]">Qəbula yazıl</h3>
+              <p className="text-gray-600 text-xs">Bir neçə klikdə randevu alın</p>
             </div>
           </motion.div>
         </div>
@@ -140,7 +140,7 @@ export default function CompactAppointmentForm() {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onSubmit={handleSubmit}
-              className="space-y-4"
+              className="space-y-3"
             >
               {/* Name */}
               <motion.div

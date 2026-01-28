@@ -216,7 +216,7 @@ export default function DiagnosticsSection() {
                 onClick={() => setActiveTab(index)}
                 onMouseEnter={() => setHoveredTab(index)}
                 onMouseLeave={() => setHoveredTab(null)}
-                className={`w-full text-left p-4 rounded-xl transition-all duration-300 group relative overflow-hidden ${
+                className={`w-full text-left p-5 rounded-xl transition-all duration-300 group relative overflow-hidden min-h-[100px] ${
                   activeTab === index
                     ? 'bg-white border border-[#00b982]/50 shadow-lg shadow-[#00b982]/10'
                     : 'bg-white/50 border border-[#00b982]/10 hover:bg-white hover:border-[#00b982]/30'
@@ -234,20 +234,20 @@ export default function DiagnosticsSection() {
                 
                 <div className="relative z-10 flex items-center gap-4">
                   <motion.div 
-                    className="w-12 h-12 rounded-xl flex items-center justify-center shadow-lg transition-transform duration-300"
+                    className="w-14 h-14 rounded-xl flex items-center justify-center shadow-lg transition-transform duration-300 flex-shrink-0"
                     style={{ 
                       backgroundColor: `${service.color}20`,
                       boxShadow: activeTab === index ? `0 8px 20px -8px ${service.color}60` : 'none'
                     }}
                     animate={{ scale: activeTab === index ? 1.1 : 1 }}
                   >
-                    <service.icon className="w-6 h-6" style={{ color: service.color }} />
+                    <service.icon className="w-7 h-7" style={{ color: service.color }} />
                   </motion.div>
                   <div className="flex-1">
-                    <h3 className={`font-bold text-base transition-colors ${activeTab === index ? 'text-[#00b982]' : 'text-[#1a365d] group-hover:text-[#00b982]'}`}>
+                    <h3 className={`font-bold text-lg transition-colors ${activeTab === index ? 'text-[#00b982]' : 'text-[#1a365d] group-hover:text-[#00b982]'}`}>
                       {service.title}
                     </h3>
-                    <p className="text-gray-500 text-sm line-clamp-1">
+                    <p className="text-gray-500 text-sm line-clamp-2">
                       {service.services.length} xidmət
                     </p>
                   </div>

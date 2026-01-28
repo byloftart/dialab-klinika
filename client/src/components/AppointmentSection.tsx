@@ -216,33 +216,7 @@ export default function AppointmentSection() {
               ))}
             </div>
 
-            {/* Working Hours */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.4, duration: 0.6 }}
-              className="mt-8 p-6 bg-gradient-to-r from-[#00b982]/10 to-[#14b8a6]/10 rounded-2xl border border-[#00b982]/20"
-            >
-              <h4 className="font-bold text-lg text-[#1a365d] mb-4 flex items-center gap-2">
-                <Clock className="w-5 h-5 text-[#00b982]" />
-                Iş Saatları
-              </h4>
-              <div className="space-y-2 text-gray-700 text-base">
-                <div className="flex justify-between">
-                  <span>Bazar ertəsi - Cümə</span>
-                  <span className="font-semibold text-[#00b982]">09:00 - 18:00</span>
-                </div>
-                <div className="flex justify-between">
-                  <span>Şənbə</span>
-                  <span className="font-semibold text-[#00b982]">09:00 - 14:00</span>
-                </div>
-                <div className="flex justify-between">
-                  <span>Bazar</span>
-                  <span className="font-semibold text-gray-400">Bağlı</span>
-                </div>
-              </div>
-            </motion.div>
+            {/* Working Hours removed - moved to footer */}
           </motion.div>
         </div>
       </div>

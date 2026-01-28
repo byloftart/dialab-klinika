@@ -131,14 +131,17 @@ export default function Footer() {
                   </div>
                 </a>
 
-                <div className="flex items-center gap-4 p-4 bg-white rounded-xl border border-[#00b982]/20">
-                  <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#f59e0b] to-[#f97316] flex items-center justify-center">
+                <div className="flex items-start gap-4 p-5 bg-gradient-to-br from-[#fef3c7] to-[#fef08a] rounded-xl border border-[#f59e0b]/30">
+                  <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#f59e0b] to-[#f97316] flex items-center justify-center flex-shrink-0">
                     <Clock className="w-6 h-6 text-white" />
                   </div>
                   <div>
-                    <p className="text-gray-500 text-sm">İş Saatları</p>
-                    <p className="text-[#1a365d] font-semibold">B.e - Cümə: 09:00-18:00</p>
-                    <p className="text-gray-500 text-sm">Şənbə: 09:00-14:00</p>
+                    <p className="text-gray-700 text-sm font-semibold mb-2">Iş Saatları</p>
+                    <div className="space-y-1 text-sm">
+                      <p className="text-gray-700"><span className="font-semibold">Bazar ertəsi - Cümə:</span> 09:00 - 18:00</p>
+                      <p className="text-gray-700"><span className="font-semibold">Şənbə:</span> 09:00 - 14:00</p>
+                      <p className="text-gray-500"><span className="font-semibold">Bazar:</span> Bağlı</p>
+                    </div>
                   </div>
                 </div>
               </div>

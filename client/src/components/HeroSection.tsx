@@ -88,13 +88,11 @@ export default function HeroSection() {
               transition={{ delay: 0.3, duration: 0.8 }}
               className="text-5xl md:text-6xl lg:text-7xl font-extrabold text-[#1a365d] leading-tight mb-8"
             >
-              Müasir Tibbi
+              Dialab
               <br />
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#00b982] to-[#14b8a6]">
-                Diaqnostika
+                Tibb Mərkəzi
               </span>
-              <br />
-              Xidmətləri
             </motion.h1>
 
             {/* Description - About Us */}

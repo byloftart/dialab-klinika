@@ -97,3 +97,28 @@
 - [ ] Verify responsive design on mobile/tablet
 - [ ] Check visual hierarchy and contrast
 - [ ] Validate form submissions
+
+
+## Stage 4 - Design Refinement (Current)
+
+### Hero Section Adjustments
+- [x] Change main heading to "Dialab Tibb Mərkəzi"
+- [x] Adjust form card height to match left text block
+- [x] Reduce form field widths for better proportions
+- [x] Improve visual symmetry
+
+### Diagnostics Section Improvements
+- [x] Increase tab/card sizes to match description block height
+- [x] Improve vertical alignment of content
+
+### FAQ & Footer Restructuring
+- [x] Remove working hours from FAQ section
+- [x] Create working hours block for footer
+- [x] Reduce width of FAQ tabs/accordion
+- [x] Maintain all FAQ content
+
+### Testing & Validation
+- [ ] Verify responsive design on mobile
+- [ ] Check visual alignment and proportions
+- [ ] Test all form functionality
+- [ ] Validate footer layout
