@@ -107,23 +107,22 @@ export default function MediaGallery() {
       </motion.div>
 
       <div className="container mx-auto px-4 lg:px-8 relative z-10">
-        {/* Section Header - Hidden */}
+        {/* Section Header - Visible with Styling */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="text-center mb-8 hidden"
+          className="mb-12 lg:mb-16"
         >
-          <span className="inline-block px-4 py-2 rounded-full bg-[#00b982]/20 text-[#00b982] text-sm font-medium mb-4">
-            Haqqımızda
-          </span>
-          <h2 className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-[#1a365d] mb-6">
-            DIALAB <span className="text-[#00b982]">Tibb Mərkəzi</span>
-          </h2>
-          <p className="text-gray-700 max-w-2xl mx-auto text-xl font-medium">
-            1998 - ci ildən bəri Azərbaycanda tibbi diaqnostika sahəsində xidmət göstərik
-          </p>
+          <motion.h2 
+            className="text-5xl md:text-6xl lg:text-7xl font-extrabold text-[#1a365d] mb-4 uppercase tracking-tight"
+            whileHover={{ scale: 1.02 }}
+          >
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#1a365d] to-[#00b982] hover:from-[#00b982] hover:to-[#14b8a6] transition-all duration-300">
+              HAQQİMIZDA
+            </span>
+          </motion.h2>
         </motion.div>
 
         {/* Gallery Slider */}

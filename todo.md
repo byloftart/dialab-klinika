@@ -132,3 +132,19 @@
 - [x] Optimize field spacing and padding
 - [x] Adjust form container max-width constraints
 - [x] Test layout on different screen sizes
+
+
+## Stage 6 - Hero Section & Section Headings (Current)
+
+### Hero Section Layout Adjustments
+- [x] Shift form to the right
+- [x] Make heading single line with larger font
+- [x] Replace "Randevu Al" button text with "Qəbul yazıl"
+
+### Section Headings Styling
+- [x] Add large uppercase headings to Haqqımızda section
+- [x] Add large uppercase headings to Laboratoriya section
+- [x] Add large uppercase headings to Diaqnostika section
+- [x] Add large uppercase headings to Məlumat section (Appointment)
+- [x] Add large uppercase headings to Ėlaqə section (Footer)
+- [x] Add hover effects to all section headings

@@ -132,6 +132,23 @@ export default function AppointmentSection() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
+          className="mb-12 lg:mb-16"
+        >
+          <motion.h2 
+            className="text-5xl md:text-6xl lg:text-7xl font-extrabold text-[#1a365d] mb-4 uppercase tracking-tight"
+            whileHover={{ scale: 1.02 }}
+          >
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#1a365d] to-[#00b982] hover:from-[#00b982] hover:to-[#14b8a6] transition-all duration-300">
+              MĖLUMĂT
+            </span>
+          </motion.h2>
+        </motion.div>
+        
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
           className="text-center mb-8 hidden"
         >
           <span className="inline-block px-4 py-2 rounded-full bg-[#00b982]/10 text-[#00b982] text-sm font-medium mb-4">
@@ -141,7 +158,7 @@ export default function AppointmentSection() {
             Randevu <span className="text-[#00b982]">Alın</span>
           </h2>
           <p className="text-gray-700 max-w-2xl mx-auto text-xl font-medium">
-            Formu dolduraraq və ya birbaaşa əlaqə saxlayaraq randevu ala bilərsiniz
+            Formu doldurarak və ya birbaaaş əlaqə saxlayarak randevu ala bilərsiniz
           </p>
         </motion.div>
 

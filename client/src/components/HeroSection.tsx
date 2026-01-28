@@ -86,12 +86,10 @@ export default function HeroSection() {
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3, duration: 0.8 }}
-              className="text-5xl md:text-6xl lg:text-7xl font-extrabold text-[#1a365d] leading-tight mb-8"
+              className="text-6xl md:text-7xl lg:text-8xl font-extrabold text-[#1a365d] leading-tight mb-8 whitespace-nowrap"
             >
-              Dialab
-              <br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#00b982] to-[#14b8a6]">
-                Tibb Mərkəzi
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#1a365d] via-[#00b982] to-[#14b8a6]">
+                Dialab Tibb Mərkəzi
               </span>
             </motion.h1>
 
@@ -171,7 +169,7 @@ export default function HeroSection() {
                 whileHover={{ scale: 1.05, y: -2 }}
                 whileTap={{ scale: 0.98 }}
               >
-                Randevu Al
+                Qəbul yazıl
                 <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
               </motion.button>
               <motion.button
@@ -210,7 +208,7 @@ export default function HeroSection() {
             initial={{ opacity: 0, x: 50 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8, delay: 0.3 }}
-            className="relative max-w-sm lg:max-w-md mx-auto lg:mx-0 w-full"
+            className="relative max-w-sm lg:max-w-md mx-auto lg:ml-auto w-full"
           >
             <CompactAppointmentForm />
           </motion.div>
