@@ -74,7 +74,7 @@ export default function Footer() {
         <div className="mb-16 lg:mb-20 flex justify-center">
           <div className="text-center">
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-[#1a365d] mb-3">
-              ĖLAQĖ
+              Əlaqə
             </h2>
             <p className="text-lg md:text-xl text-gray-600 font-medium max-w-2xl mx-auto">
               Bizimə əlaqə saxlayın
