@@ -161,7 +161,11 @@ export default function DiagnosticsSection() {
     <motion.section
       id="diagnostics"
       ref={sectionRef}
-      style={{ y: slideY, opacity }}
+      initial={{ opacity: 0, y: 40 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, amount: 0.2 }}
+      transition={{ duration: 0.8 }}
+      style={{ y: slideY }}
       className="py-24 lg:py-32 bg-gradient-to-br from-white via-[#f0fdf4] to-[#e8f4fc] relative overflow-hidden"
     >
       {/* Animated Background Elements */}

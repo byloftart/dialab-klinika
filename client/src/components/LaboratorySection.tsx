@@ -130,7 +130,14 @@ export default function LaboratorySection() {
   const secondGroup = laboratoryCategories.slice(4, 8);
 
   return (
-    <section id="laboratory" className="py-24 lg:py-32 bg-gradient-to-b from-white to-[#f0fdf4] relative overflow-hidden">
+    <motion.section 
+      id="laboratory" 
+      initial={{ opacity: 0 }}
+      whileInView={{ opacity: 1 }}
+      viewport={{ once: true, amount: 0.2 }}
+      transition={{ duration: 0.8 }}
+      className="py-24 lg:py-32 bg-gradient-to-b from-white to-[#f0fdf4] relative overflow-hidden"
+    >
       {/* Background Decorations */}
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute top-0 left-0 w-96 h-96 bg-[#00b982]/10 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2" />
@@ -332,6 +339,6 @@ export default function LaboratorySection() {
           </motion.button>
         </motion.div>
       </div>
-    </section>
+    </motion.section>
   );
 }

@@ -110,7 +110,14 @@ export default function AppointmentSection() {
   const today = new Date().toISOString().split('T')[0];
 
   return (
-    <section id="appointment" className="py-24 lg:py-32 bg-gradient-to-b from-[#f0fdf4] to-white relative overflow-hidden">
+    <motion.section 
+      id="appointment" 
+      initial={{ opacity: 0 }}
+      whileInView={{ opacity: 1 }}
+      viewport={{ once: true, amount: 0.2 }}
+      transition={{ duration: 0.8 }}
+      className="py-24 lg:py-32 bg-gradient-to-b from-[#f0fdf4] to-white relative overflow-hidden"
+    >
       {/* Background Decorations */}
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute top-0 right-0 w-96 h-96 bg-[#00b982]/10 rounded-full blur-3xl" />
@@ -418,6 +425,6 @@ export default function AppointmentSection() {
           </motion.div>
         </div>
       </div>
-    </section>
+    </motion.section>
   );
 }

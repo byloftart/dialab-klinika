@@ -52,7 +52,11 @@ export default function Footer() {
     <motion.footer
       id="contact"
       ref={footerRef}
-      style={{ x: slideX, opacity }}
+      initial={{ opacity: 0, y: 50 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, amount: 0.2 }}
+      transition={{ duration: 0.8 }}
+      style={{ x: slideX }}
       className="relative bg-gradient-to-br from-white via-[#f0fdf4] to-[#e8f4fc] overflow-hidden"
     >
       {/* Animated Background Elements */}

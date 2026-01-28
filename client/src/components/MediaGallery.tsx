@@ -88,9 +88,13 @@ export default function MediaGallery() {
   };
 
   return (
-    <section
+    <motion.section
       id="gallery"
       ref={sectionRef}
+      initial={{ opacity: 0 }}
+      whileInView={{ opacity: 1 }}
+      viewport={{ once: true, amount: 0.2 }}
+      transition={{ duration: 0.8 }}
       className="relative py-24 lg:py-32 overflow-hidden bg-gradient-to-br from-white via-[#f0fdf4] to-[#e8f4fc]"
     >
       {/* Animated Background Elements */}
@@ -252,6 +256,6 @@ export default function MediaGallery() {
           ))}
         </motion.div>
       </div>
-    </section>
+    </motion.section>
   );
 }
