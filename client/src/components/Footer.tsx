@@ -83,7 +83,7 @@ export default function Footer() {
             whileHover={{ scale: 1.05 }}
           >
             <h2 className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-[#1a365d] to-[#00b982] uppercase tracking-wider">
-              Ėlaqə
+              Əlaqə
             </h2>
           </motion.div>
         </motion.div>
