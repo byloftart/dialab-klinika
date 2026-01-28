@@ -65,7 +65,7 @@ export default function Header() {
       }`}
     >
       <div className="container mx-auto px-4 lg:px-8">
-        <div className="flex items-center justify-between h-20">
+        <div className="flex items-center justify-between h-28">
           {/* Logo */}
           <motion.a
             href="#hero"
@@ -81,7 +81,7 @@ export default function Header() {
               <motion.img
                 src="/images/dia_logo_symbol.png"
                 alt="DIALAB Logo"
-                className="h-12 w-12 object-contain"
+                className="h-16 w-16 object-contain"
                 whileHover={{ 
                   filter: 'drop-shadow(0 0 12px rgba(0, 185, 130, 0.6))',
                 }}
@@ -90,10 +90,10 @@ export default function Header() {
               <div className="absolute inset-0 bg-[#00b982]/20 rounded-full blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
             </div>
             <div className="flex flex-col">
-              <span className="font-extrabold text-xl text-[#dc2626] leading-tight tracking-tight">
+              <span className="font-extrabold text-2xl text-[#dc2626] leading-tight tracking-tight">
                 DIALAB
               </span>
-              <span className="font-semibold text-sm text-[#14b8a6] -mt-0.5">
+              <span className="font-semibold text-base text-[#14b8a6] -mt-1">
                 KLİNİKA
               </span>
             </div>
@@ -109,7 +109,7 @@ export default function Header() {
                   e.preventDefault();
                   scrollToSection(item.href);
                 }}
-                className={`relative px-4 py-2 rounded-lg font-medium text-sm transition-all duration-300 ${
+                className={`relative px-5 py-3 rounded-lg font-medium text-base transition-all duration-300 ${
                   activeSection === item.id
                     ? 'text-[#00b982]'
                     : 'text-gray-600 hover:text-[#00b982]'
