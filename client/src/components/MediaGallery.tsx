@@ -122,7 +122,7 @@ export default function MediaGallery() {
             DIALAB <span className="text-[#00b982]">Tibb Mərkəzi</span>
           </h2>
           <p className="text-gray-600 max-w-2xl mx-auto text-lg">
-            2009-cu ildən bəri Azərbaycanda tibbi diaqnostika sahəsində xidmət göstəririk
+            1998 - ci ildən bəri Azərbaycanda tibbi diaqnostika sahəsində xidmət göstəririk
           </p>
         </motion.div>
 
