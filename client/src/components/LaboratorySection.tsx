@@ -343,6 +343,10 @@ export default function LaboratorySection() {
           </div>
         </div>
       </div>
+      
+      {/* Volumetric Section Divider */}
+      <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-b from-transparent via-[#00b982]/5 to-[#f0fdf4] pointer-events-none" />
+      <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-[#00b982]/30 to-transparent" />
     </motion.section>
   );
 }

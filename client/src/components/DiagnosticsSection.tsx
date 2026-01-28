@@ -333,7 +333,7 @@ export default function DiagnosticsSection() {
                             className="w-2 h-2 rounded-full"
                             style={{ backgroundColor: activeService.color }}
                           />
-                          <span className="text-gray-300 text-sm">{service}</span>
+                          <span className="text-gray-700 text-sm font-medium">{service}</span>
                         </motion.div>
                       ))}
                     </div>
@@ -356,9 +356,9 @@ export default function DiagnosticsSection() {
                         <User className="w-8 h-8 text-white" />
                       </div>
                       <div className="text-center sm:text-left">
-                        <h4 className="font-bold text-white">{activeService.doctor.name}</h4>
-                        <p className="text-sm" style={{ color: activeService.color }}>{activeService.doctor.specialty}</p>
-                        <p className="text-gray-500 text-sm">{activeService.doctor.experience}</p>
+                        <h4 className="font-bold text-[#1a365d]">{activeService.doctor.name}</h4>
+                        <p className="font-semibold text-sm" style={{ color: activeService.color }}>{activeService.doctor.specialty}</p>
+                        <p className="text-gray-600 text-sm font-medium">{activeService.doctor.experience}</p>
                       </div>
                       <motion.button
                         whileHover={{ scale: 1.05, y: -2 }}
@@ -393,6 +393,10 @@ export default function DiagnosticsSection() {
           </div>
         </div>
       </div>
+      
+      {/* Volumetric Section Divider */}
+      <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-b from-transparent via-[#00b982]/5 to-white pointer-events-none" />
+      <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-[#00b982]/30 to-transparent" />
     </motion.section>
   );
 }
