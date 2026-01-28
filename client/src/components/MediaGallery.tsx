@@ -97,7 +97,7 @@ export default function MediaGallery() {
       <div className="absolute inset-0 opacity-5">
         <div className="absolute inset-0" style={{
           backgroundImage: `radial-gradient(circle at 2px 2px, white 1px, transparent 0)`,
-          backgroundSize: '40px 40px'
+          backgroundSize: '40px 40px', backgroundColor: '#f5f5f5'
         }} />
       </div>
 
