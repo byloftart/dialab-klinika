@@ -59,6 +59,14 @@ const faqItems = [
     question: 'Nəticələri necə ala bilərəm?',
     answer: 'Nəticələri klinikadan şəxsən, e-poçt vasitəsilə və ya onlayn portalımızdan əldə edə bilərsiniz. Həmçinin WhatsApp vasitəsilə də göndərə bilərik.',
   },
+  {
+    question: 'Randevuyu ləğv etmək və ya dəyişdirmək mümkündür?',
+    answer: 'Bəli, randevuyu müayinədən ən azı 24 saat əvvəl ləğv etdirə və ya dəyişdirə bilərsiniz. Bunun üçün +994 12 345 67 89 nömrəsinə zəng edin.',
+  },
+  {
+    question: 'Uşaqlar üçün xüsusi saat var?',
+    answer: 'Bəli, uşaqlar üçün xüsusi randevu saatları mövcuddur. Uşaq həkim müayinəsi üçün əvvəlcədən qeydiyyat etdirməniz tövsiyə olunur.',
+  },
 ];
 
 export default function AppointmentSection() {
@@ -128,20 +136,25 @@ export default function AppointmentSection() {
       <div className="container mx-auto px-4 lg:px-8 relative z-10">
         {/* Section Header - Hidden */}
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
+          initial={{ opacity: 0, y: 40 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
+          transition={{ duration: 0.8 }}
           className="mb-16 lg:mb-20 flex justify-center"
         >
-          <motion.div 
-            className="inline-block px-8 py-4 rounded-2xl border-2 border-[#00b982]/30 bg-gradient-to-r from-[#00b982]/5 to-[#14b8a6]/5 backdrop-blur-sm"
-            whileHover={{ scale: 1.05 }}
+          <motion.h2 
+            className="text-3xl md:text-4xl lg:text-5xl font-bold text-[#1a365d] uppercase tracking-widest relative inline-block"
+            whileHover={{ letterSpacing: '0.2em' }}
           >
-            <h2 className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-[#1a365d] to-[#00b982] uppercase tracking-wider">
-              Məlumat
-            </h2>
-          </motion.div>
+            Məlumat
+            <motion.div
+              className="absolute bottom-0 left-0 h-1 bg-gradient-to-r from-[#00b982] to-[#14b8a6]"
+              initial={{ width: 0 }}
+              whileInView={{ width: '100%' }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.8, delay: 0.3 }}
+            />
+          </motion.h2>
         </motion.div>
         
         <motion.div

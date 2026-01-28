@@ -15,7 +15,7 @@ const navItems = [
   { id: 'gallery', label: 'Haqqımızda', href: '#gallery' },
   { id: 'laboratory', label: 'Laboratoriya', href: '#laboratory' },
   { id: 'diagnostics', label: 'Diaqnostika', href: '#diagnostics' },
-  { id: 'appointment', label: 'Randevu', href: '#appointment' },
+  { id: 'appointment', label: 'Məlumat', href: '#appointment' },
   { id: 'contact', label: 'Əlaqə', href: '#contact' },
 ];
 
