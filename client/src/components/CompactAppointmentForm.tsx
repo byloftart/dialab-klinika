@@ -208,7 +208,7 @@ export default function CompactAppointmentForm() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.25 }}
-                className="grid sm:grid-cols-2 gap-4"
+                className="grid grid-cols-1 gap-3"
               >
                 <div>
                   <label className="block text-sm font-semibold text-gray-700 mb-2">Tarix</label>

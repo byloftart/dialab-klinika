@@ -73,7 +73,7 @@ export default function HeroSection() {
       </motion.div>
 
       <div className="container mx-auto px-4 lg:px-8 pt-28 pb-16 relative z-10">
-        <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+        <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-start lg:items-center">
           {/* Left Content */}
           <motion.div
             initial={{ opacity: 0, x: -50 }}
@@ -210,7 +210,7 @@ export default function HeroSection() {
             initial={{ opacity: 0, x: 50 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8, delay: 0.3 }}
-            className="relative"
+            className="relative max-w-sm lg:max-w-md mx-auto lg:mx-0 w-full"
           >
             <CompactAppointmentForm />
           </motion.div>
