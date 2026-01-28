@@ -179,27 +179,16 @@ export default function DiagnosticsSection() {
 
       <div className="container mx-auto px-4 lg:px-8 relative z-10">
         {/* Section Header - Hidden */}
-        <motion.div
-          initial={{ opacity: 0, y: 40 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8 }}
-          className="mb-16 lg:mb-20 flex justify-center"
-        >
-          <motion.h2 
-            className="text-3xl md:text-4xl lg:text-5xl font-bold text-[#1a365d] uppercase tracking-widest relative inline-block"
-            whileHover={{ letterSpacing: '0.2em' }}
-          >
-            Diaqnostika
-            <motion.div
-              className="absolute bottom-0 left-0 h-1 bg-gradient-to-r from-[#00b982] to-[#14b8a6]"
-              initial={{ width: 0 }}
-              whileInView={{ width: '100%' }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.8, delay: 0.3 }}
-            />
-          </motion.h2>
-        </motion.div>
+        <div className="mb-16 lg:mb-20 flex justify-center">
+          <div className="text-center">
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-[#1a365d] mb-3">
+              Tibbi Diaqnostika
+            </h2>
+            <p className="text-lg md:text-xl text-gray-600 font-medium max-w-2xl mx-auto">
+              Müasir avadanlıqlarla instrumental diaqnostika
+            </p>
+          </div>
+        </div>
         
         <motion.div
           initial={{ opacity: 0, y: 30 }}
