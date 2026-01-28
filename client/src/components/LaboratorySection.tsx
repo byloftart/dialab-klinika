@@ -208,7 +208,7 @@ export default function LaboratorySection() {
                 onClick={() => setActiveTab(index)}
                 onMouseEnter={() => setHoveredTab(index)}
                 onMouseLeave={() => setHoveredTab(null)}
-                className={`w-full text-left p-6 rounded-xl transition-all duration-300 group relative overflow-hidden min-h-[120px] flex items-center ${
+                className={`w-full text-left p-5 rounded-xl transition-all duration-300 group relative overflow-hidden min-h-[100px] ${
                   activeTab === index
                     ? 'bg-white border border-[#00b982]/50 shadow-lg shadow-[#00b982]/10'
                     : 'bg-white/50 border border-[#00b982]/10 hover:bg-white hover:border-[#00b982]/30'
@@ -226,20 +226,20 @@ export default function LaboratorySection() {
                 
                 <div className="relative z-10 flex items-center gap-4">
                   <motion.div 
-                    className="w-16 h-16 rounded-xl flex items-center justify-center shadow-lg transition-transform duration-300 flex-shrink-0"
+                    className="w-14 h-14 rounded-xl flex items-center justify-center shadow-lg transition-transform duration-300 flex-shrink-0"
                     style={{ 
                       backgroundColor: `${analysis.color}20`,
                       boxShadow: activeTab === index ? `0 8px 20px -8px ${analysis.color}60` : 'none'
                     }}
                     animate={{ scale: activeTab === index ? 1.1 : 1 }}
                   >
-                    <analysis.icon className="w-8 h-8" style={{ color: analysis.color }} />
+                    <analysis.icon className="w-7 h-7" style={{ color: analysis.color }} />
                   </motion.div>
                   <div className="flex-1">
                     <h3 className={`font-bold text-lg transition-colors ${activeTab === index ? 'text-[#00b982]' : 'text-[#1a365d] group-hover:text-[#00b982]'}`}>
                       {analysis.title}
                     </h3>
-                    <p className="text-gray-500 text-base line-clamp-1">
+                    <p className="text-gray-500 text-sm line-clamp-2">
                       {analysis.subtypes.length} test növü
                     </p>
                   </div>
