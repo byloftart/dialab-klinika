@@ -119,9 +119,9 @@ export default function MediaGallery() {
         {/* Gallery Slider */}
         <motion.div
           style={{ opacity }}
-          className="relative mb-20"
+          className="relative mb-20 -mx-4 lg:-mx-8"
         >
-          <div className="relative rounded-3xl overflow-hidden aspect-[16/9] max-w-5xl mx-auto">
+          <div className="relative overflow-hidden aspect-[16/9] w-full">
             <AnimatePresence mode="wait">
               <motion.div
                 key={currentIndex}
