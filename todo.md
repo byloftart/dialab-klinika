@@ -75,3 +75,25 @@
 1. Ultrasəs Müayinəsi (USM)
 2. Funksional Diaqnostika
 3. Həkim Məsləhətləri və Müalicə Prosedurları
+
+
+## Stage 3 - Layout Restructuring (Current)
+
+### Hero Section Redesign
+- [x] Move Randevu Form to Hero Section (replace lab image)
+- [x] Rename form title to "Qəbula yazıl"
+- [x] Add bright styling and make form more eye-catching
+- [x] Adjust hero layout for form placement
+- [x] Optimize form visibility and accessibility
+
+### Appointment Section Update
+- [x] Replace Randevu Form with Feedback Form
+- [x] Create new feedback form component
+- [x] Add feedback form styling and animations
+- [x] Maintain FAQ section in appointment area
+
+### Testing & Validation
+- [ ] Test form functionality in new locations
+- [ ] Verify responsive design on mobile/tablet
+- [ ] Check visual hierarchy and contrast
+- [ ] Validate form submissions

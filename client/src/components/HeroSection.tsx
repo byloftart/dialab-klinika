@@ -9,6 +9,7 @@
 import { useState, useRef } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { Search, Shield, Clock, Award, Users, ChevronRight, Sparkles, ArrowRight } from 'lucide-react';
+import CompactAppointmentForm from './CompactAppointmentForm';
 
 const trustIndicators = [
   { icon: Shield, label: 'Etibarlı Nəticələr', value: '99.9%' },
@@ -206,75 +207,14 @@ export default function HeroSection() {
             </motion.div>
           </motion.div>
 
-          {/* Right Content - Hero Image & Stats */}
+          {/* Right Content - Compact Appointment Form */}
           <motion.div
             initial={{ opacity: 0, x: 50 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8, delay: 0.3 }}
             className="relative"
           >
-            {/* Main Image */}
-            <motion.div
-              className="relative rounded-3xl overflow-hidden shadow-2xl"
-              whileHover={{ scale: 1.02 }}
-              transition={{ duration: 0.4 }}
-            >
-              <img
-                src="/images/hero-medical-lab.jpg"
-                alt="DIALAB Laboratoriya"
-                className="w-full h-[400px] lg:h-[500px] object-cover"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#1a365d]/60 via-transparent to-transparent" />
-              
-              {/* Floating Stats Card */}
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.8 }}
-                className="absolute bottom-6 left-6 right-6 bg-white/95 backdrop-blur-md rounded-2xl p-6 shadow-xl"
-              >
-                <div className="flex items-center gap-4 mb-4">
-                  <div className="w-12 h-12 rounded-xl bg-gradient-to-r from-[#00b982] to-[#14b8a6] flex items-center justify-center">
-                    <img src="/images/dia_logo_symbol.png" alt="Logo" className="w-8 h-8 object-contain" />
-                  </div>
-                  <div>
-                    <h3 className="font-bold text-[#1a365d]">DIALAB Klinika</h3>
-                    <p className="text-sm text-gray-500">Laboratoriya & Diaqnostika</p>
-                  </div>
-                </div>
-                <div className="grid grid-cols-4 gap-4">
-                  <div className="text-center">
-                    <div className="text-xl font-bold text-[#00b982]">500+</div>
-                    <div className="text-xs text-gray-500">Test</div>
-                  </div>
-                  <div className="text-center">
-                    <div className="text-xl font-bold text-[#00b982]">15+</div>
-                    <div className="text-xs text-gray-500">İl</div>
-                  </div>
-                  <div className="text-center">
-                    <div className="text-xl font-bold text-[#00b982]">50K+</div>
-                    <div className="text-xs text-gray-500">Pasient</div>
-                  </div>
-                  <div className="text-center">
-                    <div className="text-xl font-bold text-[#00b982]">24/7</div>
-                    <div className="text-xs text-gray-500">Dəstək</div>
-                  </div>
-                </div>
-              </motion.div>
-            </motion.div>
-
-            {/* Decorative Elements */}
-            <div className="absolute -top-6 -right-6 w-24 h-24 bg-[#00b982]/20 rounded-full blur-2xl" />
-            <div className="absolute -bottom-6 -left-6 w-32 h-32 bg-[#14b8a6]/20 rounded-full blur-2xl" />
-            
-            {/* Floating Discount Badge */}
-            <motion.div
-              className="absolute -top-4 -right-4 w-20 h-20 bg-gradient-to-br from-[#dc2626] to-[#ef4444] rounded-2xl shadow-xl shadow-red-500/30 flex items-center justify-center"
-              animate={{ y: [-5, 5, -5], rotate: [0, 5, 0] }}
-              transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
-            >
-              <span className="text-white font-bold text-xl">%20</span>
-            </motion.div>
+            <CompactAppointmentForm />
           </motion.div>
         </div>
 

@@ -21,6 +21,7 @@ import {
   HelpCircle
 } from 'lucide-react';
 import { toast } from 'sonner';
+import FeedbackForm from './FeedbackForm';
 
 const services = [
   { value: 'laboratory', label: 'Laboratoriya Testləri' },
@@ -145,194 +146,14 @@ export default function AppointmentSection() {
         </motion.div>
 
         <div className="grid lg:grid-cols-2 gap-12">
-          {/* Booking Form */}
+          {/* Feedback Form */}
           <motion.div
             initial={{ opacity: 0, x: -30 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
           >
-            <div className="bg-white rounded-3xl shadow-xl shadow-black/5 overflow-hidden border border-gray-100">
-              {/* Form Header */}
-              <div className="bg-gradient-to-r from-[#00b982] to-[#14b8a6] p-6">
-                <div className="flex items-center gap-4">
-                  <div className="w-14 h-14 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center">
-                    <Calendar className="w-7 h-7 text-white" />
-                  </div>
-                  <div>
-                    <h3 className="font-bold text-xl text-white">Randevu Formu</h3>
-                    <p className="text-white/80 text-sm">Məlumatlarınızı daxil edin</p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Form Body */}
-              <AnimatePresence mode="wait">
-                {isSubmitted ? (
-                  <motion.div
-                    key="success"
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0, scale: 0.9 }}
-                    className="p-8 text-center"
-                  >
-                    <motion.div
-                      initial={{ scale: 0 }}
-                      animate={{ scale: 1 }}
-                      transition={{ type: 'spring', stiffness: 200, damping: 15 }}
-                      className="w-20 h-20 rounded-full bg-green-100 flex items-center justify-center mx-auto mb-4"
-                    >
-                      <CheckCircle className="w-10 h-10 text-green-500" />
-                    </motion.div>
-                    <h3 className="font-bold text-2xl text-[#1a365d] mb-2">Təşəkkür Edirik!</h3>
-                    <p className="text-gray-600">Randevunuz uğurla qeydə alındı. Tezliklə sizinlə əlaqə saxlayacağıq.</p>
-                  </motion.div>
-                ) : (
-                  <motion.form
-                    key="form"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    onSubmit={handleSubmit}
-                    className="p-6 space-y-5"
-                  >
-                    {/* Name */}
-                    <div>
-                      <label className="block text-base font-semibold text-gray-800 mb-2">Ad Soyad *</label>
-                      <div className="relative">
-                        <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                        <input
-                          type="text"
-                          value={formData.name}
-                          onChange={(e) => handleInputChange('name', e.target.value)}
-                          placeholder="Adınızı daxil edin"
-                          className="w-full pl-12 pr-4 py-3 rounded-xl border border-gray-200 focus:border-[#00b982] focus:ring-4 focus:ring-[#00b982]/10 outline-none transition-all"
-                        />
-                      </div>
-                    </div>
-
-                    {/* Phone & Email */}
-                      <div className="grid sm:grid-cols-2 gap-4">
-                      <div>
-                        <label className="block text-base font-semibold text-gray-800 mb-2">Telefon *</label>
-                        <div className="relative">
-                          <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                          <input
-                            type="tel"
-                            value={formData.phone}
-                            onChange={(e) => handleInputChange('phone', e.target.value)}
-                            placeholder="+994 XX XXX XX XX"
-                            className="w-full pl-12 pr-4 py-3 rounded-xl border border-gray-200 focus:border-[#00b982] focus:ring-4 focus:ring-[#00b982]/10 outline-none transition-all"
-                          />
-                        </div>
-                      </div>
-                      <div>
-                        <label className="block text-base font-semibold text-gray-800 mb-2">E-mail *</label>
-                        <div className="relative">
-                          <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                          <input
-                            type="email"
-                            value={formData.email}
-                            onChange={(e) => handleInputChange('email', e.target.value)}
-                            placeholder="email@example.com"
-                            className="w-full pl-12 pr-4 py-3 rounded-xl border border-gray-200 focus:border-[#00b982] focus:ring-4 focus:ring-[#00b982]/10 outline-none transition-all"
-                          />
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Service */}
-                    <div>
-                      <label className="block text-base font-semibold text-gray-800 mb-2">Xidmət Növü *</label>
-                      <div className="relative">
-                        <Stethoscope className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                        <select
-                          value={formData.service}
-                          onChange={(e) => handleInputChange('service', e.target.value)}
-                          className="w-full pl-12 pr-10 py-3 rounded-xl border border-gray-200 focus:border-[#00b982] focus:ring-4 focus:ring-[#00b982]/10 outline-none transition-all appearance-none cursor-pointer"
-                        >
-                          <option value="">Xidmət seçin</option>
-                          {services.map((service) => (
-                            <option key={service.value} value={service.value}>{service.label}</option>
-                          ))}
-                        </select>
-                        <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
-                      </div>
-                    </div>
-
-                    {/* Date & Time */}
-                    <div className="grid sm:grid-cols-2 gap-4">
-                      <div>
-                        <label className="block text-base font-semibold text-gray-800 mb-2">Tarix</label>
-                        <div className="relative">
-                          <Calendar className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                          <input
-                            type="date"
-                            value={formData.date}
-                            onChange={(e) => handleInputChange('date', e.target.value)}
-                            min={today}
-                            className="w-full pl-12 pr-4 py-3 rounded-xl border border-gray-200 focus:border-[#00b982] focus:ring-4 focus:ring-[#00b982]/10 outline-none transition-all"
-                          />
-                        </div>
-                      </div>
-                      <div>
-                        <label className="block text-base font-semibold text-gray-800 mb-2">Saat</label>
-                        <div className="relative">
-                          <Clock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                          <select
-                            value={formData.time}
-                            onChange={(e) => handleInputChange('time', e.target.value)}
-                            className="w-full pl-12 pr-10 py-3 rounded-xl border border-gray-200 focus:border-[#00b982] focus:ring-4 focus:ring-[#00b982]/10 outline-none transition-all appearance-none cursor-pointer"
-                          >
-                            <option value="">Saat seçin</option>
-                            {timeSlots.map((time) => (
-                              <option key={time} value={time}>{time}</option>
-                            ))}
-                          </select>
-                          <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Message */}
-                    <div>
-                      <label className="block text-base font-semibold text-gray-800 mb-2">Əlavə Qeyd</label>
-                      <div className="relative">
-                        <MessageSquare className="absolute left-4 top-4 w-5 h-5 text-gray-400" />
-                        <textarea
-                          value={formData.message}
-                          onChange={(e) => handleInputChange('message', e.target.value)}
-                          rows={3}
-                          placeholder="Əlavə məlumat və ya suallarınız..."
-                          className="w-full pl-12 pr-4 py-3 rounded-xl border border-gray-200 focus:border-[#00b982] focus:ring-4 focus:ring-[#00b982]/10 outline-none transition-all resize-none"
-                        />
-                      </div>
-                    </div>
-
-                    {/* Submit Button */}
-                    <motion.button
-                      type="submit"
-                      disabled={isSubmitting}
-                      whileHover={{ scale: 1.02, y: -2 }}
-                      whileTap={{ scale: 0.98 }}
-                      className="w-full py-4 bg-gradient-to-r from-[#00b982] to-[#14b8a6] text-white font-semibold rounded-xl shadow-lg shadow-[#00b982]/25 hover:shadow-[#00b982]/40 transition-all duration-300 flex items-center justify-center gap-2 disabled:opacity-70"
-                    >
-                      {isSubmitting ? (
-                        <>
-                          <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                          Göndərilir...
-                        </>
-                      ) : (
-                        <>
-                          <Send className="w-5 h-5" />
-                          Randevu Sorğusu Göndər
-                        </>
-                      )}
-                    </motion.button>
-                  </motion.form>
-                )}
-              </AnimatePresence>
-            </div>
+            <FeedbackForm />
           </motion.div>
 
           {/* FAQ Section */}
