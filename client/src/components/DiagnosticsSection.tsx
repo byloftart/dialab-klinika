@@ -178,13 +178,13 @@ export default function DiagnosticsSection() {
       </motion.div>
 
       <div className="container mx-auto px-4 lg:px-8 relative z-10">
-        {/* Section Header */}
+        {/* Section Header - Hidden */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="text-center mb-16"
+          className="text-center mb-8 hidden"
         >
           <motion.span
             initial={{ opacity: 0, scale: 0.9 }}
@@ -193,11 +193,12 @@ export default function DiagnosticsSection() {
             className="inline-block px-4 py-2 rounded-full bg-[#00b982]/20 text-[#00b982] font-semibold text-sm mb-4 border border-[#00b982]/30"
           >
             Diaqnostika Xidmətləri
-          </motion.span>          <h2 className="font-extrabold text-3xl md:text-4xl lg:text-5xl text-[#1a365d] mb-4">
-            Tibbi <span className="text-[#00b982]">Diaqnostika</span> və Müalicə
+          </motion.span>
+          <h2 className="font-extrabold text-4xl md:text-5xl lg:text-6xl text-[#1a365d] mb-4">
+            Tibbi <span className="text-[#00b982]">Diaqnostika</span> və Mþalicə
           </h2>
-          <p className="text-gray-600 text-lg max-w-2xl mx-auto">
-            Müasir avadanlıqlar və təcrübəli mütəxəssisrlərlə dəqiq diaqnostika
+          <p className="text-gray-700 text-xl font-medium max-w-2xl mx-auto">
+            Müasir avadanlıqlar və təcrubəli mütəxəssisrlərlə dəqiq diaqnostika
           </p>
         </motion.div>
 

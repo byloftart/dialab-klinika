@@ -125,22 +125,22 @@ export default function AppointmentSection() {
       </div>
 
       <div className="container mx-auto px-4 lg:px-8 relative z-10">
-        {/* Section Header */}
+        {/* Section Header - Hidden */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="text-center mb-16"
+          className="text-center mb-8 hidden"
         >
           <span className="inline-block px-4 py-2 rounded-full bg-[#00b982]/10 text-[#00b982] text-sm font-medium mb-4">
             Onlayn Randevu
           </span>
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-extrabold text-[#1a365d] mb-6">
+          <h2 className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-[#1a365d] mb-6">
             Randevu <span className="text-[#00b982]">Alın</span>
           </h2>
-          <p className="text-gray-600 max-w-2xl mx-auto text-lg">
-            Formu dolduraraq və ya birbaşa əlaqə saxlayaraq randevu ala bilərsiniz
+          <p className="text-gray-700 max-w-2xl mx-auto text-xl font-medium">
+            Formu dolduraraq və ya birbaaşa əlaqə saxlayaraq randevu ala bilərsiniz
           </p>
         </motion.div>
 
@@ -198,7 +198,7 @@ export default function AppointmentSection() {
                   >
                     {/* Name */}
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Ad Soyad *</label>
+                      <label className="block text-base font-semibold text-gray-800 mb-2">Ad Soyad *</label>
                       <div className="relative">
                         <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                         <input
@@ -212,9 +212,9 @@ export default function AppointmentSection() {
                     </div>
 
                     {/* Phone & Email */}
-                    <div className="grid sm:grid-cols-2 gap-4">
+                      <div className="grid sm:grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">Telefon *</label>
+                        <label className="block text-base font-semibold text-gray-800 mb-2">Telefon *</label>
                         <div className="relative">
                           <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                           <input
@@ -227,7 +227,7 @@ export default function AppointmentSection() {
                         </div>
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">E-poçt</label>
+                        <label className="block text-base font-semibold text-gray-800 mb-2">E-mail *</label>
                         <div className="relative">
                           <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                           <input
@@ -243,7 +243,7 @@ export default function AppointmentSection() {
 
                     {/* Service */}
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Xidmət Növü *</label>
+                      <label className="block text-base font-semibold text-gray-800 mb-2">Xidmət Növü *</label>
                       <div className="relative">
                         <Stethoscope className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                         <select
@@ -263,7 +263,7 @@ export default function AppointmentSection() {
                     {/* Date & Time */}
                     <div className="grid sm:grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">Tarix</label>
+                        <label className="block text-base font-semibold text-gray-800 mb-2">Tarix</label>
                         <div className="relative">
                           <Calendar className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                           <input
@@ -276,7 +276,7 @@ export default function AppointmentSection() {
                         </div>
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">Saat</label>
+                        <label className="block text-base font-semibold text-gray-800 mb-2">Saat</label>
                         <div className="relative">
                           <Clock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                           <select
@@ -296,7 +296,7 @@ export default function AppointmentSection() {
 
                     {/* Message */}
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Əlavə Qeyd</label>
+                      <label className="block text-base font-semibold text-gray-800 mb-2">Əlavə Qeyd</label>
                       <div className="relative">
                         <MessageSquare className="absolute left-4 top-4 w-5 h-5 text-gray-400" />
                         <textarea
@@ -347,8 +347,8 @@ export default function AppointmentSection() {
                 <HelpCircle className="w-6 h-6 text-[#00b982]" />
               </div>
               <div>
-                <h3 className="text-xl font-bold text-[#1a365d]">Tez-tez Verilən Suallar</h3>
-                <p className="text-sm text-gray-500">Ən çox soruşulan suallar</p>
+                <h3 className="text-2xl font-bold text-[#1a365d]">Tez-tez Verilən Suallar</h3>
+                <p className="text-base text-gray-600">En çox soruşulan suallar</p>
               </div>
             </div>
 
@@ -366,7 +366,7 @@ export default function AppointmentSection() {
                     onClick={() => setExpandedFaq(expandedFaq === index ? null : index)}
                     className="w-full flex items-center justify-between p-5 text-left hover:bg-gray-50 transition-colors"
                   >
-                    <span className="font-semibold text-[#1a365d] pr-4">{item.question}</span>
+                    <span className="font-semibold text-[#1a365d] pr-4 text-base">{item.question}</span>
                     <motion.div
                       animate={{ rotate: expandedFaq === index ? 180 : 0 }}
                       transition={{ duration: 0.3 }}
@@ -386,7 +386,7 @@ export default function AppointmentSection() {
                         className="overflow-hidden"
                       >
                         <div className="px-5 pb-5 pt-0">
-                          <p className="text-gray-600 leading-relaxed">{item.answer}</p>
+                          <p className="text-gray-700 text-base leading-relaxed font-medium">{item.answer}</p>
                         </div>
                       </motion.div>
                     )}
@@ -403,11 +403,11 @@ export default function AppointmentSection() {
               transition={{ delay: 0.4, duration: 0.6 }}
               className="mt-8 p-6 bg-gradient-to-r from-[#00b982]/10 to-[#14b8a6]/10 rounded-2xl border border-[#00b982]/20"
             >
-              <h4 className="font-bold text-[#1a365d] mb-4 flex items-center gap-2">
+              <h4 className="font-bold text-lg text-[#1a365d] mb-4 flex items-center gap-2">
                 <Clock className="w-5 h-5 text-[#00b982]" />
-                İş Saatları
+                Iş Saatları
               </h4>
-              <div className="space-y-2 text-gray-600">
+              <div className="space-y-2 text-gray-700 text-base">
                 <div className="flex justify-between">
                   <span>Bazar ertəsi - Cümə</span>
                   <span className="font-semibold text-[#00b982]">09:00 - 18:00</span>

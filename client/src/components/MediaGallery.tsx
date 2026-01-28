@@ -107,22 +107,22 @@ export default function MediaGallery() {
       </motion.div>
 
       <div className="container mx-auto px-4 lg:px-8 relative z-10">
-        {/* Section Header */}
+        {/* Section Header - Hidden */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="text-center mb-16"
+          className="text-center mb-8 hidden"
         >
           <span className="inline-block px-4 py-2 rounded-full bg-[#00b982]/20 text-[#00b982] text-sm font-medium mb-4">
             Haqqımızda
           </span>
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-extrabold text-[#1a365d] mb-6">
+          <h2 className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-[#1a365d] mb-6">
             DIALAB <span className="text-[#00b982]">Tibb Mərkəzi</span>
           </h2>
-          <p className="text-gray-600 max-w-2xl mx-auto text-lg">
-            1998 - ci ildən bəri Azərbaycanda tibbi diaqnostika sahəsində xidmət göstəririk
+          <p className="text-gray-700 max-w-2xl mx-auto text-xl font-medium">
+            1998 - ci ildən bəri Azərbaycanda tibbi diaqnostika sahəsində xidmət göstərik
           </p>
         </motion.div>
 
@@ -215,11 +215,7 @@ export default function MediaGallery() {
               whileHover={{ y: -8, scale: 1.02 }}
               className="group relative bg-white rounded-2xl p-6 border border-[#00b982]/20 hover:border-[#00b982]/50 transition-all duration-300 hover:shadow-lg hover:shadow-[#00b982]/10"
             >
-              {/* Number */}
-              <span className="absolute top-4 right-4 text-4xl font-bold text-[#00b982]/10 group-hover:text-[#00b982]/20 transition-colors">
-                {feature.number}
-              </span>
-              
+
               {/* Icon */}
               <div className="w-12 h-12 rounded-xl bg-[#00b982]/20 flex items-center justify-center mb-4 group-hover:bg-[#00b982]/30 transition-colors">
                 <feature.icon className="w-6 h-6 text-[#00b982]" />

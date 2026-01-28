@@ -80,23 +80,12 @@ export default function HeroSection() {
             transition={{ duration: 0.8, ease: [0.4, 0, 0.2, 1] }}
             style={{ opacity }}
           >
-            {/* Badge */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2 }}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#00b982]/10 text-[#00b982] text-sm font-medium mb-6"
-            >
-              <Sparkles className="w-4 h-4" />
-              DIALAB Tibb Mərkəzi
-            </motion.div>
-
             {/* Main Heading */}
             <motion.h1
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3, duration: 0.8 }}
-              className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-[#1a365d] leading-tight mb-6"
+              className="text-5xl md:text-6xl lg:text-7xl font-extrabold text-[#1a365d] leading-tight mb-8"
             >
               Müasir Tibbi
               <br />
@@ -112,7 +101,7 @@ export default function HeroSection() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.4 }}
-              className="text-lg text-gray-600 mb-8 max-w-lg leading-relaxed"
+              className="text-xl text-gray-700 mb-10 max-w-lg leading-relaxed font-medium"
             >
               500+ növ laboratoriya testi və müasir diaqnostika avadanlıqları ilə 
               sağlamlığınızı dəqiq və etibarlı şəkildə qiymətləndiririk. 15 ildən artıq 
@@ -179,7 +168,7 @@ export default function HeroSection() {
             >
               <motion.button
                 onClick={() => scrollToSection('appointment')}
-                className="px-8 py-4 bg-gradient-to-r from-[#00b982] to-[#14b8a6] text-white font-semibold rounded-xl shadow-lg shadow-[#00b982]/25 hover:shadow-xl hover:shadow-[#00b982]/30 transition-all duration-300 flex items-center gap-2 group"
+                className="px-10 py-5 bg-gradient-to-r from-[#00b982] to-[#14b8a6] text-white font-bold text-lg rounded-xl shadow-lg shadow-[#00b982]/25 hover:shadow-xl hover:shadow-[#00b982]/30 transition-all duration-300 flex items-center gap-2 group"
                 whileHover={{ scale: 1.05, y: -2 }}
                 whileTap={{ scale: 0.98 }}
               >
@@ -188,7 +177,7 @@ export default function HeroSection() {
               </motion.button>
               <motion.button
                 onClick={() => scrollToSection('laboratory')}
-                className="px-8 py-4 bg-white text-[#1a365d] font-semibold rounded-xl border-2 border-gray-200 hover:border-[#00b982] hover:text-[#00b982] transition-all duration-300"
+                className="px-10 py-5 bg-white text-[#1a365d] font-bold text-lg rounded-xl border-2 border-gray-200 hover:border-[#00b982] hover:text-[#00b982] transition-all duration-300"
                 whileHover={{ scale: 1.05, y: -2 }}
                 whileTap={{ scale: 0.98 }}
               >
