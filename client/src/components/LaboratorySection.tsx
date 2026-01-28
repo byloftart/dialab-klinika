@@ -1,154 +1,156 @@
-/**
+/*
  * Laboratory Section - DIALAB Klinika (Section 3)
- * Design: Vertical tabs with expanding info cards (matching Diagnostics)
- * Features: 8 main analysis types with subtypes and descriptions
+ * Design: Vertical tabs with expanding 3D info cards (matching Diagnostics)
+ * Features: 6 combined analysis types, 3D hover effects, images
  * Color: Light gradient background with green/blue accents
  * Content: From Websiteserviceslist.pdf
  */
 
-import { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { useState, useRef } from 'react';
+import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
 import { 
-  Droplets, 
-  Microscope, 
-  TestTube2, 
-  Activity, 
-  Dna, 
-  FlaskConical,
+  Droplet,
+  Microscope,
+  Beaker,
+  Zap,
   Pill,
-  HeartPulse,
+  Dna,
   ArrowRight
 } from 'lucide-react';
 
-const laboratoryTypes = [
+const laboratoryAnalyses = [
   {
     id: 'clinical',
     title: 'Kliniki Analizlər',
-    icon: Droplets,
+    icon: Droplet,
     color: '#00b982',
+    image: '/images/lab-analysis.jpg',
     description: 'Qanın ümumi analizi, hemoglobin, trombositlər və digər əsas göstəricilərin tədqiqi.',
     subtypes: [
-      { name: 'Qanın ümumi analizi', desc: '26 göstərici və leykoformula' },
-      { name: 'Hemoglobin, Trombositlər, Leykositlər', desc: 'Əsas hüceyrə sayları' },
-      { name: 'Sidiyin ümumi analizi', desc: 'Sidik göstəriciləri' },
-      { name: 'Nəcisin ümumi analizi', desc: 'Nəcis göstəriciləri' },
-      { name: 'Spermogramma', desc: 'Sperma analizi' },
-      { name: 'Qan qrupu və rezus-faktor', desc: 'Qan qrupu təyini' }
+      { name: 'Qanın ümumi analizi', description: '26 göstərici və leykoformula' },
+      { name: 'Hemoglobin, Trombositlər, Leykositlər', description: 'Əsas hüceyrə sayları' },
+      { name: 'Sidiyin ümumi analizi', description: 'Sidik göstəriciləri' },
+      { name: 'Nəcisin ümumi analizi', description: 'Nəcis göstəriciləri' },
+      { name: 'Spermogramma', description: 'Sperma analizi' },
+      { name: 'Qan qrupu və rezus-faktor', description: 'Qan qrupu təyini' }
     ]
   },
   {
-    id: 'bacteriological',
-    title: 'Bakterioloji Analizlər',
+    id: 'bacterio-hormonal',
+    title: 'Bakterioloji və Hormonların Tədqiqi',
     icon: Microscope,
-    color: '#14b8a6',
-    description: 'Müxtəlif biomaterialların əkilməsi və infeksiyonların tədqiqi.',
+    color: '#ef4444',
+    image: '/images/medical-team-abstract.jpg',
+    description: 'Bakterial enfeksiyaların müəyyən edilməsi və hormon səviyyələrinin tədqiqi.',
     subtypes: [
-      { name: 'Qan əkilməsi', desc: 'Qan steril əkilməsi' },
-      { name: 'Sidik əkilməsi', desc: 'Sidik steril əkilməsi' },
-      { name: 'Antibiotikoqramma', desc: 'Antibiotiklərə həssaslıq testi' },
-      { name: 'Disbakterioz analizi', desc: 'Mikroflorası tarazlığının tədqiqi' }
+      { name: 'Boğaz sürüşməsi', description: 'Streptokkok və digər patogenlərin aşkarlanması' },
+      { name: 'Sidik kültürü', description: 'Sidik yolu enfeksiyalarının diaqnostikası' },
+      { name: 'Qan kültürü', description: 'Sepsis və qan enfeksiyalarının müəyyən edilməsi' },
+      { name: 'Tiroid hormonları (TSH, T3, T4)', description: 'Tiroid funksiyasının qiymətləndirilməsi' },
+      { name: 'Seks hormonları', description: 'Estrogen, Progesteron, Testosteron' },
+      { name: 'Adrenal hormonları', description: 'Kortizol və digər adrenal hormonları' }
     ]
   },
   {
     id: 'serological',
-    title: 'Seroloji və İmmunoloji',
-    icon: TestTube2,
-    color: '#0ea5e9',
-    description: 'Antiteslər, antigenlərin tədqiqi və immun sistemin vəziyyətinin qiymətləndirilməsi.',
-    subtypes: [
-      { name: 'RPR, HİV, Hepatit A, B, C', desc: 'Viral infeksiyalar' },
-      { name: 'İnfeksiyalar paneli', desc: 'Toksoplazma, Herpes, Xlamidiya' },
-      { name: 'Antistreptolizin-ASO, CRP', desc: 'İltihab göstəriciləri' },
-      { name: 'İmmunoqlobulinlər', desc: 'IgA, IgM, IgG, IgE' },
-      { name: 'T-limfositlər və B-limfositlər', desc: 'İmmun hüceyrələri' }
-    ]
-  },
-  {
-    id: 'hormones',
-    title: 'Hormonların Tədqiqi',
-    icon: Activity,
+    title: 'Seroloji və İmmunoloji Testlər',
+    icon: Beaker,
     color: '#8b5cf6',
-    description: 'Endokrin sistemin vəziyyətinin qiymətləndirilməsi üçün hormon testləri.',
+    image: '/images/hero-medical-lab.jpg',
+    description: 'Viral və bakteri enfeksiyalarına qarşı antitestlərin aşkarlanması.',
     subtypes: [
-      { name: 'Qalxanabənzər vəzi hormonları', desc: 'TSH, Free T3, Free T4' },
-      { name: 'Reproduktiv hormonlar', desc: 'FSH, LH, Prolaktin, Estradiol' },
-      { name: 'Kortizol, DHEA-S, ACTH', desc: 'Adrenal hormonları' },
-      { name: 'İnsulin və C-peptid', desc: 'Qlükoza metabolizmi' }
+      { name: 'HIV testi', description: 'Ən müasir metodlarla HIV aşkarlanması' },
+      { name: 'Hepatit testləri (A, B, C)', description: 'Hepatit viruslarına qarşı antitestlər' },
+      { name: 'Sifiliz testi (RPR/VDRL)', description: 'Treponema pallidum antitestləri' },
+      { name: 'Rubella antitestləri', description: 'Rubella virusuna qarşı IgG və IgM' },
+      { name: 'Toxoplasmoz testləri', description: 'Toxoplasma gondii antitestləri' },
+      { name: 'CMV antitestləri', description: 'Sitomegalovirusa qarşı antitestlər' }
     ]
   },
   {
     id: 'biochemical',
     title: 'Biokimyəvi Analizlər',
-    icon: FlaskConical,
+    icon: Zap,
     color: '#f59e0b',
-    description: 'Qaraciyər, böyrək funksiyası və metabolik göstəricilərin tədqiqi.',
+    image: '/images/diagnostics-ultrasound.jpg',
+    description: 'Metabolik proseslərin qiymətləndirilməsi və orqan funksiyasının müəyyən edilməsi.',
     subtypes: [
-      { name: 'Qaraciyər sınaqları', desc: 'ALT, AST, GGT, Bilirubin' },
-      { name: 'Böyrək sınaqları', desc: 'Kreatinin, Sidik cövhəri' },
-      { name: 'Lipid profili', desc: 'Xolesterin, Triqliseridlər, HDL, LDL' },
-      { name: 'Qlükoza, Elektrolitlər', desc: 'Minerallar və qlükoza' }
+      { name: 'Qlükoza', description: 'Qan şəkərinin səviyyəsi' },
+      { name: 'Lipid profili', description: 'Xolesterol, triqliseridlər, HDL, LDL' },
+      { name: 'Qaraciyər funksiyası', description: 'ALT, AST, Bilirubin, Albumin' },
+      { name: 'Böyrək funksiyası', description: 'Kreatinin, Üreya, Urik asid' },
+      { name: 'Elektrolit balansı', description: 'Natrium, Kalium, Kalsium, Fosfat' },
+      { name: 'Amilaza və Lipaza', description: 'Pankreas enzimləri' }
     ]
   },
   {
-    id: 'vitamins',
+    id: 'vitamins-minerals',
     title: 'Vitamin və Minerallar',
     icon: Pill,
-    color: '#22c55e',
-    description: 'Vitamin və mineral defisitlərinin tədqiqi və müalicəsinin planlaşdırılması.',
+    color: '#14b8a6',
+    image: '/images/doctor-consultation.jpg',
+    description: 'Vital vitamin və mineral səviyyələrinin tədqiqi və defisit müəyyən edilməsi.',
     subtypes: [
-      { name: 'Vitamin D', desc: 'D vitamini səviyyəsi' },
-      { name: 'Vitamin B12', desc: 'B12 vitamini səviyyəsi' },
-      { name: 'B9 Folat', desc: 'Folat səviyyəsi' },
-      { name: 'Kalsium, Maqnezium, Dəmir', desc: 'Mineral elementləri' }
+      { name: 'Vitamin D', description: '25-OH Vitamin D səviyyəsi' },
+      { name: 'Vitamin B12 və Folat', description: 'B12 və folik asid səviyyələri' },
+      { name: 'Demir (Ferritin, Serum Iron)', description: 'Demir ehtiyatlarının qiymətləndirilməsi' },
+      { name: 'Kalsium və Fosfat', description: 'Sümük metabolizmi göstəriciləri' },
+      { name: 'Maqnezium', description: 'Serum maqnezium səviyyəsi' },
+      { name: 'Sink və Mis', description: 'Trace elementlərin tədqiqi' }
     ]
   },
   {
-    id: 'oncological',
-    title: 'Onkoloji Testlər',
+    id: 'oncology-genetics',
+    title: 'Onkoloji və Genetik Testlər',
     icon: Dna,
-    color: '#ef4444',
-    description: 'Xərçəng markerləri və onkoloji xəstəliklərin erkən diaqnostikası.',
-    subtypes: [
-      { name: 'Onkomarkerlər', desc: 'PSA, CA-125, CA 15-3, AFP' },
-      { name: 'Polimeraz Zəncirvari Reaksiya', desc: 'PZR testləri' },
-      { name: 'Histoloji müayinələr', desc: 'Toxuma analizi' },
-      { name: 'Biopsiya, Pap-test', desc: 'Hüceyrə analizi' }
-    ]
-  },
-  {
-    id: 'genetic',
-    title: 'Genetik Müayinələr',
-    icon: HeartPulse,
     color: '#ec4899',
-    description: 'Genetik xəstəliklərin tədqiqi və genetik konsultasiya.',
+    image: '/images/lab-analysis.jpg',
+    description: 'Tumor markerləri və genetik mutasyonların aşkarlanması.',
     subtypes: [
-      { name: 'Tibbi-Genetik Müayinələr', desc: 'Genetik analiz' },
-      { name: 'Talassemia testi', desc: 'Talassemia diaqnostikası' },
-      { name: 'Xromosom patologiyaları', desc: 'Xromosom analizi' },
-      { name: 'Genetik konsultasiya', desc: 'Mütəxəssis məsləhəti' }
+      { name: 'PSA (Prostat Spesifik Antigen)', description: 'Prostat xərçəngi markerı' },
+      { name: 'CEA (Karsinoembrionik Antigen)', description: 'Kolorektal xərçəngi markerı' },
+      { name: 'CA 19-9', description: 'Pankreas xərçəngi markerı' },
+      { name: 'BRCA1/BRCA2 mutasyonları', description: 'Meme xərçəngi genetik riski' },
+      { name: 'Herediter xərçəngi sendromları', description: 'Lynch sendromu və digərləri' },
+      { name: 'Mikrosatellit instabilliyi', description: 'Genetik xərçəngi predispozisiyası' }
     ]
   }
 ];
 
 export default function LaboratorySection() {
-  const [selectedType, setSelectedType] = useState<string>('clinical');
+  const [activeTab, setActiveTab] = useState(0);
+  const [hoveredTab, setHoveredTab] = useState<number | null>(null);
+  const sectionRef = useRef<HTMLDivElement>(null);
+  
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ['start end', 'start start'],
+  });
+  
+  const slideY = useTransform(scrollYProgress, [0, 1], ['20%', '0%']);
+  const opacity = useTransform(scrollYProgress, [0, 0.5], [0, 1]);
 
-  const selected = laboratoryTypes.find(t => t.id === selectedType);
+  const activeAnalysis = laboratoryAnalyses[activeTab];
 
   return (
-    <motion.section 
-      id="laboratory" 
-      initial={{ opacity: 0, y: 50 }}
+    <motion.section
+      id="laboratory"
+      ref={sectionRef}
+      initial={{ opacity: 0, y: 40 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, amount: 0.2 }}
       transition={{ duration: 0.8 }}
-      className="py-24 lg:py-32 bg-gradient-to-b from-white via-[#f0fdf4] to-[#f0f9ff] relative overflow-hidden"
+      style={{ y: slideY }}
+      className="py-24 lg:py-32 bg-gradient-to-br from-white via-[#f0fdf4] to-[#e8f4fc] relative overflow-hidden"
     >
-      {/* Background Decorations */}
-      <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-0 left-0 w-96 h-96 bg-[#00b982]/10 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2" />
-        <div className="absolute bottom-0 right-0 w-96 h-96 bg-[#0ea5e9]/10 rounded-full blur-3xl translate-x-1/2 translate-y-1/2" />
-      </div>
+      {/* Animated Background Elements */}
+      <motion.div 
+        className="absolute inset-0 pointer-events-none"
+      >
+        <div className="absolute top-20 right-20 w-96 h-96 bg-[#00b982]/10 rounded-full blur-3xl" />
+        <div className="absolute bottom-20 left-20 w-80 h-80 bg-[#14b8a6]/10 rounded-full blur-3xl" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gradient-to-r from-[#00b982]/5 to-[#1a365d]/5 rounded-full blur-3xl" />
+      </motion.div>
 
       <div className="container mx-auto px-4 lg:px-8 relative z-10">
         {/* Section Header */}
@@ -163,7 +165,7 @@ export default function LaboratorySection() {
             initial={{ opacity: 0, scale: 0.9 }}
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
-            className="inline-block px-4 py-2 rounded-full bg-[#00b982]/10 text-[#00b982] font-semibold text-sm mb-4"
+            className="inline-block px-4 py-2 rounded-full bg-[#00b982]/20 text-[#00b982] font-semibold text-sm mb-4 border border-[#00b982]/30"
           >
             Laboratoriya Xidmətləri
           </motion.span>
@@ -175,159 +177,170 @@ export default function LaboratorySection() {
           </p>
         </motion.div>
 
-        {/* Tabs Layout */}
-        <div className="grid lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
+        {/* Main Content - Vertical Tabs Layout */}
+        <div className="grid lg:grid-cols-12 gap-8">
           {/* Vertical Tabs */}
-          <motion.div
-            initial={{ opacity: 0, x: -30 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="lg:col-span-1 space-y-3"
-          >
-            {laboratoryTypes.map((type, index) => (
+          <div className="lg:col-span-4 space-y-3">
+            {laboratoryAnalyses.map((analysis, index) => (
               <motion.button
-                key={type.id}
-                onClick={() => setSelectedType(type.id)}
-                initial={{ opacity: 0, x: -20 }}
+                key={analysis.id}
+                initial={{ opacity: 0, x: -30 }}
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
-                transition={{ duration: 0.4, delay: index * 0.05 }}
+                transition={{ duration: 0.5, delay: index * 0.1 }}
+                onClick={() => setActiveTab(index)}
+                onMouseEnter={() => setHoveredTab(index)}
+                onMouseLeave={() => setHoveredTab(null)}
                 className={`w-full text-left p-4 rounded-xl transition-all duration-300 group relative overflow-hidden ${
-                  selectedType === type.id
-                    ? 'bg-white shadow-lg shadow-black/10 border-2 border-[#00b982]'
-                    : 'bg-white/50 hover:bg-white border border-gray-200'
+                  activeTab === index
+                    ? 'bg-white border border-[#00b982]/50 shadow-lg shadow-[#00b982]/10'
+                    : 'bg-white/50 border border-[#00b982]/10 hover:bg-white hover:border-[#00b982]/30'
                 }`}
               >
-                <div className="relative z-10 flex items-center gap-3">
-                  <div 
-                    className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0 transition-all duration-300"
-                    style={{ 
-                      backgroundColor: `${type.color}20`,
-                      borderLeft: `3px solid ${type.color}`
-                    }}
-                  >
-                    <type.icon className="w-5 h-5" style={{ color: type.color }} />
-                  </div>
-                  <div className="text-left">
-                    <h4 className={`font-bold text-sm transition-colors ${
-                      selectedType === type.id ? 'text-[#1a365d]' : 'text-gray-700'
-                    }`}>
-                      {type.title}
-                    </h4>
-                  </div>
-                </div>
-
-                {/* Hover effect background */}
-                {selectedType === type.id && (
+                {/* Glow effect on hover */}
+                {(hoveredTab === index || activeTab === index) && (
                   <motion.div
-                    layoutId="activeTab"
-                    className="absolute inset-0 bg-gradient-to-r from-[#00b982]/5 to-transparent -z-0"
+                    layoutId="labTabGlow"
+                    className="absolute inset-0"
+                    style={{ background: `linear-gradient(135deg, ${analysis.color}15 0%, transparent 100%)` }}
                     transition={{ type: 'spring', stiffness: 300, damping: 30 }}
                   />
                 )}
+                
+                <div className="relative z-10 flex items-center gap-4">
+                  <motion.div 
+                    className="w-12 h-12 rounded-xl flex items-center justify-center shadow-lg transition-transform duration-300"
+                    style={{ 
+                      backgroundColor: `${analysis.color}20`,
+                      boxShadow: activeTab === index ? `0 8px 20px -8px ${analysis.color}60` : 'none'
+                    }}
+                    animate={{ scale: activeTab === index ? 1.1 : 1 }}
+                  >
+                    <analysis.icon className="w-6 h-6" style={{ color: analysis.color }} />
+                  </motion.div>
+                  <div className="flex-1">
+                    <h3 className={`font-bold text-base transition-colors ${activeTab === index ? 'text-[#00b982]' : 'text-[#1a365d] group-hover:text-[#00b982]'}`}>
+                      {analysis.title}
+                    </h3>
+                    <p className="text-gray-500 text-sm line-clamp-1">
+                      {analysis.subtypes.length} test növü
+                    </p>
+                  </div>
+                  <ArrowRight className={`w-5 h-5 transition-all duration-300 ${activeTab === index ? 'text-[#00b982] translate-x-0' : 'text-gray-400 -translate-x-2 opacity-0 group-hover:translate-x-0 group-hover:opacity-100'}`} />
+                </div>
               </motion.button>
             ))}
-          </motion.div>
+          </div>
 
-          {/* Content Card */}
-          <motion.div
-            initial={{ opacity: 0, x: 30 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="lg:col-span-2"
-          >
+          {/* 3D Info Card */}
+          <div className="lg:col-span-8">
             <AnimatePresence mode="wait">
-              {selected && (
+              <motion.div
+                key={activeTab}
+                initial={{ opacity: 0, rotateY: -10, x: 50 }}
+                animate={{ opacity: 1, rotateY: 0, x: 0 }}
+                exit={{ opacity: 0, rotateY: 10, x: -50 }}
+                transition={{ duration: 0.5, ease: 'easeOut' }}
+                className="relative"
+                style={{ perspective: '1000px' }}
+              >
                 <motion.div
-                  key={selected.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -20 }}
+                  className="bg-white rounded-3xl border border-[#00b982]/20 overflow-hidden shadow-2xl shadow-[#00b982]/10"
+                  whileHover={{ 
+                    rotateY: 2,
+                    rotateX: -2,
+                  }}
                   transition={{ duration: 0.4 }}
-                  className="bg-white rounded-2xl p-8 shadow-lg shadow-black/5 border border-gray-100 relative overflow-hidden"
+                  style={{ transformStyle: 'preserve-3d' }}
                 >
-                  {/* Background Accent */}
-                  <div 
-                    className="absolute top-0 right-0 w-40 h-40 rounded-full blur-3xl opacity-10 -z-0"
-                    style={{ backgroundColor: selected.color }}
-                  />
+                  {/* Image Header */}
+                  <div className="relative h-64 overflow-hidden">
+                    <motion.img
+                      key={activeAnalysis.image}
+                      initial={{ scale: 1.1, opacity: 0 }}
+                      animate={{ scale: 1, opacity: 1 }}
+                      transition={{ duration: 0.6 }}
+                      src={activeAnalysis.image}
+                      alt={activeAnalysis.title}
+                      className="w-full h-full object-cover"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-white/80 via-white/40 to-transparent" />
+                    
+                    {/* Floating Badge */}
+                    <motion.div
+                      initial={{ y: 20, opacity: 0 }}
+                      animate={{ y: 0, opacity: 1 }}
+                      transition={{ delay: 0.3 }}
+                      className="absolute top-4 right-4 px-4 py-2 rounded-full bg-white/20 backdrop-blur-md border border-white/30"
+                    >
+                      <span className="text-white font-semibold text-sm">{activeAnalysis.subtypes.length} Test</span>
+                    </motion.div>
 
-                  <div className="relative z-10">
-                    {/* Header */}
-                    <div className="flex items-start gap-4 mb-6">
-                      <motion.div
-                        initial={{ scale: 0 }}
-                        animate={{ scale: 1 }}
-                        transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-                        className="w-16 h-16 rounded-xl flex items-center justify-center flex-shrink-0 shadow-lg"
-                        style={{ 
-                          backgroundColor: `${selected.color}20`,
-                          boxShadow: `0 8px 20px -8px ${selected.color}40`
-                        }}
+                    {/* Title Overlay */}
+                    <div className="absolute bottom-0 left-0 right-0 p-6">
+                      <div 
+                        className="inline-flex items-center gap-3 px-4 py-2 rounded-xl mb-3"
+                        style={{ backgroundColor: activeAnalysis.color }}
                       >
-                        <selected.icon className="w-8 h-8" style={{ color: selected.color }} />
-                      </motion.div>
-                      <div>
-                        <h3 className="text-2xl font-bold text-[#1a365d] mb-2">
-                          {selected.title}
-                        </h3>
-                        <p className="text-gray-600">
-                          {selected.description}
-                        </p>
+                        <activeAnalysis.icon className="w-5 h-5 text-white" />
+                        <span className="text-white font-semibold">{activeAnalysis.title}</span>
                       </div>
                     </div>
+                  </div>
+
+                  {/* Content */}
+                  <div className="p-6 space-y-6">
+                    {/* Description */}
+                    <p className="text-gray-700 text-lg leading-relaxed">
+                      {activeAnalysis.description}
+                    </p>
 
                     {/* Subtypes Grid */}
-                    <div className="space-y-3">
-                      <h4 className="font-bold text-[#1a365d] text-sm uppercase tracking-wide">
-                        Altında olan Testlər
-                      </h4>
-                      <div className="grid gap-3">
-                        {selected.subtypes.map((subtype, index) => (
-                          <motion.div
-                            key={index}
-                            initial={{ opacity: 0, x: -15 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            transition={{ duration: 0.3, delay: index * 0.05 }}
-                            className="flex items-start gap-3 p-3 rounded-lg bg-gradient-to-r from-[#f9fafb] to-transparent hover:from-[#f0fdf4] transition-colors group"
-                          >
+                    <div className="grid sm:grid-cols-2 gap-3">
+                      {activeAnalysis.subtypes.map((subtype, index) => (
+                        <motion.div
+                          key={index}
+                          initial={{ opacity: 0, y: 10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ delay: 0.1 + index * 0.05 }}
+                          className="flex flex-col gap-1 p-3 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 transition-colors group cursor-pointer"
+                        >
+                          <div className="flex items-center gap-2">
                             <div 
-                              className="w-2 h-2 rounded-full mt-2 flex-shrink-0"
-                              style={{ backgroundColor: selected.color }}
+                              className="w-2 h-2 rounded-full"
+                              style={{ backgroundColor: activeAnalysis.color }}
                             />
-                            <div className="flex-1 min-w-0">
-                              <p className="font-semibold text-gray-800 text-sm group-hover:text-[#1a365d] transition-colors">
-                                {subtype.name}
-                              </p>
-                              <p className="text-xs text-gray-500 mt-1">
-                                {subtype.desc}
-                              </p>
-                            </div>
-                          </motion.div>
-                        ))}
-                      </div>
+                            <span className="text-gray-800 text-sm font-semibold group-hover:text-[#00b982] transition-colors">{subtype.name}</span>
+                          </div>
+                          <p className="text-gray-500 text-xs ml-4">{subtype.description}</p>
+                        </motion.div>
+                      ))}
                     </div>
 
                     {/* CTA Button */}
                     <motion.button
-                      whileHover={{ x: 5 }}
-                      className="mt-6 inline-flex items-center gap-2 px-6 py-3 rounded-lg font-semibold transition-all duration-300"
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.5 }}
+                      className="w-full py-3 px-4 rounded-xl font-semibold transition-all duration-300"
                       style={{ 
-                        backgroundColor: `${selected.color}20`,
-                        color: selected.color,
-                        border: `2px solid ${selected.color}40`
+                        backgroundColor: `${activeAnalysis.color}20`,
+                        color: activeAnalysis.color,
+                        border: `2px solid ${activeAnalysis.color}40`
+                      }}
+                      whileHover={{ 
+                        backgroundColor: activeAnalysis.color,
+                        color: 'white',
+                        scale: 1.02
                       }}
                     >
                       Ətraflı Məlumat
-                      <ArrowRight className="w-4 h-4" />
                     </motion.button>
                   </div>
                 </motion.div>
-              )}
+              </motion.div>
             </AnimatePresence>
-          </motion.div>
+          </div>
         </div>
       </div>
     </motion.section>
