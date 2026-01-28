@@ -73,7 +73,7 @@ export default function HeroSection() {
       </motion.div>
 
       <div className="container mx-auto px-4 lg:px-8 pt-28 pb-16 relative z-10">
-        <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-start lg:items-center">
+        <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-start">
           {/* Left Content */}
           <motion.div
             initial={{ opacity: 0, x: -50 }}
@@ -86,10 +86,10 @@ export default function HeroSection() {
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3, duration: 0.8 }}
-              className="text-6xl md:text-7xl lg:text-8xl font-extrabold text-[#1a365d] leading-tight mb-8 whitespace-nowrap"
+              className="text-5xl md:text-6xl lg:text-7xl font-extrabold text-[#1a365d] leading-tight mb-8"
             >
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#1a365d] via-[#00b982] to-[#14b8a6]">
-                Dialab Tibb Mərkəzi
+                Dialab<br />Tibb Mərkəzi
               </span>
             </motion.h1>
 

@@ -184,16 +184,16 @@ export default function DiagnosticsSection() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="mb-12 lg:mb-16"
+          className="mb-16 lg:mb-20 flex justify-center"
         >
-          <motion.h2 
-            className="text-5xl md:text-6xl lg:text-7xl font-extrabold text-[#1a365d] mb-4 uppercase tracking-tight"
-            whileHover={{ scale: 1.02 }}
+          <motion.div 
+            className="inline-block px-8 py-4 rounded-2xl border-2 border-[#00b982]/30 bg-gradient-to-r from-[#00b982]/5 to-[#14b8a6]/5 backdrop-blur-sm"
+            whileHover={{ scale: 1.05 }}
           >
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#1a365d] to-[#00b982] hover:from-[#00b982] hover:to-[#14b8a6] transition-all duration-300">
-              DİAQNOSTİKA
-            </span>
-          </motion.h2>
+            <h2 className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-[#1a365d] to-[#00b982] uppercase tracking-wider">
+              Diaqnostika
+            </h2>
+          </motion.div>
         </motion.div>
         
         <motion.div

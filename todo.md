@@ -148,3 +148,20 @@
 - [x] Add large uppercase headings to Məlumat section (Appointment)
 - [x] Add large uppercase headings to Ėlaqə section (Footer)
 - [x] Add hover effects to all section headings
+
+
+## Stage 7 - Layout & Section Headings Redesign (Current)
+
+### Hero Section Layout Fix
+- [x] Fix heading overlap with appointment form
+- [x] Ensure proportional spacing between heading and form
+- [x] Make heading responsive without clipping
+- [x] Adjust grid layout for better balance
+
+### Section Headings Redesign
+- [x] Center all section headings
+- [x] Create styled block design for headings
+- [x] Make headings look like separate design elements
+- [x] Fix Azerbaijani Latin characters (İ, ə, ğ, ş, ç, ü, ö)
+- [x] Apply consistent styling across all sections
+- [x] Add proper spacing and visual hierarchy
