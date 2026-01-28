@@ -1,8 +1,8 @@
 /**
  * Laboratory Section - DIALAB Klinika (Section 3)
- * Design: Accordion-style container with animated 3D tiles
- * Features: Medical icons, hover glow effects, 3D motion
- * Color: White background with soft green/blue accents
+ * Design: Vertical tabs with expanding info cards (matching Diagnostics)
+ * Features: 8 main analysis types with subtypes and descriptions
+ * Color: Light gradient background with green/blue accents
  * Content: From Websiteserviceslist.pdf
  */
 
@@ -17,22 +17,23 @@ import {
   FlaskConical,
   Pill,
   HeartPulse,
-  ChevronDown
+  ArrowRight
 } from 'lucide-react';
 
-const laboratoryCategories = [
+const laboratoryTypes = [
   {
     id: 'clinical',
     title: 'Kliniki Analizlər',
     icon: Droplets,
     color: '#00b982',
-    services: [
-      'Qanın ümumi analizi (26 göstərici və leykoformula)',
-      'Hemoglobin, Trombositlər, Leykositlər',
-      'Sidiyin ümumi analizi',
-      'Nəcisin ümumi analizi',
-      'Spermogramma',
-      'Qan qrupu və rezus-faktor'
+    description: 'Qanın ümumi analizi, hemoglobin, trombositlər və digər əsas göstəricilərin tədqiqi.',
+    subtypes: [
+      { name: 'Qanın ümumi analizi', desc: '26 göstərici və leykoformula' },
+      { name: 'Hemoglobin, Trombositlər, Leykositlər', desc: 'Əsas hüceyrə sayları' },
+      { name: 'Sidiyin ümumi analizi', desc: 'Sidik göstəriciləri' },
+      { name: 'Nəcisin ümumi analizi', desc: 'Nəcis göstəriciləri' },
+      { name: 'Spermogramma', desc: 'Sperma analizi' },
+      { name: 'Qan qrupu və rezus-faktor', desc: 'Qan qrupu təyini' }
     ]
   },
   {
@@ -40,24 +41,26 @@ const laboratoryCategories = [
     title: 'Bakterioloji Analizlər',
     icon: Microscope,
     color: '#14b8a6',
-    services: [
-      'Müxtəlif biomaterialların əkilməsi',
-      'Qan, sidik, sperma, yaxma əkilməsi',
-      'Antibiotikoqramma',
-      'Disbakterioz analizi'
+    description: 'Müxtəlif biomaterialların əkilməsi və infeksiyonların tədqiqi.',
+    subtypes: [
+      { name: 'Qan əkilməsi', desc: 'Qan steril əkilməsi' },
+      { name: 'Sidik əkilməsi', desc: 'Sidik steril əkilməsi' },
+      { name: 'Antibiotikoqramma', desc: 'Antibiotiklərə həssaslıq testi' },
+      { name: 'Disbakterioz analizi', desc: 'Mikroflorası tarazlığının tədqiqi' }
     ]
   },
   {
     id: 'serological',
-    title: 'Seroloji və İmmunoloji Testlər',
+    title: 'Seroloji və İmmunoloji',
     icon: TestTube2,
     color: '#0ea5e9',
-    services: [
-      'RPR (Sifilis testi), HİV, Hepatit A, B, C',
-      'İnfeksiyalar paneli (Toksoplazma, Herpes, Xlamidiya)',
-      'Antistreptolizin-ASO, CRP, Revmatoid faktor',
-      'İmmunoqlobulinlər (IgA, IgM, IgG, IgE)',
-      'T-limfositlər və B-limfositlər'
+    description: 'Antiteslər, antigenlərin tədqiqi və immun sistemin vəziyyətinin qiymətləndirilməsi.',
+    subtypes: [
+      { name: 'RPR, HİV, Hepatit A, B, C', desc: 'Viral infeksiyalar' },
+      { name: 'İnfeksiyalar paneli', desc: 'Toksoplazma, Herpes, Xlamidiya' },
+      { name: 'Antistreptolizin-ASO, CRP', desc: 'İltihab göstəriciləri' },
+      { name: 'İmmunoqlobulinlər', desc: 'IgA, IgM, IgG, IgE' },
+      { name: 'T-limfositlər və B-limfositlər', desc: 'İmmun hüceyrələri' }
     ]
   },
   {
@@ -65,11 +68,12 @@ const laboratoryCategories = [
     title: 'Hormonların Tədqiqi',
     icon: Activity,
     color: '#8b5cf6',
-    services: [
-      'Qalxanabənzər vəzi hormonları (TSH, Free T3, Free T4)',
-      'Reproduktiv hormonlar (FSH, LH, Prolaktin, Estradiol)',
-      'Kortizol, DHEA-S, ACTH',
-      'İnsulin və C-peptid'
+    description: 'Endokrin sistemin vəziyyətinin qiymətləndirilməsi üçün hormon testləri.',
+    subtypes: [
+      { name: 'Qalxanabənzər vəzi hormonları', desc: 'TSH, Free T3, Free T4' },
+      { name: 'Reproduktiv hormonlar', desc: 'FSH, LH, Prolaktin, Estradiol' },
+      { name: 'Kortizol, DHEA-S, ACTH', desc: 'Adrenal hormonları' },
+      { name: 'İnsulin və C-peptid', desc: 'Qlükoza metabolizmi' }
     ]
   },
   {
@@ -77,23 +81,25 @@ const laboratoryCategories = [
     title: 'Biokimyəvi Analizlər',
     icon: FlaskConical,
     color: '#f59e0b',
-    services: [
-      'Qaraciyər sınaqları (ALT, AST, GGT, Bilirubin)',
-      'Böyrək sınaqları (Kreatinin, Sidik cövhəri)',
-      'Lipid profili (Xolesterin, Triqliseridlər, HDL, LDL)',
-      'Qlükoza, Elektrolitlər, Minerallar'
+    description: 'Qaraciyər, böyrək funksiyası və metabolik göstəricilərin tədqiqi.',
+    subtypes: [
+      { name: 'Qaraciyər sınaqları', desc: 'ALT, AST, GGT, Bilirubin' },
+      { name: 'Böyrək sınaqları', desc: 'Kreatinin, Sidik cövhəri' },
+      { name: 'Lipid profili', desc: 'Xolesterin, Triqliseridlər, HDL, LDL' },
+      { name: 'Qlükoza, Elektrolitlər', desc: 'Minerallar və qlükoza' }
     ]
   },
   {
     id: 'vitamins',
-    title: 'Vitamin və Mineral Testləri',
+    title: 'Vitamin və Minerallar',
     icon: Pill,
     color: '#22c55e',
-    services: [
-      'Vitamin D',
-      'Vitamin B12',
-      'B9 Folat',
-      'Kalsium, Maqnezium, Dəmir'
+    description: 'Vitamin və mineral defisitlərinin tədqiqi və müalicəsinin planlaşdırılması.',
+    subtypes: [
+      { name: 'Vitamin D', desc: 'D vitamini səviyyəsi' },
+      { name: 'Vitamin B12', desc: 'B12 vitamini səviyyəsi' },
+      { name: 'B9 Folat', desc: 'Folat səviyyəsi' },
+      { name: 'Kalsium, Maqnezium, Dəmir', desc: 'Mineral elementləri' }
     ]
   },
   {
@@ -101,11 +107,12 @@ const laboratoryCategories = [
     title: 'Onkoloji Testlər',
     icon: Dna,
     color: '#ef4444',
-    services: [
-      'Onkomarkerlər (PSA, CA-125, CA 15-3, AFP)',
-      'Polimeraz Zəncirvari Reaksiya (PZR)',
-      'Histoloji və Sitoloji Müayinələr',
-      'Biopsiya, Pap-test'
+    description: 'Xərçəng markerləri və onkoloji xəstəliklərin erkən diaqnostikası.',
+    subtypes: [
+      { name: 'Onkomarkerlər', desc: 'PSA, CA-125, CA 15-3, AFP' },
+      { name: 'Polimeraz Zəncirvari Reaksiya', desc: 'PZR testləri' },
+      { name: 'Histoloji müayinələr', desc: 'Toxuma analizi' },
+      { name: 'Biopsiya, Pap-test', desc: 'Hüceyrə analizi' }
     ]
   },
   {
@@ -113,35 +120,34 @@ const laboratoryCategories = [
     title: 'Genetik Müayinələr',
     icon: HeartPulse,
     color: '#ec4899',
-    services: [
-      'Tibbi-Genetik Müayinələr',
-      'Talassemia testi',
-      'Xromosom patologiyaları',
-      'Genetik konsultasiya'
+    description: 'Genetik xəstəliklərin tədqiqi və genetik konsultasiya.',
+    subtypes: [
+      { name: 'Tibbi-Genetik Müayinələr', desc: 'Genetik analiz' },
+      { name: 'Talassemia testi', desc: 'Talassemia diaqnostikası' },
+      { name: 'Xromosom patologiyaları', desc: 'Xromosom analizi' },
+      { name: 'Genetik konsultasiya', desc: 'Mütəxəssis məsləhəti' }
     ]
   }
 ];
 
 export default function LaboratorySection() {
-  const [expandedAccordion, setExpandedAccordion] = useState<number>(0);
-  const [hoveredTile, setHoveredTile] = useState<string | null>(null);
+  const [selectedType, setSelectedType] = useState<string>('clinical');
 
-  const firstGroup = laboratoryCategories.slice(0, 4);
-  const secondGroup = laboratoryCategories.slice(4, 8);
+  const selected = laboratoryTypes.find(t => t.id === selectedType);
 
   return (
     <motion.section 
       id="laboratory" 
-      initial={{ opacity: 0 }}
-      whileInView={{ opacity: 1 }}
+      initial={{ opacity: 0, y: 50 }}
+      whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, amount: 0.2 }}
       transition={{ duration: 0.8 }}
-      className="py-24 lg:py-32 bg-gradient-to-b from-white to-[#f0fdf4] relative overflow-hidden"
+      className="py-24 lg:py-32 bg-gradient-to-b from-white via-[#f0fdf4] to-[#f0f9ff] relative overflow-hidden"
     >
       {/* Background Decorations */}
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute top-0 left-0 w-96 h-96 bg-[#00b982]/10 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2" />
-        <div className="absolute bottom-0 right-0 w-96 h-96 bg-[#14b8a6]/10 rounded-full blur-3xl translate-x-1/2 translate-y-1/2" />
+        <div className="absolute bottom-0 right-0 w-96 h-96 bg-[#0ea5e9]/10 rounded-full blur-3xl translate-x-1/2 translate-y-1/2" />
       </div>
 
       <div className="container mx-auto px-4 lg:px-8 relative z-10">
@@ -169,175 +175,160 @@ export default function LaboratorySection() {
           </p>
         </motion.div>
 
-        {/* Accordion Container */}
-        <div className="space-y-6 max-w-6xl mx-auto">
-          {[firstGroup, secondGroup].map((group, groupIndex) => (
-            <motion.div
-              key={groupIndex}
-              initial={{ opacity: 0, y: 40 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: groupIndex * 0.2 }}
-            >
-              {/* Accordion Header */}
-              <button
-                onClick={() => setExpandedAccordion(expandedAccordion === groupIndex ? -1 : groupIndex)}
-                className="w-full flex items-center justify-between p-6 bg-white rounded-2xl shadow-lg shadow-black/5 hover:shadow-xl transition-all duration-300 group border border-gray-100"
+        {/* Tabs Layout */}
+        <div className="grid lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
+          {/* Vertical Tabs */}
+          <motion.div
+            initial={{ opacity: 0, x: -30 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="lg:col-span-1 space-y-3"
+          >
+            {laboratoryTypes.map((type, index) => (
+              <motion.button
+                key={type.id}
+                onClick={() => setSelectedType(type.id)}
+                initial={{ opacity: 0, x: -20 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.4, delay: index * 0.05 }}
+                className={`w-full text-left p-4 rounded-xl transition-all duration-300 group relative overflow-hidden ${
+                  selectedType === type.id
+                    ? 'bg-white shadow-lg shadow-black/10 border-2 border-[#00b982]'
+                    : 'bg-white/50 hover:bg-white border border-gray-200'
+                }`}
               >
-                <div className="flex items-center gap-4">
+                <div className="relative z-10 flex items-center gap-3">
                   <div 
-                    className="w-12 h-12 rounded-xl flex items-center justify-center shadow-lg"
+                    className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0 transition-all duration-300"
                     style={{ 
-                      background: groupIndex === 0 
-                        ? 'linear-gradient(135deg, #00b982, #14b8a6)' 
-                        : 'linear-gradient(135deg, #f59e0b, #ef4444)'
+                      backgroundColor: `${type.color}20`,
+                      borderLeft: `3px solid ${type.color}`
                     }}
                   >
-                    <span className="text-white font-bold text-lg">{groupIndex + 1}</span>
+                    <type.icon className="w-5 h-5" style={{ color: type.color }} />
                   </div>
                   <div className="text-left">
-                    <h3 className="font-bold text-xl text-[#1a365d]">
-                      {groupIndex === 0 ? 'Əsas Laboratoriya Testləri' : 'Xüsusi Testlər və Müayinələr'}
-                    </h3>
-                    <p className="text-gray-500 text-sm">
-                      {groupIndex === 0 ? 'Kliniki, Bakterioloji, Seroloji, Hormonal' : 'Biokimyəvi, Vitamin, Onkoloji, Genetik'}
-                    </p>
+                    <h4 className={`font-bold text-sm transition-colors ${
+                      selectedType === type.id ? 'text-[#1a365d]' : 'text-gray-700'
+                    }`}>
+                      {type.title}
+                    </h4>
                   </div>
                 </div>
-                <motion.div
-                  animate={{ rotate: expandedAccordion === groupIndex ? 180 : 0 }}
-                  transition={{ duration: 0.3 }}
-                  className="p-2 rounded-full bg-gray-100 group-hover:bg-[#00b982]/10 transition-colors"
-                >
-                  <ChevronDown className="w-5 h-5 text-gray-600 group-hover:text-[#00b982]" />
-                </motion.div>
-              </button>
 
-              {/* Accordion Content - 3D Tiles Grid */}
-              <AnimatePresence>
-                {expandedAccordion === groupIndex && (
+                {/* Hover effect background */}
+                {selectedType === type.id && (
                   <motion.div
-                    initial={{ opacity: 0, height: 0 }}
-                    animate={{ opacity: 1, height: 'auto' }}
-                    exit={{ opacity: 0, height: 0 }}
-                    transition={{ duration: 0.4, ease: 'easeInOut' }}
-                    className="overflow-hidden"
-                  >
-                    <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 pt-6">
-                      {group.map((category, index) => (
-                        <motion.div
-                          key={category.id}
-                          initial={{ opacity: 0, y: 20, rotateX: -10 }}
-                          animate={{ opacity: 1, y: 0, rotateX: 0 }}
-                          transition={{ duration: 0.5, delay: index * 0.1 }}
-                          onMouseEnter={() => setHoveredTile(category.id)}
-                          onMouseLeave={() => setHoveredTile(null)}
-                          className="group relative"
-                          style={{ perspective: '1000px' }}
-                        >
-                          <motion.div
-                            className="relative bg-white rounded-2xl p-6 border border-gray-100 transition-all duration-500"
-                            animate={{
-                              rotateY: hoveredTile === category.id ? 5 : 0,
-                              rotateX: hoveredTile === category.id ? -5 : 0,
-                              translateY: hoveredTile === category.id ? -8 : 0,
-                            }}
-                            style={{
-                              transformStyle: 'preserve-3d',
-                              boxShadow: hoveredTile === category.id 
-                                ? `0 25px 50px -12px ${category.color}40, 0 0 30px ${category.color}20`
-                                : '0 4px 6px -1px rgba(0, 0, 0, 0.05)',
-                            }}
-                          >
-                            {/* Icon */}
-                            <motion.div
-                              className="w-14 h-14 rounded-xl flex items-center justify-center mb-4 shadow-lg"
-                              style={{ 
-                                backgroundColor: `${category.color}15`,
-                                boxShadow: `0 8px 20px -8px ${category.color}40`
-                              }}
-                              animate={{
-                                rotate: hoveredTile === category.id ? 360 : 0,
-                                scale: hoveredTile === category.id ? 1.1 : 1,
-                              }}
-                              transition={{ duration: 0.6 }}
-                            >
-                              <category.icon className="w-7 h-7" style={{ color: category.color }} />
-                            </motion.div>
-
-                            {/* Title */}
-                            <h4 className="font-bold text-lg text-[#1a365d] mb-3 group-hover:text-[#00b982] transition-colors">
-                              {category.title}
-                            </h4>
-
-                            {/* Services List */}
-                            <ul className="space-y-2">
-                              {category.services.slice(0, 4).map((service, sIndex) => (
-                                <motion.li
-                                  key={sIndex}
-                                  initial={{ opacity: 0, x: -10 }}
-                                  animate={{ opacity: 1, x: 0 }}
-                                  transition={{ delay: 0.3 + sIndex * 0.05 }}
-                                  className="flex items-start gap-2 text-sm text-gray-600"
-                                >
-                                  <span 
-                                    className="w-1.5 h-1.5 rounded-full mt-2 flex-shrink-0"
-                                    style={{ backgroundColor: category.color }}
-                                  />
-                                  <span className="line-clamp-2">{service}</span>
-                                </motion.li>
-                              ))}
-                            </ul>
-
-                            {/* Hover Glow Effect */}
-                            <div 
-                              className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
-                              style={{
-                                background: `radial-gradient(circle at 50% 50%, ${category.color}15 0%, transparent 70%)`,
-                              }}
-                            />
-                          </motion.div>
-                        </motion.div>
-                      ))}
-                    </div>
-                  </motion.div>
+                    layoutId="activeTab"
+                    className="absolute inset-0 bg-gradient-to-r from-[#00b982]/5 to-transparent -z-0"
+                    transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+                  />
                 )}
-              </AnimatePresence>
-            </motion.div>
-          ))}
-        </div>
+              </motion.button>
+            ))}
+          </motion.div>
 
-        {/* Bottom CTA */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6, delay: 0.4 }}
-          className="text-center mt-12"
-        >
-          <p className="text-gray-600 mb-4">Bütün laboratoriya testləri haqqında məlumat almaq üçün</p>
-          <motion.button
-            whileHover={{ scale: 1.05, y: -2 }}
-            whileTap={{ scale: 0.98 }}
-            onClick={() => {
-              const element = document.getElementById('appointment');
-              if (element) {
-                const headerHeight = 80;
-                const elementPosition = element.getBoundingClientRect().top + window.scrollY;
-                window.scrollTo({ top: elementPosition - headerHeight, behavior: 'smooth' });
-              }
-            }}
-            className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-[#00b982] to-[#14b8a6] text-white font-semibold rounded-xl shadow-lg shadow-[#00b982]/25 hover:shadow-[#00b982]/40 transition-all duration-300"
+          {/* Content Card */}
+          <motion.div
+            initial={{ opacity: 0, x: 30 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="lg:col-span-2"
           >
-            Əlaqə Saxlayın
-            <motion.span
-              animate={{ x: [0, 5, 0] }}
-              transition={{ duration: 1.5, repeat: Infinity }}
-            >
-              →
-            </motion.span>
-          </motion.button>
-        </motion.div>
+            <AnimatePresence mode="wait">
+              {selected && (
+                <motion.div
+                  key={selected.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  transition={{ duration: 0.4 }}
+                  className="bg-white rounded-2xl p-8 shadow-lg shadow-black/5 border border-gray-100 relative overflow-hidden"
+                >
+                  {/* Background Accent */}
+                  <div 
+                    className="absolute top-0 right-0 w-40 h-40 rounded-full blur-3xl opacity-10 -z-0"
+                    style={{ backgroundColor: selected.color }}
+                  />
+
+                  <div className="relative z-10">
+                    {/* Header */}
+                    <div className="flex items-start gap-4 mb-6">
+                      <motion.div
+                        initial={{ scale: 0 }}
+                        animate={{ scale: 1 }}
+                        transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+                        className="w-16 h-16 rounded-xl flex items-center justify-center flex-shrink-0 shadow-lg"
+                        style={{ 
+                          backgroundColor: `${selected.color}20`,
+                          boxShadow: `0 8px 20px -8px ${selected.color}40`
+                        }}
+                      >
+                        <selected.icon className="w-8 h-8" style={{ color: selected.color }} />
+                      </motion.div>
+                      <div>
+                        <h3 className="text-2xl font-bold text-[#1a365d] mb-2">
+                          {selected.title}
+                        </h3>
+                        <p className="text-gray-600">
+                          {selected.description}
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Subtypes Grid */}
+                    <div className="space-y-3">
+                      <h4 className="font-bold text-[#1a365d] text-sm uppercase tracking-wide">
+                        Altında olan Testlər
+                      </h4>
+                      <div className="grid gap-3">
+                        {selected.subtypes.map((subtype, index) => (
+                          <motion.div
+                            key={index}
+                            initial={{ opacity: 0, x: -15 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ duration: 0.3, delay: index * 0.05 }}
+                            className="flex items-start gap-3 p-3 rounded-lg bg-gradient-to-r from-[#f9fafb] to-transparent hover:from-[#f0fdf4] transition-colors group"
+                          >
+                            <div 
+                              className="w-2 h-2 rounded-full mt-2 flex-shrink-0"
+                              style={{ backgroundColor: selected.color }}
+                            />
+                            <div className="flex-1 min-w-0">
+                              <p className="font-semibold text-gray-800 text-sm group-hover:text-[#1a365d] transition-colors">
+                                {subtype.name}
+                              </p>
+                              <p className="text-xs text-gray-500 mt-1">
+                                {subtype.desc}
+                              </p>
+                            </div>
+                          </motion.div>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* CTA Button */}
+                    <motion.button
+                      whileHover={{ x: 5 }}
+                      className="mt-6 inline-flex items-center gap-2 px-6 py-3 rounded-lg font-semibold transition-all duration-300"
+                      style={{ 
+                        backgroundColor: `${selected.color}20`,
+                        color: selected.color,
+                        border: `2px solid ${selected.color}40`
+                      }}
+                    >
+                      Ətraflı Məlumat
+                      <ArrowRight className="w-4 h-4" />
+                    </motion.button>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </motion.div>
+        </div>
       </div>
     </motion.section>
   );
