@@ -32,7 +32,7 @@ export default function AdminGuard({ children }: AdminGuardProps) {
             Admin panelinə daxil olmaq üçün hesabınıza giriş edin.
           </p>
           <a
-            href="/api/login"
+            href="/login"
             className="block w-full bg-[#00b982] text-white py-3 rounded-xl font-semibold hover:bg-[#00a572] transition-colors"
           >
             Daxil ol

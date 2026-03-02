@@ -348,3 +348,25 @@ export async function upsertSiteSetting(key: string, value: string, label?: stri
   if (!db) throw new Error("Database not available");
   return db.insert(siteSettings).values({ key, value, label, group }).onDuplicateKeyUpdate({ set: { value } });
 }
+
+// ─── Local Auth Functions ────────────────────────────────────────────────────
+
+export async function getUserByEmail(email: string) {
+  const db = await getDb();
+  if (!db) return null;
+  const result = await db.select().from(users).where(eq(users.email, email)).limit(1);
+  return result.length > 0 ? result[0] : null;
+}
+
+export async function getUserCount() {
+  const db = await getDb();
+  if (!db) return 0;
+  const result = await db.select().from(users);
+  return result.length;
+}
+
+export async function updateUserLastSignedIn(openId: string) {
+  const db = await getDb();
+  if (!db) return;
+  await db.update(users).set({ lastSignedIn: new Date() }).where(eq(users.openId, openId));
+}
