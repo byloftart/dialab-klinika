@@ -1,13 +1,8 @@
-/**
- * HeroSection - DIALAB Klinika
- * Light, airy full-screen slider matching the site's overall light aesthetic.
- * Soft white overlay so images feel bright. Dark text for readability.
- */
-
 import { useEffect, useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { trpc } from '@/lib/trpc';
 
-const heroSlides = [
+const DEFAULT_SLIDES = [
   { id: 'slide-1', image: '/images/hero/slide1.jpg', alt: 'Tibbi komanda', label: 'Peşəkar Komanda' },
   { id: 'slide-2', image: '/images/hero/slide2.jpg', alt: 'Müasir klinika', label: 'Müasir Klinika' },
   { id: 'slide-3', image: '/images/hero/slide3.jpg', alt: 'Laboratoriya', label: 'Laboratoriya Xidmətləri' },
@@ -16,8 +11,25 @@ const heroSlides = [
 export default function HeroSection() {
   const [idx, setIdx] = useState(0);
   const [paused, setPaused] = useState(false);
+  
+  const { data: settings } = trpc.cms.settings.getGroup.useQuery({ group: 'hero' });
+  
+  const getSetting = (key: string, defaultValue: string) => {
+    return settings?.find(s => s.key === key)?.value || defaultValue;
+  };
 
-  const next = useCallback(() => setIdx(p => (p + 1) % heroSlides.length), []);
+  const badge = getSetting('hero.badge', 'Dialab Tibb Mərkəzi');
+  const title1 = getSetting('hero.title1', 'Sağlamlığınız —');
+  const title2 = getSetting('hero.title2', 'Bizim Prioritet');
+  const subtitle = getSetting('hero.subtitle', '500+ növ laboratoriya testi və müasir diaqnostika avadanlıqları ilə sağlamlığınızı dəqiq və etibarlı şəkildə qiymətləndiririk.');
+
+  const heroSlides = [
+    { id: 'slide-1', image: getSetting('hero.slide1', '/images/hero/slide1.jpg'), alt: 'Tibbi komanda', label: 'Peşəkar Komanda' },
+    { id: 'slide-2', image: getSetting('hero.slide2', '/images/hero/slide2.jpg'), alt: 'Müasir klinika', label: 'Müasir Klinika' },
+    { id: 'slide-3', image: getSetting('hero.slide3', '/images/hero/slide3.jpg'), alt: 'Laboratoriya', label: 'Laboratoriya Xidmətləri' },
+  ];
+
+  const next = useCallback(() => setIdx(p => (p + 1) % heroSlides.length), [heroSlides.length]);
 
   useEffect(() => {
     if (paused) return;
@@ -37,7 +49,7 @@ export default function HeroSection() {
       <div className="absolute inset-0 z-0">
         <AnimatePresence mode="wait">
           <motion.div
-            key={heroSlides[idx].id}
+            key={`${heroSlides[idx].id}-${heroSlides[idx].image}`}
             initial={{ opacity: 0, scale: 1.03 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0 }}
@@ -68,20 +80,19 @@ export default function HeroSection() {
           >
             {/* Badge */}
             <span className="inline-block bg-[#00b982] text-white text-xs font-bold uppercase tracking-[0.18em] px-4 py-1.5 rounded-full mb-6">
-              Dialab Tibb Mərkəzi
+              {badge}
             </span>
 
             {/* Heading — dark text on light overlay */}
             <h1 className="text-4xl sm:text-5xl md:text-6xl xl:text-7xl font-light leading-[1.1] text-gray-900 mb-2">
-              Sağlamlığınız —
+              {title1}
             </h1>
             <h1 className="text-4xl sm:text-5xl md:text-6xl xl:text-7xl font-extrabold leading-[1.1] text-gray-900 mb-6">
-              <span className="text-[#00b982]">Bizim</span> Prioritet
+              <span className="text-[#00b982]">{title2.split(' ')[0]}</span> {title2.split(' ').slice(1).join(' ')}
             </h1>
 
             <p className="text-gray-600 text-base md:text-lg leading-relaxed max-w-lg mb-6">
-              500+ növ laboratoriya testi və müasir diaqnostika avadanlıqları ilə
-              sağlamlığınızı dəqiq və etibarlı şəkildə qiymətləndiririk.
+              {subtitle}
             </p>
 
             {/* Slide label */}

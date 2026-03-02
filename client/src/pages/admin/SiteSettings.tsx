@@ -33,6 +33,9 @@ const SETTINGS_SCHEMA = [
       { key: 'hero.title1', label: 'Başlıq sətri 1', placeholder: 'Sağlamlığınız —' },
       { key: 'hero.title2', label: 'Başlıq sətri 2 (qalın)', placeholder: 'Bizim Prioritet' },
       { key: 'hero.subtitle', label: 'Alt başlıq', placeholder: '500+ növ laboratoriya testi...' },
+      { key: 'hero.slide1', label: 'Slayd 1 Şəkil URL', placeholder: '/images/hero/slide1.jpg' },
+      { key: 'hero.slide2', label: 'Slayd 2 Şəkil URL', placeholder: '/images/hero/slide2.jpg' },
+      { key: 'hero.slide3', label: 'Slayd 3 Şəkil URL', placeholder: '/images/hero/slide3.jpg' },
     ],
   },
   {
