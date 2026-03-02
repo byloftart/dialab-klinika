@@ -68,7 +68,7 @@ export default function MediaGallery() {
       whileInView={{ opacity: 1 }}
       viewport={{ once: true, amount: 0.2 }}
       transition={{ duration: 0.7 }}
-      className="relative py-24 lg:py-32 overflow-hidden bg-gradient-to-br from-white via-[#f0fdf4] to-[#e8f4fc] border-t border-[#00b982]/20"
+      className="relative py-24 lg:py-32 overflow-hidden bg-gradient-to-br from-white via-[#f0fdf4] to-[#e8f4fc] border-t-2 border-[#00b982]/30"
     >
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute top-20 right-20 w-80 h-80 bg-[#00b982]/8 rounded-full blur-3xl" />
@@ -76,13 +76,13 @@ export default function MediaGallery() {
       </div>
 
       <div className="container mx-auto px-4 lg:px-8 relative z-10">
-        <div className="grid lg:grid-cols-2 gap-10 lg:gap-12 items-start">
+        <div className="grid lg:grid-cols-2 gap-10 lg:gap-12 items-stretch">
           <motion.div
             initial={{ opacity: 0, x: -24 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
-            className="max-w-2xl"
+            className="max-w-2xl flex flex-col justify-between"
           >
             <p className="uppercase tracking-[0.22em] text-sm font-medium text-[#00b982]">Haqqımızda</p>
             <h2 className="mt-2 text-4xl md:text-5xl font-extrabold text-[#1a365d] leading-tight">
@@ -121,11 +121,11 @@ export default function MediaGallery() {
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
-            className="relative"
+            className="relative flex flex-col"
             onMouseEnter={() => setIsPaused(true)}
             onMouseLeave={() => setIsPaused(false)}
           >
-            <div className="relative overflow-hidden rounded-2xl border border-[#00b982]/20 shadow-xl shadow-black/10 aspect-[16/10] max-h-[420px] bg-white">
+            <div className="relative overflow-hidden rounded-2xl border border-[#00b982]/20 shadow-xl shadow-black/10 flex-1 min-h-[380px] bg-white">
               <AnimatePresence mode="wait">
                 <motion.div
                   key={galleryItems[currentIndex].id}

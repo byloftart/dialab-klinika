@@ -1,221 +1,139 @@
-import { useEffect, useState } from 'react';
+/**
+ * HeroSection - DIALAB Klinika
+ * Light, airy full-screen slider matching the site's overall light aesthetic.
+ * Soft white overlay so images feel bright. Dark text for readability.
+ */
+
+import { useEffect, useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Search, ChevronRight } from 'lucide-react';
-import CompactAppointmentForm from './CompactAppointmentForm';
 
-interface HeroSlideItem {
-  id: string;
-  image: string;
-  alt: string;
-}
-
-const heroSlides: HeroSlideItem[] = [
-  {
-    id: 'slide-lab',
-    image: '/images/hero-medical-lab.jpg',
-    alt: 'Laboratoriya avadanlıqları',
-  },
-  {
-    id: 'slide-usm',
-    image: '/images/diagnostics-ultrasound.jpg',
-    alt: 'Diaqnostika müayinəsi',
-  },
-  {
-    id: 'slide-doctor',
-    image: '/images/doctor-consultation.jpg',
-    alt: 'Həkim konsultasiyası',
-  },
-];
-
-const popularServices = [
-  'Qanın ümumi analizi',
-  'Hormon testləri',
-  'USM müayinəsi',
-  'EKQ',
-  'Hepatit testləri',
-  'Vitamin D',
-  'Biokimyəvi analizlər',
-  'Onkomarkerlər',
+const heroSlides = [
+  { id: 'slide-1', image: '/images/hero/slide1.jpg', alt: 'Tibbi komanda', label: 'Peşəkar Komanda' },
+  { id: 'slide-2', image: '/images/hero/slide2.jpg', alt: 'Müasir klinika', label: 'Müasir Klinika' },
+  { id: 'slide-3', image: '/images/hero/slide3.jpg', alt: 'Laboratoriya', label: 'Laboratoriya Xidmətləri' },
 ];
 
 export default function HeroSection() {
-  const [searchQuery, setSearchQuery] = useState('');
-  const [showSuggestions, setShowSuggestions] = useState(false);
-  const [activeSlideIndex, setActiveSlideIndex] = useState(0);
-  const [isPaused, setIsPaused] = useState(false);
+  const [idx, setIdx] = useState(0);
+  const [paused, setPaused] = useState(false);
+
+  const next = useCallback(() => setIdx(p => (p + 1) % heroSlides.length), []);
 
   useEffect(() => {
-    if (isPaused) return;
-
-    const timer = window.setInterval(() => {
-      setActiveSlideIndex(prev => (prev + 1) % heroSlides.length);
-    }, 4200);
-
-    return () => window.clearInterval(timer);
-  }, [isPaused]);
-
-  const filteredServices = popularServices.filter(service =>
-    service.toLowerCase().includes(searchQuery.toLowerCase())
-  );
-
-  const scrollToSection = (sectionId: string) => {
-    const element = document.getElementById(sectionId);
-    if (element) {
-      const headerHeight = 80;
-      const elementPosition = element.getBoundingClientRect().top + window.scrollY;
-      window.scrollTo({ top: elementPosition - headerHeight, behavior: 'smooth' });
-    }
-    setShowSuggestions(false);
-  };
+    if (paused) return;
+    const t = setInterval(next, 6000);
+    return () => clearInterval(t);
+  }, [paused, next]);
 
   return (
     <section
       id="hero"
-      className="relative min-h-screen flex items-center overflow-hidden"
-      onMouseEnter={() => setIsPaused(true)}
-      onMouseLeave={() => setIsPaused(false)}
+      className="relative w-full overflow-hidden"
+      style={{ height: '82vh', minHeight: '520px' }}
+      onMouseEnter={() => setPaused(true)}
+      onMouseLeave={() => setPaused(false)}
     >
-      <div className="absolute inset-0">
+      {/* ── Background slider ── */}
+      <div className="absolute inset-0 z-0">
         <AnimatePresence mode="wait">
           <motion.div
-            key={heroSlides[activeSlideIndex].id}
-            initial={{ opacity: 0, y: '10%' }}
-            animate={{ opacity: 1, y: '0%' }}
-            exit={{ opacity: 0, y: '-10%' }}
-            transition={{ duration: 0.42, ease: 'easeOut' }}
+            key={heroSlides[idx].id}
+            initial={{ opacity: 0, scale: 1.03 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 1.2, ease: [0.4, 0, 0.2, 1] }}
             className="absolute inset-0"
           >
             <img
-              src={heroSlides[activeSlideIndex].image}
-              alt={heroSlides[activeSlideIndex].alt}
+              src={heroSlides[idx].image}
+              alt={heroSlides[idx].alt}
               className="w-full h-full object-cover"
               draggable={false}
             />
           </motion.div>
         </AnimatePresence>
 
-        <div className="absolute inset-0 bg-gradient-to-br from-white/82 via-[#f0fdf4]/74 to-[#e8f4fc]/70" />
-        <div className="absolute inset-0 bg-white/12" />
+        {/* Light overlay — keeps everything bright & airy */}
+        <div className="absolute inset-0 bg-gradient-to-r from-white/70 via-white/40 to-white/20" />
       </div>
 
-      <div className="absolute right-4 sm:right-6 lg:right-10 top-1/2 -translate-y-1/2 z-20 flex flex-col gap-2.5">
-        {heroSlides.map((slide, index) => (
-          <button
-            key={slide.id}
-            onClick={() => setActiveSlideIndex(index)}
-            aria-label={`Slayd ${index + 1}`}
-            className={`w-2 rounded-full transition-all duration-300 ${
-              index === activeSlideIndex ? 'h-8 bg-[#00b982]' : 'h-2 bg-[#1a365d]/25 hover:bg-[#1a365d]/40'
-            }`}
-          />
-        ))}
-      </div>
-
-      <div className="container mx-auto px-4 lg:px-8 pt-28 pb-16 relative z-10">
-        <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-start">
+      {/* ── Content ── */}
+      <div className="relative z-10 h-full flex items-center">
+        <div className="container mx-auto px-6 lg:px-12 xl:px-16">
           <motion.div
-            initial={{ opacity: 0, x: -40 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.7, ease: [0.4, 0, 0.2, 1] }}
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.15 }}
+            className="max-w-2xl"
           >
-            <motion.h1
-              initial={{ opacity: 0, y: 22 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2, duration: 0.7 }}
-              className="text-5xl md:text-6xl lg:text-7xl font-extrabold text-[#1a365d] leading-tight mb-8"
-            >
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#1a365d] via-[#00b982] to-[#14b8a6]">
-                Dialab
-                <br />
-                Tibb Mərkəzi
-              </span>
-            </motion.h1>
+            {/* Badge */}
+            <span className="inline-block bg-[#00b982] text-white text-xs font-bold uppercase tracking-[0.18em] px-4 py-1.5 rounded-full mb-6">
+              Dialab Tibb Mərkəzi
+            </span>
 
-            <motion.p
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3 }}
-              className="text-xl text-gray-700 mb-10 max-w-lg leading-relaxed font-medium"
-            >
+            {/* Heading — dark text on light overlay */}
+            <h1 className="text-4xl sm:text-5xl md:text-6xl xl:text-7xl font-light leading-[1.1] text-gray-900 mb-2">
+              Sağlamlığınız —
+            </h1>
+            <h1 className="text-4xl sm:text-5xl md:text-6xl xl:text-7xl font-extrabold leading-[1.1] text-gray-900 mb-6">
+              <span className="text-[#00b982]">Bizim</span> Prioritet
+            </h1>
+
+            <p className="text-gray-600 text-base md:text-lg leading-relaxed max-w-lg mb-6">
               500+ növ laboratoriya testi və müasir diaqnostika avadanlıqları ilə
-              sağlamlığınızı dəqiq və etibarlı şəkildə qiymətləndiririk. 15 ildən artıq
-              təcrübə ilə Azərbaycanda tibbi xidmət standartlarını müəyyən edirik.
-            </motion.p>
+              sağlamlığınızı dəqiq və etibarlı şəkildə qiymətləndiririk.
+            </p>
 
-            <motion.div
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.4 }}
-              className="relative"
-            >
-              <div className="relative">
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                <input
-                  type="text"
-                  placeholder="Xidmət və ya test axtarın..."
-                  value={searchQuery}
-                  onChange={event => setSearchQuery(event.target.value)}
-                  onFocus={() => setShowSuggestions(true)}
-                  onBlur={() => setTimeout(() => setShowSuggestions(false), 180)}
-                  className="w-full pl-12 pr-4 py-4 rounded-xl bg-white border-2 border-gray-100 focus:border-[#00b982] focus:ring-4 focus:ring-[#00b982]/10 transition-all duration-300 text-gray-700 placeholder:text-gray-400 shadow-lg shadow-black/5"
-                />
-              </div>
-
-              {showSuggestions && (
-                <motion.div
-                  initial={{ opacity: 0, y: 8 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="absolute top-full left-0 right-0 mt-2 bg-white rounded-xl shadow-xl border border-gray-100 overflow-hidden z-30"
-                >
-                  <div className="p-3 border-b border-gray-100">
-                    <span className="text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Populyar Xidmətlər
-                    </span>
-                  </div>
-                  <div className="p-2 max-h-64 overflow-y-auto">
-                    {filteredServices.map((service, index) => (
-                      <button
-                        key={index}
-                        onClick={() => {
-                          setSearchQuery(service);
-                          scrollToSection('laboratory');
-                        }}
-                        className="w-full text-left px-4 py-3 rounded-lg hover:bg-[#00b982]/10 text-gray-700 hover:text-[#00b982] transition-colors flex items-center justify-between group"
-                      >
-                        <span>{service}</span>
-                        <ChevronRight className="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity" />
-                      </button>
-                    ))}
-                  </div>
-                </motion.div>
-              )}
-            </motion.div>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, x: 40 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.7, delay: 0.2 }}
-            className="relative max-w-sm lg:max-w-md mx-auto lg:ml-auto w-full"
-          >
-            <CompactAppointmentForm />
+            {/* Slide label */}
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={idx}
+                initial={{ opacity: 0, x: -8 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.25 }}
+                className="flex items-center gap-3"
+              >
+                <span className="w-6 h-[2px] bg-[#00b982]" />
+                <span className="text-gray-400 text-xs uppercase tracking-[0.2em] font-medium">
+                  {heroSlides[idx].label}
+                </span>
+              </motion.div>
+            </AnimatePresence>
           </motion.div>
         </div>
       </div>
 
-      <button
-        onClick={() => scrollToSection('gallery')}
-        className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20 h-12 w-7 rounded-full border-2 border-[#00b982]/38 bg-white/55 flex items-start justify-center pt-2 hover:border-[#00b982]/60 transition-colors"
-        aria-label="Aşağı keç"
-      >
-        <motion.span
-          className="w-1.5 h-3 rounded-full bg-[#00b982]"
-          animate={{ y: [0, 10, 0], opacity: [0.95, 0.55, 0.95] }}
-          transition={{ repeat: Infinity, duration: 1.6, ease: 'easeInOut' }}
-        />
-      </button>
+      {/* ── Dot navigation — left ── */}
+      <div className="absolute left-6 top-1/2 -translate-y-1/2 z-20 flex flex-col gap-3">
+        {heroSlides.map((s, i) => (
+          <button
+            key={s.id}
+            onClick={() => setIdx(i)}
+            aria-label={`Slayd ${i + 1}`}
+            className="group"
+          >
+            <span
+              className={`block rounded-full transition-all duration-300 ${
+                i === idx
+                  ? 'w-3 h-3 bg-[#00b982] shadow-md shadow-[#00b982]/30'
+                  : 'w-2.5 h-2.5 bg-gray-400/40 group-hover:bg-[#00b982]/50'
+              }`}
+            />
+          </button>
+        ))}
+      </div>
 
-      <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-b from-transparent via-[#00b982]/5 to-[#f0fdf4] pointer-events-none" />
+      {/* ── Progress bar ── */}
+      <div className="absolute bottom-0 left-0 right-0 h-[3px] bg-gray-200/50 z-20">
+        <motion.div
+          key={`p-${idx}`}
+          initial={{ width: '0%' }}
+          animate={{ width: '100%' }}
+          transition={{ duration: paused ? 0 : 6, ease: 'linear' }}
+          className="h-full bg-[#00b982]"
+        />
+      </div>
     </section>
   );
 }

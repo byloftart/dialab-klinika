@@ -1,17 +1,10 @@
-import { int, mysqlEnum, mysqlTable, text, timestamp, varchar } from "drizzle-orm/mysql-core";
+import { boolean, int, mysqlEnum, mysqlTable, text, timestamp, varchar } from "drizzle-orm/mysql-core";
 
 /**
  * Core user table backing auth flow.
- * Extend this file with additional tables as your product grows.
- * Columns use camelCase to match both database fields and generated types.
  */
 export const users = mysqlTable("users", {
-  /**
-   * Surrogate primary key. Auto-incremented numeric value managed by the database.
-   * Use this for relations between tables.
-   */
   id: int("id").autoincrement().primaryKey(),
-  /** Manus OAuth identifier (openId) returned from the OAuth callback. Unique per user. */
   openId: varchar("openId", { length: 64 }).notNull().unique(),
   name: text("name"),
   email: varchar("email", { length: 320 }),
@@ -25,9 +18,8 @@ export const users = mysqlTable("users", {
 export type User = typeof users.$inferSelect;
 export type InsertUser = typeof users.$inferInsert;
 
-// CMS Tables for Dynamic Content Management
+// ─── CMS: Diagnostics ────────────────────────────────────────────────────────
 
-// Diagnostics Services
 export const diagnosticServices = mysqlTable("diagnosticServices", {
   id: int("id").autoincrement().primaryKey(),
   titleAz: varchar("titleAz", { length: 255 }).notNull(),
@@ -35,6 +27,7 @@ export const diagnosticServices = mysqlTable("diagnosticServices", {
   imageUrl: varchar("imageUrl", { length: 512 }),
   icon: varchar("icon", { length: 100 }),
   order: int("order").default(0),
+  isActive: boolean("isActive").default(true).notNull(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
 });
@@ -42,7 +35,6 @@ export const diagnosticServices = mysqlTable("diagnosticServices", {
 export type DiagnosticService = typeof diagnosticServices.$inferSelect;
 export type InsertDiagnosticService = typeof diagnosticServices.$inferInsert;
 
-// Diagnostic Sub-services (procedures/tests within each service)
 export const diagnosticSubServices = mysqlTable("diagnosticSubServices", {
   id: int("id").autoincrement().primaryKey(),
   diagnosticServiceId: int("diagnosticServiceId").notNull(),
@@ -56,13 +48,15 @@ export const diagnosticSubServices = mysqlTable("diagnosticSubServices", {
 export type DiagnosticSubService = typeof diagnosticSubServices.$inferSelect;
 export type InsertDiagnosticSubService = typeof diagnosticSubServices.$inferInsert;
 
-// Laboratory Analysis Types
+// ─── CMS: Laboratory ─────────────────────────────────────────────────────────
+
 export const laboratoryAnalysisTypes = mysqlTable("laboratoryAnalysisTypes", {
   id: int("id").autoincrement().primaryKey(),
   titleAz: varchar("titleAz", { length: 255 }).notNull(),
   descriptionAz: text("descriptionAz").notNull(),
   icon: varchar("icon", { length: 100 }),
   order: int("order").default(0),
+  isActive: boolean("isActive").default(true).notNull(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
 });
@@ -70,7 +64,6 @@ export const laboratoryAnalysisTypes = mysqlTable("laboratoryAnalysisTypes", {
 export type LaboratoryAnalysisType = typeof laboratoryAnalysisTypes.$inferSelect;
 export type InsertLaboratoryAnalysisType = typeof laboratoryAnalysisTypes.$inferInsert;
 
-// Laboratory Sub-tests (specific tests within each analysis type)
 export const laboratorySubTests = mysqlTable("laboratorySubTests", {
   id: int("id").autoincrement().primaryKey(),
   analysisTypeId: int("analysisTypeId").notNull(),
@@ -83,3 +76,89 @@ export const laboratorySubTests = mysqlTable("laboratorySubTests", {
 
 export type LaboratorySubTest = typeof laboratorySubTests.$inferSelect;
 export type InsertLaboratorySubTest = typeof laboratorySubTests.$inferInsert;
+
+// ─── CMS: Doctors ─────────────────────────────────────────────────────────────
+
+export const doctors = mysqlTable("doctors", {
+  id: int("id").autoincrement().primaryKey(),
+  nameAz: varchar("nameAz", { length: 255 }).notNull(),
+  specialtyAz: varchar("specialtyAz", { length: 255 }).notNull(),
+  bioAz: text("bioAz"),
+  photoUrl: varchar("photoUrl", { length: 512 }),
+  experienceYears: int("experienceYears").default(0),
+  order: int("order").default(0),
+  isActive: boolean("isActive").default(true).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type Doctor = typeof doctors.$inferSelect;
+export type InsertDoctor = typeof doctors.$inferInsert;
+
+// ─── CMS: Gallery ─────────────────────────────────────────────────────────────
+
+export const galleryImages = mysqlTable("galleryImages", {
+  id: int("id").autoincrement().primaryKey(),
+  imageUrl: varchar("imageUrl", { length: 512 }).notNull(),
+  titleAz: varchar("titleAz", { length: 255 }),
+  descriptionAz: text("descriptionAz"),
+  category: varchar("category", { length: 100 }).default("general"),
+  order: int("order").default(0),
+  isActive: boolean("isActive").default(true).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type GalleryImage = typeof galleryImages.$inferSelect;
+export type InsertGalleryImage = typeof galleryImages.$inferInsert;
+
+// ─── CMS: Appointments ────────────────────────────────────────────────────────
+
+export const appointments = mysqlTable("appointments", {
+  id: int("id").autoincrement().primaryKey(),
+  fullName: varchar("fullName", { length: 255 }).notNull(),
+  phone: varchar("phone", { length: 50 }).notNull(),
+  appointmentDate: varchar("appointmentDate", { length: 20 }),
+  appointmentTime: varchar("appointmentTime", { length: 10 }),
+  serviceType: varchar("serviceType", { length: 255 }),
+  notes: text("notes"),
+  status: mysqlEnum("status", ["new", "confirmed", "completed", "cancelled"]).default("new").notNull(),
+  isRead: boolean("isRead").default(false).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type Appointment = typeof appointments.$inferSelect;
+export type InsertAppointment = typeof appointments.$inferInsert;
+
+// ─── CMS: Feedback Messages ───────────────────────────────────────────────────
+
+export const feedbackMessages = mysqlTable("feedbackMessages", {
+  id: int("id").autoincrement().primaryKey(),
+  fullName: varchar("fullName", { length: 255 }).notNull(),
+  email: varchar("email", { length: 320 }),
+  phone: varchar("phone", { length: 50 }),
+  subject: varchar("subject", { length: 255 }),
+  message: text("message").notNull(),
+  isRead: boolean("isRead").default(false).notNull(),
+  status: mysqlEnum("status", ["new", "read", "replied"]).default("new").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type FeedbackMessage = typeof feedbackMessages.$inferSelect;
+export type InsertFeedbackMessage = typeof feedbackMessages.$inferInsert;
+
+// ─── CMS: Site Settings ───────────────────────────────────────────────────────
+
+export const siteSettings = mysqlTable("siteSettings", {
+  id: int("id").autoincrement().primaryKey(),
+  key: varchar("key", { length: 100 }).notNull().unique(),
+  value: text("value"),
+  label: varchar("label", { length: 255 }),
+  group: varchar("group", { length: 100 }).default("general"),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type SiteSetting = typeof siteSettings.$inferSelect;
+export type InsertSiteSetting = typeof siteSettings.$inferInsert;

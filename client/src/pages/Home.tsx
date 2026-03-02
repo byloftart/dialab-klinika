@@ -13,6 +13,7 @@
 
 import Header from '@/components/Header';
 import HeroSection from '@/components/HeroSection';
+import InfoBar from '@/components/InfoBar';
 import MediaGallery from '@/components/MediaGallery';
 import LaboratorySection from '@/components/LaboratorySection';
 import DiagnosticsSection from '@/components/DiagnosticsSection';
@@ -28,8 +29,11 @@ export default function Home() {
       
       {/* Main Content */}
       <main>
-        {/* Section 1: Hero - Full width parallax with About Us */}
+        {/* Section 1: Hero - Full width parallax slider */}
         <HeroSection />
+        
+        {/* Section 1.5: Info Bar - Contacts, Appointment, Hours */}
+        <InfoBar />
         
         {/* Section 2: Media Gallery - About Us with image slider */}
         <MediaGallery />

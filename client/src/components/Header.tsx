@@ -58,14 +58,14 @@ export default function Header() {
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
+      className={`fixed left-0 right-0 z-50 transition-all duration-500 ${
         isScrolled
-          ? 'bg-white/95 backdrop-blur-md shadow-lg shadow-black/5'
-          : 'bg-white/80 backdrop-blur-sm'
+          ? 'top-3 mx-4 lg:mx-8 rounded-2xl bg-white/60 backdrop-blur-xl shadow-[0_8px_32px_-4px_rgba(0,0,0,0.08)] border border-white/50'
+          : 'top-0 bg-white/70 backdrop-blur-sm border-b border-gray-100/40'
       }`}
     >
       <div className="container mx-auto px-4 lg:px-8">
-        <div className="flex items-center justify-between h-28">
+        <div className={`flex items-center justify-between transition-all duration-500 ${isScrolled ? 'h-20' : 'h-24'}`}>
           {/* Logo */}
           <motion.a
             href="#hero"
