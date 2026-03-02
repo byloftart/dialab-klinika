@@ -173,17 +173,18 @@
   
   /* Custom scrollbar */
   ::-webkit-scrollbar {
-    width: 8px;
+    width: 7px;
   }
   ::-webkit-scrollbar-track {
-    background: #f1f1f1;
+    background: transparent;
   }
   ::-webkit-scrollbar-thumb {
-    background: var(--medical-green);
-    border-radius: 4px;
+    background: transparent;
+    border-radius: 999px;
+    border: none;
   }
   ::-webkit-scrollbar-thumb:hover {
-    background: var(--medical-dark-blue);
+    background: transparent;
   }
 }
 

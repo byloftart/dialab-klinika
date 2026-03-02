@@ -1,251 +1,176 @@
-/**
- * Media Gallery Section - DIALAB Klinika (Section 2)
- * Design: Visual slider with video/image carousel
- * Features: Parallax scrolling, fade transitions, About Us content
- * Animation: Smooth transitions, 3D card effects
- */
-
-import { useState, useRef } from 'react';
-import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
-import { ChevronLeft, ChevronRight, Play, Building2, Users2, Award, Target } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Award, Users, Microscope } from 'lucide-react';
 
 const galleryItems = [
   {
     id: 1,
-    type: 'image',
     src: '/images/hero-medical-lab.jpg',
     title: 'Müasir Laboratoriya',
-    description: 'Ən son texnologiya ilə təchiz olunmuş laboratoriya avadanlıqları',
+    description: 'Yüksək dəqiqlikli analiz avadanlıqları və beynəlxalq standartlara uyğun nəticələr.',
   },
   {
     id: 2,
-    type: 'image',
     src: '/images/diagnostics-ultrasound.jpg',
     title: 'Diaqnostika Mərkəzi',
-    description: 'USM və digər müasir diaqnostika cihazları',
+    description: 'USM və digər instrumental diaqnostika xidmətləri ilə erkən aşkarlama imkanı.',
   },
   {
     id: 3,
-    type: 'image',
     src: '/images/doctor-consultation.jpg',
     title: 'Peşəkar Komanda',
-    description: 'Təcrübəli həkimlər və tibb personalı',
+    description: 'Təcrübəli həkimlər və pasient mərkəzli tibbi yanaşma ilə etibarlı xidmət.',
   },
   {
     id: 4,
-    type: 'image',
     src: '/images/lab-analysis.jpg',
-    title: 'Dəqiq Analizlər',
-    description: 'Beynəlxalq standartlara uyğun test nəticələri',
+    title: 'Dəqiq Nəticələr',
+    description: 'Sürətli və etibarlı cavablarla müalicə qərarlarının düzgün verilməsi.',
   },
 ];
 
-const aboutFeatures = [
+const aboutStats = [
   {
-    icon: Building2,
-    title: 'Missiyamız',
-    description: 'Azərbaycanda tibbi diaqnostika xidmətlərinin keyfiyyətini yüksəltmək və hər kəsə əlçatan etmək.',
-    number: '01',
+    icon: Microscope,
+    value: '500+',
+    label: 'Laboratoriya testləri',
   },
   {
-    icon: Target,
-    title: 'Vizyonumuz',
-    description: 'Regionda ən etibarlı və müasir tibbi diaqnostika mərkəzi olmaq.',
-    number: '02',
-  },
-  {
-    icon: Users2,
-    title: 'Dəyərlərimiz',
-    description: 'Dəqiqlik, etibarlılıq, pasient məmnuniyyəti və peşəkarlıq.',
-    number: '03',
+    icon: Users,
+    value: '50K+',
+    label: 'Xoşbəxt pasient',
   },
   {
     icon: Award,
-    title: 'Keyfiyyət',
-    description: 'ISO sertifikatlı laboratoriya və beynəlxalq akkreditasiya standartları.',
-    number: '04',
+    value: '15+ il',
+    label: 'Sahə təcrübəsi',
   },
 ];
 
 export default function MediaGallery() {
   const [currentIndex, setCurrentIndex] = useState(0);
-  const sectionRef = useRef<HTMLElement>(null);
-  
-  const { scrollYProgress } = useScroll({
-    target: sectionRef,
-    offset: ['start end', 'end start']
-  });
-  
-  const y = useTransform(scrollYProgress, [0, 1], [100, -100]);
-  const opacity = useTransform(scrollYProgress, [0, 0.2, 0.8, 1], [0, 1, 1, 0]);
+  const [isPaused, setIsPaused] = useState(false);
 
-  const nextSlide = () => {
-    setCurrentIndex((prev) => (prev + 1) % galleryItems.length);
-  };
+  useEffect(() => {
+    if (isPaused) return;
 
-  const prevSlide = () => {
-    setCurrentIndex((prev) => (prev - 1 + galleryItems.length) % galleryItems.length);
-  };
+    const timer = window.setInterval(() => {
+      setCurrentIndex(prev => (prev + 1) % galleryItems.length);
+    }, 4200);
+
+    return () => window.clearInterval(timer);
+  }, [isPaused]);
 
   return (
     <motion.section
       id="gallery"
-      ref={sectionRef}
       initial={{ opacity: 0 }}
       whileInView={{ opacity: 1 }}
       viewport={{ once: true, amount: 0.2 }}
-      transition={{ duration: 0.8 }}
-      className="relative py-24 lg:py-32 overflow-hidden bg-gradient-to-br from-white via-[#f0fdf4] to-[#e8f4fc]"
+      transition={{ duration: 0.7 }}
+      className="relative py-24 lg:py-32 overflow-hidden bg-gradient-to-br from-white via-[#f0fdf4] to-[#e8f4fc] border-t border-[#00b982]/20"
     >
-      {/* Animated Background Elements */}
-      <motion.div 
-        className="absolute inset-0 pointer-events-none"
-      >
-        <div className="absolute top-20 right-20 w-96 h-96 bg-[#00b982]/10 rounded-full blur-3xl" />
-        <div className="absolute bottom-20 left-20 w-80 h-80 bg-[#14b8a6]/10 rounded-full blur-3xl" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gradient-to-r from-[#00b982]/5 to-[#1a365d]/5 rounded-full blur-3xl" />
-      </motion.div>
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute top-20 right-20 w-80 h-80 bg-[#00b982]/8 rounded-full blur-3xl" />
+        <div className="absolute bottom-20 left-20 w-72 h-72 bg-[#14b8a6]/8 rounded-full blur-3xl" />
+      </div>
 
       <div className="container mx-auto px-4 lg:px-8 relative z-10">
-        {/* Section Header - Visible with Styling */}
-        <div className="mb-16 lg:mb-20 flex justify-center">
-          <div className="text-center">
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-[#1a365d] mb-3">
-              Haqqımızda
+        <div className="grid lg:grid-cols-2 gap-10 lg:gap-12 items-start">
+          <motion.div
+            initial={{ opacity: 0, x: -24 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+            className="max-w-2xl"
+          >
+            <p className="uppercase tracking-[0.22em] text-sm font-medium text-[#00b982]">Haqqımızda</p>
+            <h2 className="mt-2 text-4xl md:text-5xl font-extrabold text-[#1a365d] leading-tight">
+              Bizim Hekayəmiz
             </h2>
-          </div>
-        </div>
 
-        {/* Gallery Slider */}
-        <motion.div
-          style={{ opacity }}
-          className="relative mb-20 -mx-4 lg:-mx-8"
-        >
-          <div className="relative overflow-hidden aspect-[16/9] w-full">
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={currentIndex}
-                initial={{ opacity: 0, scale: 1.1 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.95 }}
-                transition={{ duration: 0.6 }}
-                className="absolute inset-0"
-              >
-                <motion.img
-                  src={galleryItems[currentIndex].src}
-                  alt={galleryItems[currentIndex].title}
-                  className="w-full h-full object-cover"
-                  style={{ y }}
-                />
-                {/* Overlay */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
-                
-                {/* Content */}
-                <div className="absolute bottom-0 left-0 right-0 p-8 md:p-12">
-                  <motion.h3
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.2 }}
-                    className="text-2xl md:text-3xl font-bold text-white mb-2"
-                  >
-                    {galleryItems[currentIndex].title}
-                  </motion.h3>
-                  <motion.p
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.3 }}
-                    className="text-gray-300 text-lg"
-                  >
-                    {galleryItems[currentIndex].description}
-                  </motion.p>
+            <p className="mt-7 text-lg text-gray-600 leading-relaxed">
+              Dialab Klinika olaraq məqsədimiz müasir laboratoriya və diaqnostika xidmətlərini
+              yüksək keyfiyyətlə təqdim etməkdir. Pasient məmnuniyyəti, dəqiqlik və etibarlılıq
+              gündəlik fəaliyyətimizin əsas prioritetidir.
+            </p>
+
+            <p className="mt-5 text-lg text-gray-600 leading-relaxed">
+              Komandamız peşəkar mütəxəssislərdən ibarətdir və hər bir müraciətə fərdi yanaşma
+              göstərir. Texnoloji imkanlarımız sayəsində nəticələri sürətli və şəffaf şəkildə
+              təqdim edirik.
+            </p>
+
+            <div className="mt-10 border-y border-[#00b982]/20 divide-y divide-[#00b982]/20">
+              {aboutStats.map((item, index) => (
+                <div key={index} className="flex items-center justify-between gap-4 py-4">
+                  <div className="flex items-center gap-3">
+                    <div className="w-9 h-9 rounded-full bg-[#00b982]/12 flex items-center justify-center">
+                      <item.icon className="w-4 h-4 text-[#00b982]" />
+                    </div>
+                    <span className="text-xl font-bold text-[#1a365d]">{item.value}</span>
+                  </div>
+                  <span className="text-gray-600 text-base md:text-lg">{item.label}</span>
                 </div>
-              </motion.div>
-            </AnimatePresence>
-
-            {/* Navigation Arrows */}
-            <button
-              onClick={prevSlide}
-              className="absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white hover:bg-white/20 transition-all flex items-center justify-center"
-            >
-              <ChevronLeft className="w-6 h-6" />
-            </button>
-            <button
-              onClick={nextSlide}
-              className="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white hover:bg-white/20 transition-all flex items-center justify-center"
-            >
-              <ChevronRight className="w-6 h-6" />
-            </button>
-          </div>
-
-          {/* Slide Indicators */}
-          <div className="flex justify-center gap-3 mt-6">
-            {galleryItems.map((_, index) => (
-              <button
-                key={index}
-                onClick={() => setCurrentIndex(index)}
-                className={`h-2 rounded-full transition-all duration-300 ${
-                  index === currentIndex
-                    ? 'w-8 bg-[#00b982]'
-                    : 'w-2 bg-white/30 hover:bg-white/50'
-                }`}
-              />
-            ))}
-          </div>
-        </motion.div>
-
-        {/* About Features Grid */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {aboutFeatures.map((feature, index) => (
-            <motion.div
-              key={index}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: index * 0.1, duration: 0.6 }}
-              whileHover={{ y: -8, scale: 1.02 }}
-              className="group relative bg-white rounded-2xl p-6 border border-[#00b982]/20 hover:border-[#00b982]/50 transition-all duration-300 hover:shadow-lg hover:shadow-[#00b982]/10"
-            >
-
-              {/* Icon */}
-              <div className="w-12 h-12 rounded-xl bg-[#00b982]/20 flex items-center justify-center mb-4 group-hover:bg-[#00b982]/30 transition-colors">
-                <feature.icon className="w-6 h-6 text-[#00b982]" />
-              </div>
-              
-              {/* Content */}
-              <h3 className="text-lg font-bold text-[#1a365d] mb-2">{feature.title}</h3>
-              <p className="text-gray-600 text-sm leading-relaxed">{feature.description}</p>
-              
-              {/* Hover Glow */}
-              <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-[#00b982]/0 to-[#00b982]/0 group-hover:from-[#00b982]/5 group-hover:to-transparent transition-all duration-300" />
-            </motion.div>
-          ))}
-        </div>
-
-        {/* Stats Row */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ delay: 0.4, duration: 0.6 }}
-          className="mt-16 grid grid-cols-2 md:grid-cols-4 gap-8 py-8 border-t border-[#00b982]/20"
-        >
-          {[
-            { value: '500+', label: 'Test Növü' },
-            { value: '15+', label: 'İl Təcrübə' },
-            { value: '50K+', label: 'Xoşbəxt Pasient' },
-            { value: '20+', label: 'Mütəxəssis Həkim' },
-          ].map((stat, index) => (
-            <div key={index} className="text-center">
-              <div className="text-3xl md:text-4xl font-bold text-[#00b982] mb-2">{stat.value}</div>
-              <div className="text-gray-600">{stat.label}</div>
+              ))}
             </div>
-          ))}
-        </motion.div>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, x: 24 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+            className="relative"
+            onMouseEnter={() => setIsPaused(true)}
+            onMouseLeave={() => setIsPaused(false)}
+          >
+            <div className="relative overflow-hidden rounded-2xl border border-[#00b982]/20 shadow-xl shadow-black/10 aspect-[16/10] max-h-[420px] bg-white">
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={galleryItems[currentIndex].id}
+                  initial={{ opacity: 0, x: 45 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -45 }}
+                  transition={{ duration: 0.45, ease: 'easeOut' }}
+                  className="absolute inset-0"
+                >
+                  <img
+                    src={galleryItems[currentIndex].src}
+                    alt={galleryItems[currentIndex].title}
+                    className="w-full h-full object-cover"
+                    draggable={false}
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/62 via-black/20 to-transparent" />
+
+                  <div className="absolute bottom-0 left-0 right-0 p-5 md:p-6">
+                    <h3 className="text-2xl md:text-3xl font-bold text-white">
+                      {galleryItems[currentIndex].title}
+                    </h3>
+                    <p className="mt-2 text-white/90 text-sm md:text-base leading-relaxed">
+                      {galleryItems[currentIndex].description}
+                    </p>
+                  </div>
+                </motion.div>
+              </AnimatePresence>
+
+            </div>
+
+            <div className="flex justify-center gap-2.5 mt-4">
+              {galleryItems.map((item, index) => (
+                <button
+                  key={item.id}
+                  onClick={() => setCurrentIndex(index)}
+                  aria-label={`Şəkil ${index + 1}`}
+                  className={`h-2 rounded-full transition-all ${
+                    index === currentIndex ? 'w-7 bg-[#00b982]' : 'w-2 bg-[#1a365d]/25 hover:bg-[#1a365d]/45'
+                  }`}
+                />
+              ))}
+            </div>
+          </motion.div>
+        </div>
       </div>
-      
-      {/* Volumetric Section Divider */}
-      <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-b from-transparent via-[#00b982]/5 to-white pointer-events-none" />
-      <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-[#00b982]/30 to-transparent" />
     </motion.section>
   );
 }

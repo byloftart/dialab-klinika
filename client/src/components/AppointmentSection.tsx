@@ -120,8 +120,8 @@ export default function AppointmentSection() {
       initial={{ opacity: 0 }}
       whileInView={{ opacity: 1 }}
       viewport={{ once: true, amount: 0.2 }}
-      transition={{ duration: 0.8 }}
-      className="py-24 lg:py-32 bg-gradient-to-b from-[#f0fdf4] to-white relative overflow-hidden"
+      transition={{ duration: 0.45 }}
+      className="py-24 lg:py-32 bg-gradient-to-b from-[#f0fdf4] to-white relative overflow-hidden border-t border-[#00b982]/20"
     >
       {/* Background Decorations */}
       <div className="absolute inset-0 pointer-events-none">

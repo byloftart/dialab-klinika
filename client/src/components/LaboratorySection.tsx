@@ -6,8 +6,8 @@
  * Content: From Websiteserviceslist.pdf
  */
 
-import { useState, useRef } from 'react';
-import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
+import { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Droplet,
   Microscope,
@@ -120,28 +120,17 @@ const laboratoryAnalyses = [
 export default function LaboratorySection() {
   const [activeTab, setActiveTab] = useState(0);
   const [hoveredTab, setHoveredTab] = useState<number | null>(null);
-  const sectionRef = useRef<HTMLDivElement>(null);
-  
-  const { scrollYProgress } = useScroll({
-    target: sectionRef,
-    offset: ['start end', 'start start'],
-  });
-  
-  const slideY = useTransform(scrollYProgress, [0, 1], ['20%', '0%']);
-  const opacity = useTransform(scrollYProgress, [0, 0.5], [0, 1]);
 
   const activeAnalysis = laboratoryAnalyses[activeTab];
 
   return (
     <motion.section
       id="laboratory"
-      ref={sectionRef}
       initial={{ opacity: 0, y: 40 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, amount: 0.2 }}
-      transition={{ duration: 0.8 }}
-      style={{ y: slideY }}
-      className="py-24 lg:py-32 bg-gradient-to-br from-white via-[#f0fdf4] to-[#e8f4fc] relative overflow-hidden"
+      transition={{ duration: 0.45 }}
+      className="py-24 lg:py-32 bg-gradient-to-br from-white via-[#f0fdf4] to-[#e8f4fc] relative overflow-hidden border-t border-[#00b982]/20"
     >
       {/* Animated Background Elements */}
       <motion.div 

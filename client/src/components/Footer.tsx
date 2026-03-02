@@ -5,8 +5,7 @@
  * Color: Dark background with green accents
  */
 
-import { useRef } from 'react';
-import { motion, useScroll, useTransform } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { 
   MapPin, 
   Phone, 
@@ -19,16 +18,6 @@ import {
 import { MapView } from '@/components/Map';
 
 export default function Footer() {
-  const footerRef = useRef<HTMLDivElement>(null);
-  
-  const { scrollYProgress } = useScroll({
-    target: footerRef,
-    offset: ['start end', 'start center'],
-  });
-  
-  const slideX = useTransform(scrollYProgress, [0, 1], ['-5%', '0%']);
-  const opacity = useTransform(scrollYProgress, [0, 0.5], [0, 1]);
-
   const handleMapReady = (map: google.maps.Map) => {
     // Set marker for DIALAB Klinika location (Baku, Azerbaijan)
     const location = { lat: 40.4093, lng: 49.8671 };
@@ -51,13 +40,11 @@ export default function Footer() {
   return (
     <motion.footer
       id="contact"
-      ref={footerRef}
       initial={{ opacity: 0, y: 50 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, amount: 0.2 }}
-      transition={{ duration: 0.8 }}
-      style={{ x: slideX }}
-      className="relative bg-gradient-to-br from-white via-[#f0fdf4] to-[#e8f4fc] overflow-hidden"
+      transition={{ duration: 0.45 }}
+      className="relative bg-gradient-to-br from-white via-[#f0fdf4] to-[#e8f4fc] overflow-hidden border-t border-[#00b982]/20"
     >
       {/* Animated Background Elements */}
       <motion.div 
