@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
 import AdminLayout from '@/components/admin/AdminLayout';
 import AdminGuard from '@/components/admin/AdminGuard';
+import ImageUpload from '@/components/admin/ImageUpload';
 import { trpc } from '@/lib/trpc';
-import { Settings, Loader2, Save, CheckCircle } from 'lucide-react';
+import { Settings, Loader2, Save, CheckCircle, Image as ImageIcon } from 'lucide-react';
 
 const SETTINGS_SCHEMA = [
   {
@@ -33,9 +34,11 @@ const SETTINGS_SCHEMA = [
       { key: 'hero.title1', label: 'Başlıq sətri 1', placeholder: 'Sağlamlığınız —' },
       { key: 'hero.title2', label: 'Başlıq sətri 2 (qalın)', placeholder: 'Bizim Prioritet' },
       { key: 'hero.subtitle', label: 'Alt başlıq', placeholder: '500+ növ laboratoriya testi...' },
-      { key: 'hero.slide1', label: 'Slayd 1 Şəkil URL', placeholder: '/images/hero/slide1.jpg' },
-      { key: 'hero.slide2', label: 'Slayd 2 Şəkil URL', placeholder: '/images/hero/slide2.jpg' },
-      { key: 'hero.slide3', label: 'Slayd 3 Şəkil URL', placeholder: '/images/hero/slide3.jpg' },
+    ],
+    imageFields: [
+      { key: 'hero.slide1', label: 'Slayd 1 Şəkili' },
+      { key: 'hero.slide2', label: 'Slayd 2 Şəkili' },
+      { key: 'hero.slide3', label: 'Slayd 3 Şəkili' },
     ],
   },
   {
@@ -89,6 +92,14 @@ export default function SiteSettings() {
     setTimeout(() => setSaved(null), 2000);
   };
 
+  const handleImageUpload = (key: string, url: string) => {
+    setValues(v => ({ ...v, [key]: url }));
+    // Автосохранение после загрузки
+    const group = key.split('.')[0];
+    const label = SETTINGS_SCHEMA.find(s => s.group === group)?.label || '';
+    upsertMutation.mutateAsync({ key, value: url, label, group });
+  };
+
   return (
     <AdminGuard>
       <AdminLayout title="Tənzimləmələr">
@@ -98,7 +109,7 @@ export default function SiteSettings() {
           <div className="flex items-center justify-center py-16"><Loader2 className="w-8 h-8 text-[#00b982] animate-spin" /></div>
         ) : (
           <div className="space-y-6">
-            {SETTINGS_SCHEMA.map(({ group, label, fields }) => (
+            {SETTINGS_SCHEMA.map(({ group, label, fields, imageFields }: any) => (
               <div key={group} className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
                 <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
                   <div className="flex items-center gap-3">
@@ -115,28 +126,51 @@ export default function SiteSettings() {
                     {saved === group ? <><CheckCircle className="w-3.5 h-3.5" /> Saxlanıldı</> : <><Save className="w-3.5 h-3.5" /> Yadda saxla</>}
                   </button>
                 </div>
-                <div className="p-6 grid sm:grid-cols-2 gap-4">
-                  {fields.map((field: any) => (
-                    <div key={field.key} className={field.multiline ? 'sm:col-span-2' : ''}>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">{field.label}</label>
-                      {field.multiline ? (
-                        <textarea
-                          value={values[field.key] ?? ''}
-                          onChange={e => setValues(v => ({ ...v, [field.key]: e.target.value }))}
-                          rows={3}
-                          className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:border-[#00b982] focus:ring-2 focus:ring-[#00b982]/20 outline-none resize-none"
-                          placeholder={field.placeholder}
-                        />
-                      ) : (
-                        <input
-                          value={values[field.key] ?? ''}
-                          onChange={e => setValues(v => ({ ...v, [field.key]: e.target.value }))}
-                          className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:border-[#00b982] focus:ring-2 focus:ring-[#00b982]/20 outline-none"
-                          placeholder={field.placeholder}
-                        />
-                      )}
+                <div className="p-6 space-y-6">
+                  {/* Text Fields */}
+                  <div className="grid sm:grid-cols-2 gap-4">
+                    {fields.map((field: any) => (
+                      <div key={field.key} className={field.multiline ? 'sm:col-span-2' : ''}>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">{field.label}</label>
+                        {field.multiline ? (
+                          <textarea
+                            value={values[field.key] ?? ''}
+                            onChange={e => setValues(v => ({ ...v, [field.key]: e.target.value }))}
+                            rows={3}
+                            className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:border-[#00b982] focus:ring-2 focus:ring-[#00b982]/20 outline-none resize-none"
+                            placeholder={field.placeholder}
+                          />
+                        ) : (
+                          <input
+                            value={values[field.key] ?? ''}
+                            onChange={e => setValues(v => ({ ...v, [field.key]: e.target.value }))}
+                            className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:border-[#00b982] focus:ring-2 focus:ring-[#00b982]/20 outline-none"
+                            placeholder={field.placeholder}
+                          />
+                        )}
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Image Upload Fields */}
+                  {imageFields && (
+                    <div className="border-t border-gray-100 pt-6">
+                      <div className="flex items-center gap-2 mb-4">
+                        <ImageIcon className="w-4 h-4 text-[#00b982]" />
+                        <h4 className="font-semibold text-sm text-gray-700">Şəkillər</h4>
+                      </div>
+                      <div className="grid sm:grid-cols-3 gap-4">
+                        {imageFields.map((field: any) => (
+                          <ImageUpload
+                            key={field.key}
+                            label={field.label}
+                            currentImage={values[field.key]}
+                            onUpload={(url) => handleImageUpload(field.key, url)}
+                          />
+                        ))}
+                      </div>
                     </div>
-                  ))}
+                  )}
                 </div>
               </div>
             ))}

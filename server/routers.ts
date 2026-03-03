@@ -1,6 +1,7 @@
 import { COOKIE_NAME } from "@shared/const";
 import { getSessionCookieOptions } from "./_core/cookies";
 import { systemRouter } from "./_core/systemRouter";
+import { uploadRouter } from "./_core/uploadRouter";
 import { adminProcedure, publicProcedure, router } from "./_core/trpc";
 import { z } from "zod";
 import {
@@ -19,6 +20,7 @@ import {
 
 export const appRouter = router({
   system: systemRouter,
+  upload: uploadRouter,
 
   auth: router({
     me: publicProcedure.query(opts => opts.ctx.user),
