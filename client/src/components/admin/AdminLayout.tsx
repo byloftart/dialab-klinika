@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Link, useLocation } from 'wouter';
 import {
   LayoutDashboard, FlaskConical, Stethoscope, Users, Image,
-  Calendar, MessageSquare, Settings, LogOut, Menu, X,
+  Calendar, MessageSquare, Settings, LogOut, Menu, X, FileText,
   ChevronRight, Bell, Shield
 } from 'lucide-react';
 import { trpc } from '@/lib/trpc';
@@ -13,6 +13,7 @@ const navItems = [
   { href: '/admin/diagnostics', label: 'Diaqnostika', icon: Stethoscope },
   { href: '/admin/doctors', label: 'Həkimlər', icon: Users },
   { href: '/admin/gallery', label: 'Qalereya', icon: Image },
+  { href: '/admin/pages', label: 'Səhifələr', icon: FileText },
   { href: '/admin/appointments', label: 'Qəbullar', icon: Calendar },
   { href: '/admin/feedback', label: 'Mesajlar', icon: MessageSquare },
   { href: '/admin/settings', label: 'Tənzimləmələr', icon: Settings },

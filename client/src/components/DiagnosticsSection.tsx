@@ -1,152 +1,54 @@
-/**
- * Diagnostics Section - DIALAB Klinika (Section 4)
- * Design: Vertical tabs with expanding 3D info cards
- * Features: Doctor photos, service descriptions, hover animations
- * Color: Dark background with green/blue accents
- * Content: From Websiteserviceslist.pdf
- */
-
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  Stethoscope, 
-  Heart, 
-  Brain, 
-  Baby,
-  Ear,
-  Activity,
-  User,
-  ArrowRight
-} from 'lucide-react';
-
-const diagnosticsServices = [
-  {
-    id: 'usm',
-    title: 'Ultrasəs Müayinəsi (USM)',
-    icon: Activity,
-    color: '#00b982',
-    image: '/images/diagnostics-ultrasound.jpg',
-    description: 'Ən müasir USM cihazları ilə daxili orqanların, kiçik çanaq üzvlərinin və hamiləliyin müayinəsi.',
-    services: [
-      'Daxili orqanların USM-i',
-      'Kiçik çanaq üzvlərinin USM-i',
-      'Hamiləliyin USM-i və Doppleroqrafiya',
-      'Damarların Doppleroqrafiyası',
-      'Digər USM müayinələri'
-    ],
-    doctor: {
-      name: 'Dr. Aynur Məmmədova',
-      specialty: 'USM Mütəxəssisi',
-      experience: '12 il təcrübə'
-    }
-  },
-  {
-    id: 'cardio',
-    title: 'Kardioloji Diaqnostika',
-    icon: Heart,
-    color: '#ef4444',
-    image: '/images/doctor-consultation.jpg',
-    description: 'Ürək-damar sisteminin hərtərəfli müayinəsi və diaqnostikası.',
-    services: [
-      'Elektrokardioqramma (EKQ)',
-      'Holter EKQ monitorinqi',
-      'Exokardioqrafiya (EXO-KQ)',
-      'Stress testi',
-      'Kardioloji konsultasiya'
-    ],
-    doctor: {
-      name: 'Dr. Rəşad Hüseynov',
-      specialty: 'Kardioloq',
-      experience: '18 il təcrübə'
-    }
-  },
-  {
-    id: 'neuro',
-    title: 'Nevroloji Müayinə',
-    icon: Brain,
-    color: '#8b5cf6',
-    image: '/images/lab-analysis.jpg',
-    description: 'Sinir sisteminin müayinəsi və nevroloji xəstəliklərin diaqnostikası.',
-    services: [
-      'Elektroensefaloqramma (EEQ)',
-      'Nevroloji müayinə',
-      'Baş ağrılarının diaqnostikası',
-      'Yuxu pozğunluqları müayinəsi',
-      'Nevropatoloq konsultasiyası'
-    ],
-    doctor: {
-      name: 'Dr. Leyla Əliyeva',
-      specialty: 'Nevropatoloq',
-      experience: '15 il təcrübə'
-    }
-  },
-  {
-    id: 'gyneco',
-    title: 'Ginekoloji Müayinə',
-    icon: Baby,
-    color: '#ec4899',
-    image: '/images/diagnostics-ultrasound.jpg',
-    description: 'Qadın sağlamlığı üçün hərtərəfli ginekoloji müayinə və diaqnostika.',
-    services: [
-      'Kolposkopiya',
-      'Ginekoloji USM',
-      'Hamiləlik müayinəsi',
-      'Hormonal müayinə',
-      'Ginekoloq konsultasiyası'
-    ],
-    doctor: {
-      name: 'Dr. Səbinə Quliyeva',
-      specialty: 'Ginekoloq',
-      experience: '20 il təcrübə'
-    }
-  },
-  {
-    id: 'ent',
-    title: 'LOR Müayinəsi',
-    icon: Ear,
-    color: '#f59e0b',
-    image: '/images/doctor-consultation.jpg',
-    description: 'Qulaq, burun və boğaz xəstəliklərinin müayinəsi və müalicəsi.',
-    services: [
-      'Endoskopik müayinə',
-      'Audiometriya',
-      'Rinoskopiya',
-      'Laringoskopiya',
-      'LOR konsultasiyası'
-    ],
-    doctor: {
-      name: 'Dr. Kamran Əhmədov',
-      specialty: 'Otolorinqoloq-Foniatr',
-      experience: '14 il təcrübə'
-    }
-  },
-  {
-    id: 'general',
-    title: 'Ümumi Həkim Məsləhəti',
-    icon: Stethoscope,
-    color: '#14b8a6',
-    image: '/images/doctor-consultation.jpg',
-    description: 'Təcrübəli mütəxəssislərdən fərdi yanaşma və peşəkar məsləhət.',
-    services: [
-      'Terapevt konsultasiyası',
-      'Pediatr konsultasiyası',
-      'Endokrinoloq konsultasiyası',
-      'Dermatoveneroloq konsultasiyası',
-      'Reabilitoloq və Fizioterapiya'
-    ],
-    doctor: {
-      name: 'Dr. Nigar Həsənova',
-      specialty: 'Terapevt',
-      experience: '16 il təcrübə'
-    }
-  }
-];
+import { ArrowRight, CheckCircle2 } from 'lucide-react';
+import { trpc } from '@/lib/trpc';
+import { buildSettingsMap, getSetting } from '@/lib/siteSettings';
+import { getDiagnosticPresentation } from '@/lib/services';
 
 export default function DiagnosticsSection() {
-  const [activeTab, setActiveTab] = useState(0);
+  const [activeIndex, setActiveIndex] = useState(0);
   const [hoveredTab, setHoveredTab] = useState<number | null>(null);
+  const { data: settings } = trpc.cms.settings.getGroup.useQuery({ group: 'diagnostics' });
+  const { data: diagnostics } = trpc.cms.diagnostics.list.useQuery();
 
-  const activeService = diagnosticsServices[activeTab];
+  const displayServices = useMemo(() => {
+    return (diagnostics ?? [])
+      .filter((item) => item.isActive)
+      .map((item, index) => ({
+        ...item,
+        ...getDiagnosticPresentation(item.icon, index),
+      }));
+  }, [diagnostics]);
+
+  const visibleService = displayServices[activeIndex];
+  const { data: activeServiceData } = trpc.cms.diagnostics.getById.useQuery(
+    { id: visibleService?.id ?? 0 },
+    { enabled: Boolean(visibleService?.id) }
+  );
+
+  useEffect(() => {
+    if (!displayServices.length) {
+      setActiveIndex(0);
+      return;
+    }
+
+    if (activeIndex >= displayServices.length) {
+      setActiveIndex(0);
+    }
+  }, [activeIndex, displayServices.length]);
+
+  const settingsMap = buildSettingsMap(settings);
+  const eyebrow = getSetting(settingsMap, 'diagnostics.eyebrow', 'Tibbi Diaqnostika');
+  const title = getSetting(settingsMap, 'diagnostics.title', 'Tibbi Diaqnostika');
+  const subtitle = getSetting(
+    settingsMap,
+    'diagnostics.subtitle',
+    'Müasir avadanlıqlarla instrumental diaqnostika'
+  );
+
+  if (!displayServices.length) {
+    return null;
+  }
 
   return (
     <motion.section
@@ -157,111 +59,81 @@ export default function DiagnosticsSection() {
       transition={{ duration: 0.45 }}
       className="py-24 lg:py-32 bg-gradient-to-br from-white via-[#f0fdf4] to-[#e8f4fc] relative overflow-hidden border-t-2 border-[#00b982]/30"
     >
-      {/* Animated Background Elements */}
-      <motion.div 
-        className="absolute inset-0 pointer-events-none"
-      >
+      <motion.div className="absolute inset-0 pointer-events-none">
         <div className="absolute top-20 right-20 w-96 h-96 bg-[#00b982]/10 rounded-full blur-3xl" />
         <div className="absolute bottom-20 left-20 w-80 h-80 bg-[#14b8a6]/10 rounded-full blur-3xl" />
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gradient-to-r from-[#00b982]/5 to-[#1a365d]/5 rounded-full blur-3xl" />
       </motion.div>
 
       <div className="container mx-auto px-4 lg:px-8 relative z-10">
-        {/* Section Header - Hidden */}
         <div className="mb-16 lg:mb-20 flex justify-center">
-          <div className="text-center">
+          <div className="text-center max-w-3xl">
+            <p className="uppercase tracking-[0.2em] text-sm font-semibold text-[#00b982] mb-3">{eyebrow}</p>
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-[#1a365d] mb-3">
-              Tibbi Diaqnostika
+              {title}
             </h2>
             <p className="text-lg md:text-xl text-gray-600 font-medium max-w-2xl mx-auto">
-              Müasir avadanlıqlarla instrumental diaqnostika
+              {subtitle}
             </p>
           </div>
         </div>
-        
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="text-center mb-8 hidden"
-        >
-          <motion.span
-            initial={{ opacity: 0, scale: 0.9 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
-            className="inline-block px-4 py-2 rounded-full bg-[#00b982]/20 text-[#00b982] font-semibold text-sm mb-4 border border-[#00b982]/30"
-          >
-            Diaqnostika Xidmətləri
-          </motion.span>
-          <h2 className="font-extrabold text-4xl md:text-5xl lg:text-6xl text-[#1a365d] mb-4">
-            Tibbi <span className="text-[#00b982]">Diaqnostika</span> və Mþəlicə
-          </h2>
-          <p className="text-gray-700 text-xl font-medium max-w-2xl mx-auto">
-            Müasir avadanlıqlar və təcrubəli mütəxəssisrlərlə dəqiq diaqnostika
-          </p>
-        </motion.div>
 
-        {/* Main Content - Vertical Tabs Layout */}
         <div className="grid lg:grid-cols-12 gap-8">
-          {/* Vertical Tabs */}
           <div className="lg:col-span-4 space-y-3">
-            {diagnosticsServices.map((service, index) => (
+            {displayServices.map((service, index) => (
               <motion.button
                 key={service.id}
                 initial={{ opacity: 0, x: -30 }}
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
-                onClick={() => setActiveTab(index)}
+                transition={{ duration: 0.5, delay: index * 0.08 }}
+                onClick={() => setActiveIndex(index)}
                 onMouseEnter={() => setHoveredTab(index)}
                 onMouseLeave={() => setHoveredTab(null)}
                 className={`w-full text-left p-5 rounded-xl transition-all duration-300 group relative overflow-hidden min-h-[100px] ${
-                  activeTab === index
+                  activeIndex === index
                     ? 'bg-white border border-[#00b982]/50 shadow-lg shadow-[#00b982]/10'
                     : 'bg-white/50 border border-[#00b982]/10 hover:bg-white hover:border-[#00b982]/30'
                 }`}
               >
-                {/* Glow effect on hover */}
-                {(hoveredTab === index || activeTab === index) && (
+                {(hoveredTab === index || activeIndex === index) && (
                   <motion.div
-                    layoutId="tabGlow"
+                    layoutId="diagnosticTabGlow"
                     className="absolute inset-0"
                     style={{ background: `linear-gradient(135deg, ${service.color}15 0%, transparent 100%)` }}
                     transition={{ type: 'spring', stiffness: 300, damping: 30 }}
                   />
                 )}
-                
+
                 <div className="relative z-10 flex items-center gap-4">
-                  <motion.div 
+                  <motion.div
                     className="w-14 h-14 rounded-xl flex items-center justify-center shadow-lg transition-transform duration-300 flex-shrink-0"
-                    style={{ 
+                    style={{
                       backgroundColor: `${service.color}20`,
-                      boxShadow: activeTab === index ? `0 8px 20px -8px ${service.color}60` : 'none'
+                      boxShadow: activeIndex === index ? `0 8px 20px -8px ${service.color}60` : 'none'
                     }}
-                    animate={{ scale: activeTab === index ? 1.1 : 1 }}
+                    animate={{ scale: activeIndex === index ? 1.1 : 1 }}
                   >
                     <service.icon className="w-7 h-7" style={{ color: service.color }} />
                   </motion.div>
                   <div className="flex-1">
-                    <h3 className={`font-bold text-lg transition-colors ${activeTab === index ? 'text-[#00b982]' : 'text-[#1a365d] group-hover:text-[#00b982]'}`}>
-                      {service.title}
+                    <h3 className={`font-bold text-lg transition-colors ${activeIndex === index ? 'text-[#00b982]' : 'text-[#1a365d] group-hover:text-[#00b982]'}`}>
+                      {service.titleAz}
                     </h3>
                     <p className="text-gray-500 text-sm line-clamp-2">
-                      {service.services.length} xidmət
+                      {service.descriptionAz}
                     </p>
                   </div>
-                  <ArrowRight className={`w-5 h-5 transition-all duration-300 ${activeTab === index ? 'text-[#00b982] translate-x-0' : 'text-gray-400 -translate-x-2 opacity-0 group-hover:translate-x-0 group-hover:opacity-100'}`} />
+                  <ArrowRight className={`w-5 h-5 transition-all duration-300 ${activeIndex === index ? 'text-[#00b982] translate-x-0' : 'text-gray-400 -translate-x-2 opacity-0 group-hover:translate-x-0 group-hover:opacity-100'}`} />
                 </div>
               </motion.button>
             ))}
           </div>
 
-          {/* 3D Info Card */}
           <div className="lg:col-span-8">
             <AnimatePresence mode="wait">
               <motion.div
-                key={activeTab}
+                key={visibleService.id}
                 initial={{ opacity: 0, rotateY: -10, x: 50 }}
                 animate={{ opacity: 1, rotateY: 0, x: 0 }}
                 exit={{ opacity: 0, rotateY: 10, x: -50 }}
@@ -271,133 +143,64 @@ export default function DiagnosticsSection() {
               >
                 <motion.div
                   className="bg-white rounded-3xl border border-[#00b982]/20 overflow-hidden shadow-2xl shadow-[#00b982]/10"
-                  whileHover={{ 
-                    rotateY: 2,
-                    rotateX: -2,
-                  }}
+                  whileHover={{ rotateY: 2, rotateX: -2 }}
                   transition={{ duration: 0.4 }}
                   style={{ transformStyle: 'preserve-3d' }}
                 >
-                  {/* Image Header */}
                   <div className="relative h-64 overflow-hidden">
                     <motion.img
-                      key={activeService.image}
+                      key={visibleService.imageUrl || visibleService.image}
                       initial={{ scale: 1.1, opacity: 0 }}
                       animate={{ scale: 1, opacity: 1 }}
                       transition={{ duration: 0.6 }}
-                      src={activeService.image}
-                      alt={activeService.title}
+                      src={visibleService.imageUrl || visibleService.image}
+                      alt={visibleService.titleAz}
                       className="w-full h-full object-cover"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-white/80 via-white/40 to-transparent" />
-                    
-                    {/* Floating Badge */}
-                    <motion.div
-                      initial={{ y: 20, opacity: 0 }}
-                      animate={{ y: 0, opacity: 1 }}
-                      transition={{ delay: 0.3 }}
-                      className="absolute top-4 right-4 px-4 py-2 rounded-full bg-white/20 backdrop-blur-md border border-white/30"
-                    >
-                      <span className="text-white font-semibold text-sm">{activeService.services.length} Xidmət</span>
-                    </motion.div>
-
-                    {/* Title Overlay */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-black/20 to-transparent" />
                     <div className="absolute bottom-0 left-0 right-0 p-6">
-                      <div 
-                        className="inline-flex items-center gap-3 px-4 py-2 rounded-xl mb-3"
-                        style={{ backgroundColor: activeService.color }}
+                      <div
+                        className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-semibold"
+                        style={{ backgroundColor: `${visibleService.color}20`, color: visibleService.color }}
                       >
-                        <activeService.icon className="w-5 h-5 text-white" />
-                        <span className="text-white font-semibold">{activeService.title}</span>
+                        <visibleService.icon className="w-4 h-4" />
+                        {eyebrow}
                       </div>
+                      <h3 className="text-3xl font-bold text-white mt-3">{visibleService.titleAz}</h3>
                     </div>
                   </div>
 
-                  {/* Content */}
-                  <div className="p-6 space-y-6">
-                    {/* Description */}
-                    <p className="text-gray-700 text-lg leading-relaxed">
-                      {activeService.description}
+                  <div className="p-6 lg:p-8">
+                    <p className="text-gray-700 text-lg leading-relaxed font-medium">
+                      {visibleService.descriptionAz}
                     </p>
 
-                    {/* Services Grid */}
-                    <div className="grid sm:grid-cols-2 gap-3">
-                      {activeService.services.map((service, index) => (
-                        <motion.div
-                          key={index}
-                          initial={{ opacity: 0, y: 10 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          transition={{ delay: 0.1 + index * 0.05 }}
-                          className="flex items-center gap-3 p-3 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 transition-colors"
-                        >
-                          <div 
-                            className="w-2 h-2 rounded-full"
-                            style={{ backgroundColor: activeService.color }}
-                          />
-                          <span className="text-gray-700 text-sm font-medium">{service}</span>
-                        </motion.div>
+                    <div className="mt-8 grid md:grid-cols-2 gap-4">
+                      {(activeServiceData?.subServices ?? []).map((subService) => (
+                        <div key={subService.id} className="flex items-start gap-3 bg-[#f7fffb] rounded-2xl border border-[#00b982]/10 p-4">
+                          <CheckCircle2 className="w-5 h-5 text-[#00b982] mt-0.5 flex-shrink-0" />
+                          <div>
+                            <h4 className="font-semibold text-[#1a365d]">{subService.titleAz}</h4>
+                            {subService.descriptionAz && (
+                              <p className="text-sm text-gray-600 mt-1">{subService.descriptionAz}</p>
+                            )}
+                          </div>
+                        </div>
                       ))}
                     </div>
 
-                    {/* Doctor Card */}
-                    <motion.div
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: 0.4 }}
-                      className="flex flex-col sm:flex-row items-center gap-4 p-4 rounded-xl border border-white/10"
-                      style={{ background: `linear-gradient(135deg, ${activeService.color}15 0%, transparent 100%)` }}
-                    >
-                      <div 
-                        className="w-16 h-16 rounded-full flex items-center justify-center shadow-lg"
-                        style={{ 
-                          backgroundColor: activeService.color,
-                          boxShadow: `0 8px 20px -8px ${activeService.color}60`
-                        }}
-                      >
-                        <User className="w-8 h-8 text-white" />
+                    {(activeServiceData?.subServices ?? []).length === 0 && (
+                      <div className="mt-8 rounded-2xl border border-dashed border-[#00b982]/20 p-6 text-center text-gray-500">
+                        Bu xidmət üçün alt diaqnostika punktları admin paneldən əlavə oluna bilər.
                       </div>
-                      <div className="text-center sm:text-left">
-                        <h4 className="font-bold text-[#1a365d]">{activeService.doctor.name}</h4>
-                        <p className="font-semibold text-sm" style={{ color: activeService.color }}>{activeService.doctor.specialty}</p>
-                        <p className="text-gray-600 text-sm font-medium">{activeService.doctor.experience}</p>
-                      </div>
-                      <motion.button
-                        whileHover={{ scale: 1.05, y: -2 }}
-                        whileTap={{ scale: 0.98 }}
-                        onClick={() => {
-                          const element = document.getElementById('appointment');
-                          if (element) {
-                            const headerHeight = 80;
-                            const elementPosition = element.getBoundingClientRect().top + window.scrollY;
-                            window.scrollTo({ top: elementPosition - headerHeight, behavior: 'smooth' });
-                          }
-                        }}
-                        className="sm:ml-auto px-6 py-3 text-white font-semibold rounded-xl shadow-lg transition-all"
-                        style={{ 
-                          background: `linear-gradient(135deg, ${activeService.color}, ${activeService.color}cc)`,
-                          boxShadow: `0 10px 30px -10px ${activeService.color}60`
-                        }}
-                      >
-                        Randevu Al
-                      </motion.button>
-                    </motion.div>
+                    )}
                   </div>
                 </motion.div>
-
-                {/* 3D Shadow Effect */}
-                <div 
-                  className="absolute -inset-4 rounded-3xl blur-2xl -z-10 opacity-30"
-                  style={{ background: `linear-gradient(135deg, ${activeService.color}40 0%, transparent 100%)` }}
-                />
               </motion.div>
             </AnimatePresence>
           </div>
         </div>
       </div>
-      
-      {/* Volumetric Section Divider */}
-      <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-b from-transparent via-[#00b982]/5 to-white pointer-events-none" />
-      <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-[#00b982]/30 to-transparent" />
     </motion.section>
   );
 }

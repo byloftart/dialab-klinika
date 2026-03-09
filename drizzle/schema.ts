@@ -55,6 +55,7 @@ export const laboratoryAnalysisTypes = mysqlTable("laboratoryAnalysisTypes", {
   id: int("id").autoincrement().primaryKey(),
   titleAz: varchar("titleAz", { length: 255 }).notNull(),
   descriptionAz: text("descriptionAz").notNull(),
+  imageUrl: varchar("imageUrl", { length: 512 }),
   icon: varchar("icon", { length: 100 }),
   order: int("order").default(0),
   isActive: boolean("isActive").default(true).notNull(),
@@ -163,3 +164,21 @@ export const siteSettings = mysqlTable("siteSettings", {
 
 export type SiteSetting = typeof siteSettings.$inferSelect;
 export type InsertSiteSetting = typeof siteSettings.$inferInsert;
+
+// ─── CMS: Static Pages ────────────────────────────────────────────────────────
+
+export const staticPages = mysqlTable("staticPages", {
+  id: int("id").autoincrement().primaryKey(),
+  titleAz: varchar("titleAz", { length: 255 }).notNull(),
+  slug: varchar("slug", { length: 150 }).notNull().unique(),
+  excerptAz: text("excerptAz"),
+  contentAz: text("contentAz"),
+  heroImageUrl: varchar("heroImageUrl", { length: 512 }),
+  order: int("order").default(0),
+  isPublished: boolean("isPublished").default(false).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type StaticPage = typeof staticPages.$inferSelect;
+export type InsertStaticPage = typeof staticPages.$inferInsert;

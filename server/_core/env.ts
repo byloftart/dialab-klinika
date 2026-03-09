@@ -7,4 +7,6 @@ export const ENV = {
   isProduction: process.env.NODE_ENV === "production",
   forgeApiUrl: process.env.BUILT_IN_FORGE_API_URL ?? "",
   forgeApiKey: process.env.BUILT_IN_FORGE_API_KEY ?? "",
+  gcsBucketName: process.env.GCS_BUCKET_NAME ?? "",
+  gcsPublicBaseUrl: process.env.GCS_PUBLIC_BASE_URL ?? "",
 };

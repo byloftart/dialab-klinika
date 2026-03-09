@@ -18,16 +18,8 @@ import {
   ChevronDown
 } from 'lucide-react';
 import { toast } from 'sonner';
-
-const services = [
-  { value: 'laboratory', label: 'Laboratoriya Testləri' },
-  { value: 'usm', label: 'Ultrasəs Müayinəsi (USM)' },
-  { value: 'cardio', label: 'Kardioloji Diaqnostika' },
-  { value: 'neuro', label: 'Nevroloji Müayinə' },
-  { value: 'gyneco', label: 'Ginekoloji Müayinə' },
-  { value: 'ent', label: 'LOR Müayinəsi' },
-  { value: 'general', label: 'Ümumi Həkim Məsləhəti' },
-];
+import { trpc } from '@/lib/trpc';
+import { buildServiceOptions } from '@/lib/services';
 
 const timeSlots = [
   '09:00', '09:30', '10:00', '10:30', '11:00', '11:30',
@@ -45,6 +37,10 @@ export default function CompactAppointmentForm() {
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const { data: laboratory } = trpc.cms.laboratory.list.useQuery();
+  const { data: diagnostics } = trpc.cms.diagnostics.list.useQuery();
+  const appointmentMutation = trpc.cms.appointments.create.useMutation();
+  const services = buildServiceOptions(laboratory, diagnostics);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -55,22 +51,33 @@ export default function CompactAppointmentForm() {
     }
 
     setIsSubmitting(true);
-    await new Promise(resolve => setTimeout(resolve, 1500));
-    
-    setIsSubmitting(false);
-    setIsSubmitted(true);
-    toast.success('Randevunuz uğurla qeydə alındı!');
-    
-    setTimeout(() => {
-      setIsSubmitted(false);
-      setFormData({
-        name: '',
-        phone: '',
-        service: '',
-        date: '',
-        time: ''
+    try {
+      await appointmentMutation.mutateAsync({
+        fullName: formData.name,
+        phone: formData.phone,
+        appointmentDate: formData.date,
+        appointmentTime: formData.time,
+        serviceType: formData.service,
       });
-    }, 3000);
+
+      setIsSubmitted(true);
+      toast.success('Randevunuz uğurla qeydə alındı!');
+
+      setTimeout(() => {
+        setIsSubmitted(false);
+        setFormData({
+          name: '',
+          phone: '',
+          service: '',
+          date: '',
+          time: ''
+        });
+      }, 3000);
+    } catch {
+      toast.error('Randevu göndərilərkən xəta baş verdi');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleInputChange = (field: string, value: string) => {

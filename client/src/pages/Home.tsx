@@ -20,38 +20,46 @@ import DiagnosticsSection from '@/components/DiagnosticsSection';
 import AppointmentSection from '@/components/AppointmentSection';
 import Footer from '@/components/Footer';
 import VirtualAssistant from '@/components/VirtualAssistant';
+import { trpc } from '@/lib/trpc';
+import { buildSettingsMap, parseHomeSections, type HomeSectionSetting } from '@/lib/siteSettings';
+
+const fallbackSections: HomeSectionSetting[] = [
+  { id: 'hero', enabled: true },
+  { id: 'infoBar', enabled: true },
+  { id: 'gallery', enabled: true },
+  { id: 'laboratory', enabled: true },
+  { id: 'diagnostics', enabled: true },
+  { id: 'appointment', enabled: true },
+];
 
 export default function Home() {
+  const { data: homeSettings } = trpc.cms.settings.getGroup.useQuery({ group: 'home' });
+  const settingsMap = buildSettingsMap(homeSettings);
+  const sections = parseHomeSections(settingsMap['home.sections'], fallbackSections);
+
+  const sectionRegistry = {
+    hero: HeroSection,
+    infoBar: InfoBar,
+    gallery: MediaGallery,
+    laboratory: LaboratorySection,
+    diagnostics: DiagnosticsSection,
+    appointment: AppointmentSection,
+  } as const;
+
   return (
     <div className="min-h-screen bg-white overflow-x-hidden">
-      {/* Sticky Header with Navigation */}
       <Header />
-      
-      {/* Main Content */}
+
       <main>
-        {/* Section 1: Hero - Full width parallax slider */}
-        <HeroSection />
-        
-        {/* Section 1.5: Info Bar - Contacts, Appointment, Hours */}
-        <InfoBar />
-        
-        {/* Section 2: Media Gallery - About Us with image slider */}
-        <MediaGallery />
-        
-        {/* Section 3: Laboratory - Accordion with 3D tiles */}
-        <LaboratorySection />
-        
-        {/* Section 4: Diagnostics - Vertical tabs with 3D cards */}
-        <DiagnosticsSection />
-        
-        {/* Section 5: Appointment - Booking form with FAQ */}
-        <AppointmentSection />
+        {sections
+          .filter((section) => section.enabled)
+          .map((section) => {
+            const Component = sectionRegistry[section.id as keyof typeof sectionRegistry];
+            return Component ? <Component key={section.id} /> : null;
+          })}
       </main>
-      
-      {/* Section 6: Footer - Contact and Map */}
+
       <Footer />
-      
-      {/* Floating Virtual Assistant */}
       <VirtualAssistant />
     </div>
   );

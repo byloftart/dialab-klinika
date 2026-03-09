@@ -6,9 +6,10 @@ interface ImageUploadProps {
   onUpload: (url: string) => void;
   label?: string;
   currentImage?: string;
+  category?: string;
 }
 
-export default function ImageUpload({ onUpload, label = 'Şəkil Yüklə', currentImage }: ImageUploadProps) {
+export default function ImageUpload({ onUpload, label = 'Şəkil Yüklə', currentImage, category = 'uploads' }: ImageUploadProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [preview, setPreview] = useState<string | null>(currentImage || null);
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
@@ -70,6 +71,8 @@ export default function ImageUpload({ onUpload, label = 'Şəkil Yüklə', curre
     uploadMutation.mutate({
       filename: file.name,
       base64,
+      contentType: file.type,
+      category,
     });
   };
 

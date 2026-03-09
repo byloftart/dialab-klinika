@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import AdminLayout from '@/components/admin/AdminLayout';
 import AdminGuard from '@/components/admin/AdminGuard';
+import ImageUpload from '@/components/admin/ImageUpload';
 import { trpc } from '@/lib/trpc';
 import { Plus, Pencil, Trash2, ChevronDown, ChevronRight, Stethoscope, Loader2, ToggleLeft, ToggleRight } from 'lucide-react';
 
@@ -163,8 +164,14 @@ export default function Diagnostics() {
                 <label className="block text-sm font-medium text-gray-700 mb-1">Təsvir *</label>
                 <textarea value={form.descriptionAz} onChange={e => setForm(f => ({ ...f, descriptionAz: e.target.value }))} rows={3} className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:border-[#00b982] focus:ring-2 focus:ring-[#00b982]/20 outline-none resize-none" />
               </div>
+              <ImageUpload
+                label="Bölmə şəkli"
+                currentImage={form.imageUrl}
+                category="diagnostics"
+                onUpload={(url) => setForm(f => ({ ...f, imageUrl: url }))}
+              />
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Şəkil URL</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">və ya şəkil URL</label>
                 <input value={form.imageUrl} onChange={e => setForm(f => ({ ...f, imageUrl: e.target.value }))} className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:border-[#00b982] focus:ring-2 focus:ring-[#00b982]/20 outline-none" placeholder="https://..." />
               </div>
               <div className="grid grid-cols-2 gap-4">

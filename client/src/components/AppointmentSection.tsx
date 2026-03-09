@@ -1,164 +1,69 @@
-/**
- * Appointment Section - DIALAB Klinika (Section 5)
- * Design: Booking form with FAQ accordion
- * Features: Form validation, service selection, FAQ, contact info
- * Color: Light green/white background
- */
-
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  Calendar, 
-  Clock, 
-  User, 
-  Phone, 
-  Mail, 
-  MessageSquare,
-  Send,
-  CheckCircle,
-  Stethoscope,
-  ChevronDown,
-  HelpCircle
-} from 'lucide-react';
-import { toast } from 'sonner';
+import { ChevronDown, HelpCircle } from 'lucide-react';
+import { trpc } from '@/lib/trpc';
+import { buildSettingsMap, getSetting, parseJsonSetting } from '@/lib/siteSettings';
 import FeedbackForm from './FeedbackForm';
 
-const services = [
-  { value: 'laboratory', label: 'Laboratoriya Testləri' },
-  { value: 'usm', label: 'Ultrasəs Müayinəsi (USM)' },
-  { value: 'cardio', label: 'Kardioloji Diaqnostika' },
-  { value: 'neuro', label: 'Nevroloji Müayinə' },
-  { value: 'gyneco', label: 'Ginekoloji Müayinə' },
-  { value: 'ent', label: 'LOR Müayinəsi' },
-  { value: 'general', label: 'Ümumi Həkim Məsləhəti' },
-];
+type FaqItem = {
+  question: string;
+  answer: string;
+};
 
-const timeSlots = [
-  '09:00', '09:30', '10:00', '10:30', '11:00', '11:30',
-  '14:00', '14:30', '15:00', '15:30', '16:00', '16:30', '17:00'
-];
-
-const faqItems = [
+const fallbackFaqItems: FaqItem[] = [
   {
     question: 'Randevu almaq üçün nə etməliyəm?',
-    answer: 'Randevu almaq üçün bu formu doldurun, telefonla (+994 12 345 67 89) zəng edin və ya WhatsApp vasitəsilə əlaqə saxlayın. Operatorlarımız sizə ən uyğun vaxtı təyin edəcəklər.',
+    answer: 'Randevu almaq üçün formu doldurun, telefonla zəng edin və ya WhatsApp vasitəsilə əlaqə saxlayın. Operatorlarımız sizə uyğun vaxt təklif edəcəklər.',
   },
   {
     question: 'Laboratoriya testlərinin nəticələri nə qədər vaxt alır?',
-    answer: 'Əksər standart testlərin nəticələri 24-48 saat ərzində hazır olur. Bəzi xüsusi testlər (genetik, onkoloji) 5-7 iş günü tələb edə bilər.',
+    answer: 'Standart testlərin çoxu 24-48 saat ərzində hazır olur. Xüsusi testlər daha uzun müddət tələb edə bilər.',
   },
   {
     question: 'Hansı ödəniş üsullarını qəbul edirsiniz?',
-    answer: 'Nağd, bank kartları (Visa, MasterCard) və bank köçürməsi ilə ödəniş qəbul edirik. Bəzi sığorta şirkətləri ilə də əməkdaşlıq edirik.',
-  },
-  {
-    question: 'Müayinəyə gəlmədən əvvəl nə etməliyəm?',
-    answer: 'Qan testləri üçün 8-12 saat ac qalmaq tövsiyə olunur. USM müayinəsi üçün xüsusi hazırlıq tələb oluna bilər - qeydiyyat zamanı məlumat veriləcək.',
+    answer: 'Nağd, bank kartları və bank köçürməsi ilə ödəniş mümkündür. Bəzi sığorta şirkətləri ilə əməkdaşlıq da mümkündür.',
   },
   {
     question: 'Nəticələri necə ala bilərəm?',
-    answer: 'Nəticələri klinikadan şəxsən, e-poçt vasitəsilə və ya onlayn portalımızdan əldə edə bilərsiniz. Həmçinin WhatsApp vasitəsilə də göndərə bilərik.',
-  },
-  {
-    question: 'Randevuyu ləğv etmək və ya dəyişdirmək mümkündür?',
-    answer: 'Bəli, randevuyu müayinədən ən azı 24 saat əvvəl ləğv etdirə və ya dəyişdirə bilərsiniz. Bunun üçün +994 12 345 67 89 nömrəsinə zəng edin.',
+    answer: 'Nəticələri klinikadan, e-poçt vasitəsilə və ya onlayn formada təqdim edə bilərik.',
   },
 ];
 
 export default function AppointmentSection() {
-  const [formData, setFormData] = useState({
-    name: '',
-    phone: '',
-    email: '',
-    service: '',
-    date: '',
-    time: '',
-    message: ''
-  });
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isSubmitted, setIsSubmitted] = useState(false);
   const [expandedFaq, setExpandedFaq] = useState<number | null>(0);
+  const { data: appointmentSettings } = trpc.cms.settings.getGroup.useQuery({ group: 'appointment' });
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    if (!formData.name || !formData.phone || !formData.service) {
-      toast.error('Zəhmət olmasa bütün məcburi sahələri doldurun');
-      return;
-    }
-
-    setIsSubmitting(true);
-    await new Promise(resolve => setTimeout(resolve, 1500));
-    
-    setIsSubmitting(false);
-    setIsSubmitted(true);
-    toast.success('Randevunuz uğurla qeydə alındı!');
-    
-    setTimeout(() => {
-      setIsSubmitted(false);
-      setFormData({
-        name: '',
-        phone: '',
-        email: '',
-        service: '',
-        date: '',
-        time: '',
-        message: ''
-      });
-    }, 3000);
-  };
-
-  const handleInputChange = (field: string, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
-  };
-
-  const today = new Date().toISOString().split('T')[0];
+  const settingsMap = buildSettingsMap(appointmentSettings);
+  const sectionTitle = getSetting(settingsMap, 'appointment.title', 'Məlumat');
+  const faqTitle = getSetting(settingsMap, 'appointment.faqTitle', 'Tez-tez Verilən Suallar');
+  const faqSubtitle = getSetting(settingsMap, 'appointment.faqSubtitle', 'Ən çox soruşulan suallar');
+  const faqItems = parseJsonSetting<FaqItem[]>(settingsMap['appointment.faqItems'], fallbackFaqItems)
+    .filter((item) => item?.question && item?.answer);
 
   return (
-    <motion.section 
-      id="appointment" 
+    <motion.section
+      id="appointment"
       initial={{ opacity: 0 }}
       whileInView={{ opacity: 1 }}
       viewport={{ once: true, amount: 0.2 }}
       transition={{ duration: 0.45 }}
       className="py-24 lg:py-32 bg-gradient-to-b from-[#f0fdf4] to-white relative overflow-hidden border-t-2 border-[#00b982]/30"
     >
-      {/* Background Decorations */}
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute top-0 right-0 w-96 h-96 bg-[#00b982]/10 rounded-full blur-3xl" />
         <div className="absolute bottom-0 left-0 w-80 h-80 bg-[#14b8a6]/10 rounded-full blur-3xl" />
       </div>
 
       <div className="container mx-auto px-4 lg:px-8 relative z-10">
-        {/* Section Header - Hidden */}
         <div className="mb-16 lg:mb-20 flex justify-center">
           <div className="text-center">
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-[#1a365d] mb-3">
-              Məlumat
+              {sectionTitle}
             </h2>
           </div>
         </div>
-        
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="text-center mb-8 hidden"
-        >
-          <span className="inline-block px-4 py-2 rounded-full bg-[#00b982]/10 text-[#00b982] text-sm font-medium mb-4">
-            Onlayn Randevu
-          </span>
-          <h2 className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-[#1a365d] mb-6">
-            Randevu <span className="text-[#00b982]">Alın</span>
-          </h2>
-          <p className="text-gray-700 max-w-2xl mx-auto text-xl font-medium">
-            Formu doldurarak və ya birbaaaş əlaqə saxlayarak randevu ala bilərsiniz
-          </p>
-        </motion.div>
 
         <div className="grid lg:grid-cols-2 gap-12">
-          {/* Feedback Form */}
           <motion.div
             initial={{ opacity: 0, x: -30 }}
             whileInView={{ opacity: 1, x: 0 }}
@@ -168,7 +73,6 @@ export default function AppointmentSection() {
             <FeedbackForm />
           </motion.div>
 
-          {/* FAQ Section */}
           <motion.div
             initial={{ opacity: 0, x: 30 }}
             whileInView={{ opacity: 1, x: 0 }}
@@ -180,15 +84,15 @@ export default function AppointmentSection() {
                 <HelpCircle className="w-6 h-6 text-[#00b982]" />
               </div>
               <div>
-                <h3 className="text-2xl font-bold text-[#1a365d]">Tez-tez Verilən Suallar</h3>
-                <p className="text-base text-gray-600">En çox soruşulan suallar</p>
+                <h3 className="text-2xl font-bold text-[#1a365d]">{faqTitle}</h3>
+                <p className="text-base text-gray-600">{faqSubtitle}</p>
               </div>
             </div>
 
             <div className="space-y-4">
               {faqItems.map((item, index) => (
                 <motion.div
-                  key={index}
+                  key={`${item.question}-${index}`}
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
@@ -208,7 +112,7 @@ export default function AppointmentSection() {
                       <ChevronDown className="w-5 h-5 text-gray-500" />
                     </motion.div>
                   </button>
-                  
+
                   <AnimatePresence>
                     {expandedFaq === index && (
                       <motion.div
@@ -227,8 +131,6 @@ export default function AppointmentSection() {
                 </motion.div>
               ))}
             </div>
-
-            {/* Working Hours removed - moved to footer */}
           </motion.div>
         </div>
       </div>

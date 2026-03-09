@@ -16,6 +16,8 @@ import {
   CheckCircle
 } from 'lucide-react';
 import { toast } from 'sonner';
+import { trpc } from '@/lib/trpc';
+import { buildSettingsMap, getSetting } from '@/lib/siteSettings';
 
 export default function FeedbackForm() {
   const [formData, setFormData] = useState({
@@ -28,6 +30,20 @@ export default function FeedbackForm() {
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const { data: feedbackSettings } = trpc.cms.settings.getGroup.useQuery({ group: 'feedback' });
+  const feedbackMutation = trpc.cms.feedback.create.useMutation();
+
+  const settingsMap = buildSettingsMap(feedbackSettings);
+  const title = getSetting(settingsMap, 'feedback.title', 'Bizə Yazın');
+  const subtitle = getSetting(settingsMap, 'feedback.subtitle', 'Suallarınız və təklifləriniz üçün');
+  const subjectPlaceholder = getSetting(settingsMap, 'feedback.subjectPlaceholder', 'Mesajın mövzusu');
+  const buttonLabel = getSetting(settingsMap, 'feedback.buttonLabel', 'Göndər');
+  const successTitle = getSetting(settingsMap, 'feedback.successTitle', 'Təşəkkür Edirik!');
+  const successText = getSetting(
+    settingsMap,
+    'feedback.successText',
+    'Mesajınız uğurla göndərildi. Tezliklə sizinlə əlaqə saxlayacağıq.'
+  );
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -38,22 +54,33 @@ export default function FeedbackForm() {
     }
 
     setIsSubmitting(true);
-    await new Promise(resolve => setTimeout(resolve, 1500));
-    
-    setIsSubmitting(false);
-    setIsSubmitted(true);
-    toast.success('Mesajınız uğurla göndərildi!');
-    
-    setTimeout(() => {
-      setIsSubmitted(false);
-      setFormData({
-        name: '',
-        email: '',
-        phone: '',
-        subject: '',
-        message: ''
+    try {
+      await feedbackMutation.mutateAsync({
+        fullName: formData.name,
+        email: formData.email,
+        phone: formData.phone,
+        subject: formData.subject,
+        message: formData.message,
       });
-    }, 3000);
+
+      setIsSubmitted(true);
+      toast.success('Mesajınız uğurla göndərildi!');
+
+      setTimeout(() => {
+        setIsSubmitted(false);
+        setFormData({
+          name: '',
+          email: '',
+          phone: '',
+          subject: '',
+          message: ''
+        });
+      }, 3000);
+    } catch {
+      toast.error('Mesaj göndərilərkən xəta baş verdi');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleInputChange = (field: string, value: string) => {
@@ -76,8 +103,8 @@ export default function FeedbackForm() {
               <MessageSquare className="w-7 h-7 text-white" />
             </div>
             <div>
-              <h3 className="font-bold text-xl text-white">Bizə Yazın</h3>
-              <p className="text-white/80 text-sm">Suallarınız və təklifləriniz üçün</p>
+              <h3 className="font-bold text-xl text-white">{title}</h3>
+              <p className="text-white/80 text-sm">{subtitle}</p>
             </div>
           </div>
         </div>
@@ -100,8 +127,8 @@ export default function FeedbackForm() {
               >
                 <CheckCircle className="w-10 h-10 text-green-500" />
               </motion.div>
-              <h3 className="font-bold text-2xl text-[#1a365d] mb-2">Təşəkkür Edirik!</h3>
-              <p className="text-gray-600">Mesajınız uğurla göndərildi. Tezliklə sizinlə əlaqə saxlayacağıq.</p>
+              <h3 className="font-bold text-2xl text-[#1a365d] mb-2">{successTitle}</h3>
+              <p className="text-gray-600">{successText}</p>
             </motion.div>
           ) : (
             <motion.form
@@ -165,7 +192,7 @@ export default function FeedbackForm() {
                     type="text"
                     value={formData.subject}
                     onChange={(e) => handleInputChange('subject', e.target.value)}
-                    placeholder="Mesajın mövzusu"
+                    placeholder={subjectPlaceholder}
                     className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-[#00b982] focus:ring-4 focus:ring-[#00b982]/10 outline-none transition-all"
                   />
                 </div>
@@ -205,7 +232,7 @@ export default function FeedbackForm() {
                   </>
                 ) : (
                   <>
-                    Göndər
+                    {buttonLabel}
                     <Send className="w-5 h-5" />
                   </>
                 )}

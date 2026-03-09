@@ -7,6 +7,34 @@ import { Settings, Loader2, Save, CheckCircle, Image as ImageIcon } from 'lucide
 
 const SETTINGS_SCHEMA = [
   {
+    group: 'header',
+    label: 'Header və Naviqasiya',
+    fields: [
+      { key: 'header.logoTitle', label: 'Logo başlıq', placeholder: 'DIALAB' },
+      { key: 'header.logoSubtitle', label: 'Logo alt başlıq', placeholder: 'KLİNİKA' },
+      { key: 'header.phone', label: 'Header telefon', placeholder: '+994 12 345 67 89' },
+      { key: 'header.ctaLabel', label: 'CTA düymə mətni', placeholder: 'Randevu Al' },
+      {
+        key: 'header.navItems',
+        label: 'Naviqasiya JSON',
+        placeholder: '[{"id":"hero","label":"Ana Səhifə","href":"#hero"},{"id":"about-page","label":"Səhifə","href":"/pages/about"}]',
+        multiline: true,
+      },
+    ],
+  },
+  {
+    group: 'home',
+    label: 'Ana səhifə bölmələri',
+    fields: [
+      {
+        key: 'home.sections',
+        label: 'Bölmələrin sırası və görünməsi (JSON)',
+        placeholder: '[{"id":"hero","enabled":true},{"id":"infoBar","enabled":true},{"id":"gallery","enabled":true},{"id":"laboratory","enabled":true},{"id":"diagnostics","enabled":true},{"id":"appointment","enabled":true}]',
+        multiline: true,
+      },
+    ],
+  },
+  {
     group: 'contact',
     label: 'Əlaqə məlumatları',
     fields: [
@@ -45,12 +73,78 @@ const SETTINGS_SCHEMA = [
     group: 'about',
     label: 'Haqqımızda bölməsi',
     fields: [
+      { key: 'about.eyebrow', label: 'Kiçik başlıq', placeholder: 'Haqqımızda' },
       { key: 'about.title', label: 'Başlıq', placeholder: 'Bizim Hekayəmiz' },
       { key: 'about.text1', label: 'Birinci paraqraf', placeholder: 'Dialab Klinika olaraq...', multiline: true },
       { key: 'about.text2', label: 'İkinci paraqraf', placeholder: 'Komandamız...', multiline: true },
-      { key: 'about.stat1', label: 'Statistika 1 (rəqəm)', placeholder: '500+' },
-      { key: 'about.stat2', label: 'Statistika 2 (rəqəm)', placeholder: '50K+' },
-      { key: 'about.stat3', label: 'Statistika 3 (rəqəm)', placeholder: '15+ il' },
+      { key: 'about.stat1Value', label: 'Statistika 1 rəqəm', placeholder: '500+' },
+      { key: 'about.stat1Label', label: 'Statistika 1 mətn', placeholder: 'Laboratoriya testləri' },
+      { key: 'about.stat2Value', label: 'Statistika 2 rəqəm', placeholder: '50K+' },
+      { key: 'about.stat2Label', label: 'Statistika 2 mətn', placeholder: 'Xoşbəxt pasient' },
+      { key: 'about.stat3Value', label: 'Statistika 3 rəqəm', placeholder: '15+ il' },
+      { key: 'about.stat3Label', label: 'Statistika 3 mətn', placeholder: 'Sahə təcrübəsi' },
+      { key: 'about.videoUrl', label: 'Video URL', placeholder: 'MP4/WebM faylı, YouTube və ya Vimeo linki' },
+    ],
+    imageFields: [
+      { key: 'about.media1', label: 'Media 1' },
+      { key: 'about.media2', label: 'Media 2' },
+      { key: 'about.media3', label: 'Media 3' },
+      { key: 'about.media4', label: 'Media 4' },
+    ],
+  },
+  {
+    group: 'laboratory',
+    label: 'Laboratoriya bölməsi',
+    fields: [
+      { key: 'laboratory.eyebrow', label: 'Kiçik başlıq', placeholder: 'Laboratoriya Xidmətləri' },
+      { key: 'laboratory.title', label: 'Başlıq', placeholder: 'Laboratoriya Xidmətləri' },
+      { key: 'laboratory.subtitle', label: 'Alt başlıq', placeholder: 'Geniş spektrli laborator analizlər və dəqiq nəticələr' },
+    ],
+  },
+  {
+    group: 'diagnostics',
+    label: 'Diaqnostika bölməsi',
+    fields: [
+      { key: 'diagnostics.eyebrow', label: 'Kiçik başlıq', placeholder: 'Tibbi Diaqnostika' },
+      { key: 'diagnostics.title', label: 'Başlıq', placeholder: 'Tibbi Diaqnostika' },
+      { key: 'diagnostics.subtitle', label: 'Alt başlıq', placeholder: 'Müasir avadanlıqlarla instrumental diaqnostika' },
+    ],
+  },
+  {
+    group: 'infoBar',
+    label: 'Info Bar bölməsi',
+    fields: [
+      { key: 'infoBar.contactsTitle', label: 'Kontakt kart başlığı', placeholder: 'Əlaqə' },
+      { key: 'infoBar.appointmentTitle', label: 'Qəbul kart başlığı', placeholder: 'Qəbula Yazıl' },
+      { key: 'infoBar.hoursTitle', label: 'Saat kart başlığı', placeholder: 'İş Saatları' },
+      { key: 'infoBar.emergencyNote', label: 'Əlavə qeyd', placeholder: 'Təcili hallarda 7/24 xidmət' },
+    ],
+  },
+  {
+    group: 'appointment',
+    label: 'Məlumat və FAQ bölməsi',
+    fields: [
+      { key: 'appointment.title', label: 'Bölmə başlığı', placeholder: 'Məlumat' },
+      { key: 'appointment.faqTitle', label: 'FAQ başlığı', placeholder: 'Tez-tez Verilən Suallar' },
+      { key: 'appointment.faqSubtitle', label: 'FAQ alt başlıq', placeholder: 'Ən çox soruşulan suallar' },
+      {
+        key: 'appointment.faqItems',
+        label: 'FAQ JSON',
+        placeholder: '[{"question":"...","answer":"..."}]',
+        multiline: true,
+      },
+    ],
+  },
+  {
+    group: 'feedback',
+    label: 'Əks əlaqə forması',
+    fields: [
+      { key: 'feedback.title', label: 'Form başlığı', placeholder: 'Bizə Yazın' },
+      { key: 'feedback.subtitle', label: 'Form alt başlıq', placeholder: 'Suallarınız və təklifləriniz üçün' },
+      { key: 'feedback.subjectPlaceholder', label: 'Mövzu placeholder', placeholder: 'Mesajın mövzusu' },
+      { key: 'feedback.buttonLabel', label: 'Göndər düyməsi', placeholder: 'Göndər' },
+      { key: 'feedback.successTitle', label: 'Uğurlu göndəriş başlığı', placeholder: 'Təşəkkür Edirik!' },
+      { key: 'feedback.successText', label: 'Uğurlu göndəriş mətni', placeholder: 'Mesajınız uğurla göndərildi. Tezliklə sizinlə əlaqə saxlayacağıq.' },
     ],
   },
   {
@@ -94,10 +188,11 @@ export default function SiteSettings() {
 
   const handleImageUpload = (key: string, url: string) => {
     setValues(v => ({ ...v, [key]: url }));
-    // Автосохранение после загрузки
     const group = key.split('.')[0];
-    const label = SETTINGS_SCHEMA.find(s => s.group === group)?.label || '';
-    upsertMutation.mutateAsync({ key, value: url, label, group });
+    const fieldDef = SETTINGS_SCHEMA
+      .flatMap(section => [...(section.fields ?? []), ...(section.imageFields ?? [])])
+      .find(field => field.key === key);
+    upsertMutation.mutateAsync({ key, value: url, label: fieldDef?.label, group });
   };
 
   return (
@@ -165,6 +260,7 @@ export default function SiteSettings() {
                             key={field.key}
                             label={field.label}
                             currentImage={values[field.key]}
+                            category={group}
                             onUpload={(url) => handleImageUpload(field.key, url)}
                           />
                         ))}

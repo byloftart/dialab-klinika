@@ -16,6 +16,7 @@ import {
   getAppointments, getAppointmentById, createAppointment, updateAppointment, deleteAppointment, countNewAppointments,
   getFeedbackMessages, getFeedbackMessageById, createFeedbackMessage, updateFeedbackMessage, deleteFeedbackMessage, countUnreadMessages,
   getSiteSettings, getSiteSettingByKey, upsertSiteSetting,
+  getStaticPages, getStaticPageById, getStaticPageBySlug, createStaticPage, updateStaticPage, deleteStaticPage,
 } from "./db";
 
 export const appRouter = router({
@@ -58,6 +59,10 @@ export const appRouter = router({
     settings: router({
       get: publicProcedure.input(z.object({ key: z.string() })).query(async ({ input }) => getSiteSettingByKey(input.key)),
       getGroup: publicProcedure.input(z.object({ group: z.string() })).query(async ({ input }) => getSiteSettings(input.group)),
+    }),
+    pages: router({
+      list: publicProcedure.query(async () => getStaticPages(true)),
+      getBySlug: publicProcedure.input(z.object({ slug: z.string() })).query(async ({ input }) => getStaticPageBySlug(input.slug, true)),
     }),
     // Public appointment submission
     appointments: router({
@@ -171,6 +176,7 @@ export const appRouter = router({
       create: adminProcedure.input(z.object({
         titleAz: z.string().min(1),
         descriptionAz: z.string().min(1),
+        imageUrl: z.string().optional(),
         icon: z.string().optional(),
         order: z.number().optional(),
         isActive: z.boolean().optional(),
@@ -182,6 +188,7 @@ export const appRouter = router({
         id: z.number(),
         titleAz: z.string().optional(),
         descriptionAz: z.string().optional(),
+        imageUrl: z.string().optional(),
         icon: z.string().optional(),
         order: z.number().optional(),
         isActive: z.boolean().optional(),
@@ -336,6 +343,41 @@ export const appRouter = router({
         group: z.string().optional(),
       })).mutation(async ({ input }) => {
         await upsertSiteSetting(input.key, input.value, input.label, input.group);
+        return { success: true };
+      }),
+    }),
+
+    pages: router({
+      list: adminProcedure.query(async () => getStaticPages()),
+      getById: adminProcedure.input(z.object({ id: z.number() })).query(async ({ input }) => getStaticPageById(input.id)),
+      create: adminProcedure.input(z.object({
+        titleAz: z.string().min(1),
+        slug: z.string().min(1),
+        excerptAz: z.string().optional(),
+        contentAz: z.string().optional(),
+        heroImageUrl: z.string().optional(),
+        order: z.number().optional(),
+        isPublished: z.boolean().optional(),
+      })).mutation(async ({ input }) => {
+        await createStaticPage(input);
+        return { success: true };
+      }),
+      update: adminProcedure.input(z.object({
+        id: z.number(),
+        titleAz: z.string().optional(),
+        slug: z.string().optional(),
+        excerptAz: z.string().optional(),
+        contentAz: z.string().optional(),
+        heroImageUrl: z.string().optional(),
+        order: z.number().optional(),
+        isPublished: z.boolean().optional(),
+      })).mutation(async ({ input }) => {
+        const { id, ...data } = input;
+        await updateStaticPage(id, data);
+        return { success: true };
+      }),
+      delete: adminProcedure.input(z.object({ id: z.number() })).mutation(async ({ input }) => {
+        await deleteStaticPage(input.id);
         return { success: true };
       }),
     }),

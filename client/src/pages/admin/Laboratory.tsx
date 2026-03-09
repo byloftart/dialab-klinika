@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import AdminLayout from '@/components/admin/AdminLayout';
 import AdminGuard from '@/components/admin/AdminGuard';
+import ImageUpload from '@/components/admin/ImageUpload';
 import { trpc } from '@/lib/trpc';
 import { Plus, Pencil, Trash2, ChevronDown, ChevronRight, FlaskConical, Loader2, ToggleLeft, ToggleRight } from 'lucide-react';
 
@@ -8,6 +9,7 @@ type AnalysisType = {
   id: number;
   titleAz: string;
   descriptionAz: string;
+  imageUrl: string | null;
   icon: string | null;
   order: number | null;
   isActive: boolean;
@@ -36,11 +38,11 @@ export default function Laboratory() {
   const [editType, setEditType] = useState<AnalysisType | null>(null);
   const [showAddSubTest, setShowAddSubTest] = useState<number | null>(null);
 
-  const [form, setForm] = useState({ titleAz: '', descriptionAz: '', icon: '', order: 0, isActive: true });
+  const [form, setForm] = useState({ titleAz: '', descriptionAz: '', imageUrl: '', icon: '', order: 0, isActive: true });
   const [subForm, setSubForm] = useState({ titleAz: '', descriptionAz: '', order: 0 });
 
   const createMutation = trpc.admin.laboratory.create.useMutation({
-    onSuccess: () => { utils.admin.laboratory.list.invalidate(); setShowAddType(false); setForm({ titleAz: '', descriptionAz: '', icon: '', order: 0, isActive: true }); },
+    onSuccess: () => { utils.admin.laboratory.list.invalidate(); setShowAddType(false); setForm({ titleAz: '', descriptionAz: '', imageUrl: '', icon: '', order: 0, isActive: true }); },
   });
   const updateMutation = trpc.admin.laboratory.update.useMutation({
     onSuccess: () => { utils.admin.laboratory.list.invalidate(); setEditType(null); },
@@ -107,7 +109,7 @@ export default function Laboratory() {
                   </button>
                   <div className="flex items-center gap-2">
                     <button
-                      onClick={() => { setEditType(type as AnalysisType); setForm({ titleAz: type.titleAz, descriptionAz: type.descriptionAz, icon: type.icon ?? '', order: type.order ?? 0, isActive: type.isActive }); }}
+                      onClick={() => { setEditType(type as AnalysisType); setForm({ titleAz: type.titleAz, descriptionAz: type.descriptionAz, imageUrl: (type as AnalysisType).imageUrl ?? '', icon: type.icon ?? '', order: type.order ?? 0, isActive: type.isActive }); }}
                       className="p-2 text-gray-400 hover:text-[#00b982] hover:bg-[#00b982]/10 rounded-lg transition-all"
                     >
                       <Pencil className="w-4 h-4" />
@@ -186,6 +188,21 @@ export default function Laboratory() {
                   rows={3}
                   className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:border-[#00b982] focus:ring-2 focus:ring-[#00b982]/20 outline-none resize-none"
                   placeholder="Qısa təsvir..."
+                />
+              </div>
+              <ImageUpload
+                label="Bölmə şəkli"
+                currentImage={form.imageUrl}
+                category="laboratory"
+                onUpload={(url) => setForm(f => ({ ...f, imageUrl: url }))}
+              />
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">və ya şəkil URL</label>
+                <input
+                  value={form.imageUrl}
+                  onChange={e => setForm(f => ({ ...f, imageUrl: e.target.value }))}
+                  className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:border-[#00b982] focus:ring-2 focus:ring-[#00b982]/20 outline-none"
+                  placeholder="https://..."
                 />
               </div>
               <div className="grid grid-cols-2 gap-4">

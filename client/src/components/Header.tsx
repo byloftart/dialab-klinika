@@ -1,16 +1,11 @@
-/**
- * Header Component - DIALAB Klinika
- * Design: Modern medical with 3D depth effects
- * Features: Sticky navigation, logo hover effect, soft green/blue glow on nav items
- * Sections: 6 distinct sections with smooth scroll
- */
-
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, X, Phone, Calendar } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { trpc } from '@/lib/trpc';
+import { buildSettingsMap, getSetting, parseHomeSections, parseNavItems, type NavItemSetting } from '@/lib/siteSettings';
 
-const navItems = [
+const fallbackNavItems: NavItemSetting[] = [
   { id: 'hero', label: 'Ana Səhifə', href: '#hero' },
   { id: 'gallery', label: 'Haqqımızda', href: '#gallery' },
   { id: 'laboratory', label: 'Laboratoriya', href: '#laboratory' },
@@ -23,12 +18,35 @@ export default function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState('hero');
+  const { data: settings } = trpc.cms.settings.getGroup.useQuery({ group: 'header' });
+  const { data: homeSettings } = trpc.cms.settings.getGroup.useQuery({ group: 'home' });
+
+  const settingsMap = buildSettingsMap(settings);
+  const homeMap = buildSettingsMap(homeSettings);
+  const visibleSectionIds = new Set(
+    parseHomeSections(homeMap['home.sections'], [
+      { id: 'hero', enabled: true },
+      { id: 'infoBar', enabled: true },
+      { id: 'gallery', enabled: true },
+      { id: 'laboratory', enabled: true },
+      { id: 'diagnostics', enabled: true },
+      { id: 'appointment', enabled: true },
+    ])
+      .filter((item) => item.enabled)
+      .map((item) => item.id)
+  );
+  const navItems = parseNavItems(settingsMap['header.navItems'], fallbackNavItems).filter((item) => {
+    if (!item.href.startsWith('#')) return true;
+    return visibleSectionIds.has(item.id);
+  });
+  const phone = getSetting(settingsMap, 'header.phone', '+994 12 345 67 89');
+  const ctaLabel = getSetting(settingsMap, 'header.ctaLabel', 'Randevu Al');
+  const logoTitle = getSetting(settingsMap, 'header.logoTitle', 'DIALAB');
+  const logoSubtitle = getSetting(settingsMap, 'header.logoSubtitle', 'KLİNİKA');
 
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 20);
-      
-      // Update active section based on scroll position
       const sections = navItems.map(item => item.id);
       for (const section of sections.reverse()) {
         const element = document.getElementById(section);
@@ -43,10 +61,17 @@ export default function Header() {
     };
 
     window.addEventListener('scroll', handleScroll);
+    handleScroll();
     return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  }, [navItems]);
 
-  const scrollToSection = (href: string) => {
+  const navigateToTarget = (href: string) => {
+    if (!href.startsWith('#')) {
+      window.location.href = href;
+      setIsMobileMenuOpen(false);
+      return;
+    }
+
     const element = document.querySelector(href);
     if (element) {
       const headerHeight = 80;
@@ -66,12 +91,11 @@ export default function Header() {
     >
       <div className="container mx-auto px-4 lg:px-8">
         <div className={`flex items-center justify-between transition-all duration-500 ${isScrolled ? 'h-20' : 'h-24'}`}>
-          {/* Logo */}
           <motion.a
             href="#hero"
             onClick={(e) => {
               e.preventDefault();
-              scrollToSection('#hero');
+              navigateToTarget('#hero');
             }}
             className="flex items-center gap-3 group"
             whileHover={{ scale: 1.02 }}
@@ -82,24 +106,21 @@ export default function Header() {
                 src="/images/dia_logo_symbol.png"
                 alt="DIALAB Logo"
                 className="h-16 w-16 object-contain"
-                whileHover={{ 
-                  filter: 'drop-shadow(0 0 12px rgba(0, 185, 130, 0.6))',
-                }}
+                whileHover={{ filter: 'drop-shadow(0 0 12px rgba(0, 185, 130, 0.6))' }}
                 transition={{ duration: 0.3 }}
               />
               <div className="absolute inset-0 bg-[#00b982]/20 rounded-full blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
             </div>
             <div className="flex flex-col">
               <span className="font-extrabold text-2xl text-[#dc2626] leading-tight tracking-tight">
-                DIALAB
+                {logoTitle}
               </span>
               <span className="font-semibold text-base text-[#14b8a6] -mt-1">
-                KLİNİKA
+                {logoSubtitle}
               </span>
             </div>
           </motion.a>
 
-          {/* Desktop Navigation */}
           <nav className="hidden lg:flex items-center gap-0.5">
             {navItems.map((item) => (
               <motion.a
@@ -107,7 +128,7 @@ export default function Header() {
                 href={item.href}
                 onClick={(e) => {
                   e.preventDefault();
-                  scrollToSection(item.href);
+                  navigateToTarget(item.href);
                 }}
                 className={`relative px-5 py-3 rounded-lg font-medium text-base transition-all duration-300 ${
                   activeSection === item.id
@@ -117,17 +138,15 @@ export default function Header() {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.98 }}
               >
-                {/* Glow background on hover */}
                 <motion.div
                   className="absolute inset-0 rounded-lg bg-gradient-to-r from-[#00b982]/10 to-[#14b8a6]/10"
                   initial={{ opacity: 0 }}
-                  whileHover={{ 
+                  whileHover={{
                     opacity: 1,
-                    boxShadow: '0 0 20px rgba(0, 185, 130, 0.15)'
+                    boxShadow: '0 0 20px rgba(0, 185, 130, 0.15)',
                   }}
                   transition={{ duration: 0.3 }}
                 />
-                {/* Active indicator */}
                 {activeSection === item.id && (
                   <motion.div
                     layoutId="activeNav"
@@ -140,32 +159,27 @@ export default function Header() {
             ))}
           </nav>
 
-          {/* CTA Button & Phone */}
           <div className="hidden lg:flex items-center gap-4">
-            <a 
-              href="tel:+994123456789" 
+            <a
+              href={`tel:${phone.replace(/\s+/g, '')}`}
               className="flex items-center gap-2 text-gray-600 hover:text-[#00b982] transition-colors"
             >
               <div className="w-8 h-8 rounded-full bg-[#00b982]/10 flex items-center justify-center">
                 <Phone className="w-4 h-4 text-[#00b982]" />
               </div>
-              <span className="font-medium text-sm">+994 12 345 67 89</span>
+              <span className="font-medium text-sm">{phone}</span>
             </a>
-            <motion.div
-              whileHover={{ scale: 1.05, y: -2 }}
-              whileTap={{ scale: 0.98 }}
-            >
+            <motion.div whileHover={{ scale: 1.05, y: -2 }} whileTap={{ scale: 0.98 }}>
               <Button
-                onClick={() => scrollToSection('#appointment')}
+                onClick={() => navigateToTarget('#appointment')}
                 className="bg-gradient-to-r from-[#00b982] to-[#14b8a6] hover:from-[#00a070] hover:to-[#12a090] text-white font-semibold px-5 py-2.5 rounded-lg shadow-lg shadow-[#00b982]/25 hover:shadow-[#00b982]/40 transition-all duration-300 flex items-center gap-2"
               >
                 <Calendar className="w-4 h-4" />
-                Randevu Al
+                {ctaLabel}
               </Button>
             </motion.div>
           </div>
 
-          {/* Mobile Menu Button */}
           <motion.button
             className="lg:hidden p-2 rounded-lg text-gray-600 hover:text-[#00b982] hover:bg-[#00b982]/10 transition-colors"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
@@ -176,7 +190,6 @@ export default function Header() {
         </div>
       </div>
 
-      {/* Mobile Menu */}
       <AnimatePresence>
         {isMobileMenuOpen && (
           <motion.div
@@ -193,7 +206,7 @@ export default function Header() {
                   href={item.href}
                   onClick={(e) => {
                     e.preventDefault();
-                    scrollToSection(item.href);
+                    navigateToTarget(item.href);
                   }}
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
@@ -213,19 +226,19 @@ export default function Header() {
                 transition={{ delay: 0.3 }}
                 className="pt-2 flex flex-col gap-3"
               >
-                <a 
-                  href="tel:+994123456789" 
+                <a
+                  href={`tel:${phone.replace(/\s+/g, '')}`}
                   className="flex items-center gap-3 px-4 py-3 rounded-lg bg-gray-50 text-gray-700"
                 >
                   <Phone className="w-5 h-5 text-[#00b982]" />
-                  <span className="font-medium">+994 12 345 67 89</span>
+                  <span className="font-medium">{phone}</span>
                 </a>
                 <Button
-                  onClick={() => scrollToSection('#appointment')}
+                  onClick={() => navigateToTarget('#appointment')}
                   className="w-full bg-gradient-to-r from-[#00b982] to-[#14b8a6] text-white font-semibold py-3 rounded-lg flex items-center justify-center gap-2"
                 >
                   <Calendar className="w-5 h-5" />
-                  Randevu Al
+                  {ctaLabel}
                 </Button>
               </motion.div>
             </nav>

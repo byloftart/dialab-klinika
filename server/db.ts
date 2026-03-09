@@ -1,4 +1,4 @@
-import { eq, asc, desc, and } from "drizzle-orm";
+import { eq, asc, desc, and, like } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
 import {
   InsertUser, users,
@@ -11,6 +11,7 @@ import {
   appointments, InsertAppointment,
   feedbackMessages, InsertFeedbackMessage,
   siteSettings, InsertSiteSetting,
+  staticPages, InsertStaticPage,
 } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
@@ -332,7 +333,11 @@ export async function countUnreadMessages() {
 export async function getSiteSettings(group?: string) {
   const db = await getDb();
   if (!db) return [];
-  if (group) return db.select().from(siteSettings).where(eq(siteSettings.group, group));
+  if (group) {
+    const grouped = await db.select().from(siteSettings).where(eq(siteSettings.group, group));
+    if (grouped.length > 0) return grouped;
+    return db.select().from(siteSettings).where(like(siteSettings.key, `${group}.%`));
+  }
   return db.select().from(siteSettings);
 }
 
@@ -346,7 +351,57 @@ export async function getSiteSettingByKey(key: string) {
 export async function upsertSiteSetting(key: string, value: string, label?: string, group?: string) {
   const db = await getDb();
   if (!db) throw new Error("Database not available");
-  return db.insert(siteSettings).values({ key, value, label, group }).onDuplicateKeyUpdate({ set: { value } });
+  return db.insert(siteSettings).values({ key, value, label, group }).onDuplicateKeyUpdate({
+    set: {
+      value,
+      ...(label !== undefined ? { label } : {}),
+      ...(group !== undefined ? { group } : {}),
+    },
+  });
+}
+
+// ─── Static Pages ────────────────────────────────────────────────────────────
+
+export async function getStaticPages(publishedOnly = false) {
+  const db = await getDb();
+  if (!db) return [];
+  const query = db.select().from(staticPages);
+  if (publishedOnly) return query.where(eq(staticPages.isPublished, true)).orderBy(asc(staticPages.order));
+  return query.orderBy(asc(staticPages.order));
+}
+
+export async function getStaticPageById(id: number) {
+  const db = await getDb();
+  if (!db) return null;
+  const result = await db.select().from(staticPages).where(eq(staticPages.id, id)).limit(1);
+  return result.length > 0 ? result[0] : null;
+}
+
+export async function getStaticPageBySlug(slug: string, publishedOnly = false) {
+  const db = await getDb();
+  if (!db) return null;
+  const filters = [eq(staticPages.slug, slug)];
+  if (publishedOnly) filters.push(eq(staticPages.isPublished, true));
+  const result = await db.select().from(staticPages).where(and(...filters)).limit(1);
+  return result.length > 0 ? result[0] : null;
+}
+
+export async function createStaticPage(data: InsertStaticPage) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  return db.insert(staticPages).values(data);
+}
+
+export async function updateStaticPage(id: number, data: Partial<InsertStaticPage>) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  return db.update(staticPages).set(data).where(eq(staticPages.id, id));
+}
+
+export async function deleteStaticPage(id: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  return db.delete(staticPages).where(eq(staticPages.id, id));
 }
 
 // ─── Local Auth Functions ────────────────────────────────────────────────────

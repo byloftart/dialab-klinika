@@ -1,127 +1,55 @@
-/*
- * Laboratory Section - DIALAB Klinika (Section 3)
- * Design: Vertical tabs with expanding 3D info cards (matching Diagnostics)
- * Features: 6 combined analysis types, 3D hover effects, images
- * Color: Light gradient background with green/blue accents
- * Content: From Websiteserviceslist.pdf
- */
-
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  Droplet,
-  Microscope,
-  Beaker,
-  Zap,
-  Pill,
-  Dna,
-  ArrowRight
-} from 'lucide-react';
-
-const laboratoryAnalyses = [
-  {
-    id: 'clinical',
-    title: 'Kliniki Analizlər',
-    icon: Droplet,
-    color: '#00b982',
-    image: '/images/lab-analysis.jpg',
-    description: 'Qanın ümumi analizi, hemoglobin, trombositlər və digər əsas göstəricilərin tədqiqi.',
-    subtypes: [
-      { name: 'Qanın ümumi analizi', description: '26 göstərici və leykoformula' },
-      { name: 'Hemoglobin, Trombositlər, Leykositlər', description: 'Əsas hüceyrə sayları' },
-      { name: 'Sidiyin ümumi analizi', description: 'Sidik göstəriciləri' },
-      { name: 'Nəcisin ümumi analizi', description: 'Nəcis göstəriciləri' },
-      { name: 'Spermogramma', description: 'Sperma analizi' },
-      { name: 'Qan qrupu və rezus-faktor', description: 'Qan qrupu təyini' }
-    ]
-  },
-  {
-    id: 'bacterio-hormonal',
-    title: 'Bakterioloji və Hormonların Tədqiqi',
-    icon: Microscope,
-    color: '#ef4444',
-    image: '/images/medical-team-abstract.jpg',
-    description: 'Bakterial enfeksiyaların müəyyən edilməsi və hormon səviyyələrinin tədqiqi.',
-    subtypes: [
-      { name: 'Boğaz sürüşməsi', description: 'Streptokkok və digər patogenlərin aşkarlanması' },
-      { name: 'Sidik kültürü', description: 'Sidik yolu enfeksiyalarının diaqnostikası' },
-      { name: 'Qan kültürü', description: 'Sepsis və qan enfeksiyalarının müəyyən edilməsi' },
-      { name: 'Tiroid hormonları (TSH, T3, T4)', description: 'Tiroid funksiyasının qiymətləndirilməsi' },
-      { name: 'Seks hormonları', description: 'Estrogen, Progesteron, Testosteron' },
-      { name: 'Adrenal hormonları', description: 'Kortizol və digər adrenal hormonları' }
-    ]
-  },
-  {
-    id: 'serological',
-    title: 'Seroloji və İmmunoloji Testlər',
-    icon: Beaker,
-    color: '#8b5cf6',
-    image: '/images/hero-medical-lab.jpg',
-    description: 'Viral və bakteri enfeksiyalarına qarşı antitestlərin aşkarlanması.',
-    subtypes: [
-      { name: 'HIV testi', description: 'Ən müasir metodlarla HIV aşkarlanması' },
-      { name: 'Hepatit testləri (A, B, C)', description: 'Hepatit viruslarına qarşı antitestlər' },
-      { name: 'Sifiliz testi (RPR/VDRL)', description: 'Treponema pallidum antitestləri' },
-      { name: 'Rubella antitestləri', description: 'Rubella virusuna qarşı IgG və IgM' },
-      { name: 'Toxoplasmoz testləri', description: 'Toxoplasma gondii antitestləri' },
-      { name: 'CMV antitestləri', description: 'Sitomegalovirusa qarşı antitestlər' }
-    ]
-  },
-  {
-    id: 'biochemical',
-    title: 'Biokimyəvi Analizlər',
-    icon: Zap,
-    color: '#f59e0b',
-    image: '/images/diagnostics-ultrasound.jpg',
-    description: 'Metabolik proseslərin qiymətləndirilməsi və orqan funksiyasının müəyyən edilməsi.',
-    subtypes: [
-      { name: 'Qlükoza', description: 'Qan şəkərinin səviyyəsi' },
-      { name: 'Lipid profili', description: 'Xolesterol, triqliseridlər, HDL, LDL' },
-      { name: 'Qaraciyər funksiyası', description: 'ALT, AST, Bilirubin, Albumin' },
-      { name: 'Böyrək funksiyası', description: 'Kreatinin, Üreya, Urik asid' },
-      { name: 'Elektrolit balansı', description: 'Natrium, Kalium, Kalsium, Fosfat' },
-      { name: 'Amilaza və Lipaza', description: 'Pankreas enzimləri' }
-    ]
-  },
-  {
-    id: 'vitamins-minerals',
-    title: 'Vitamin və Minerallar',
-    icon: Pill,
-    color: '#14b8a6',
-    image: '/images/doctor-consultation.jpg',
-    description: 'Vital vitamin və mineral səviyyələrinin tədqiqi və defisit müəyyən edilməsi.',
-    subtypes: [
-      { name: 'Vitamin D', description: '25-OH Vitamin D səviyyəsi' },
-      { name: 'Vitamin B12 və Folat', description: 'B12 və folik asid səviyyələri' },
-      { name: 'Demir (Ferritin, Serum Iron)', description: 'Demir ehtiyatlarının qiymətləndirilməsi' },
-      { name: 'Kalsium və Fosfat', description: 'Sümük metabolizmi göstəriciləri' },
-      { name: 'Maqnezium', description: 'Serum maqnezium səviyyəsi' },
-      { name: 'Sink və Mis', description: 'Trace elementlərin tədqiqi' }
-    ]
-  },
-  {
-    id: 'oncology-genetics',
-    title: 'Onkoloji və Genetik Testlər',
-    icon: Dna,
-    color: '#ec4899',
-    image: '/images/lab-analysis.jpg',
-    description: 'Tumor markerləri və genetik mutasyonların aşkarlanması.',
-    subtypes: [
-      { name: 'PSA (Prostat Spesifik Antigen)', description: 'Prostat xərçəngi markerı' },
-      { name: 'CEA (Karsinoembrionik Antigen)', description: 'Kolorektal xərçəngi markerı' },
-      { name: 'CA 19-9', description: 'Pankreas xərçəngi markerı' },
-      { name: 'BRCA1/BRCA2 mutasyonları', description: 'Meme xərçəngi genetik riski' },
-      { name: 'Herediter xərçəngi sendromları', description: 'Lynch sendromu və digərləri' },
-      { name: 'Mikrosatellit instabilliyi', description: 'Genetik xərçəngi predispozisiyası' }
-    ]
-  }
-];
+import { ArrowRight, CheckCircle2 } from 'lucide-react';
+import { trpc } from '@/lib/trpc';
+import { buildSettingsMap, getSetting } from '@/lib/siteSettings';
+import { getLaboratoryPresentation } from '@/lib/services';
 
 export default function LaboratorySection() {
-  const [activeTab, setActiveTab] = useState(0);
+  const [activeIndex, setActiveIndex] = useState(0);
   const [hoveredTab, setHoveredTab] = useState<number | null>(null);
+  const { data: settings } = trpc.cms.settings.getGroup.useQuery({ group: 'laboratory' });
+  const { data: laboratoryTypes } = trpc.cms.laboratory.list.useQuery();
 
-  const activeAnalysis = laboratoryAnalyses[activeTab];
+  useEffect(() => {
+    if (!laboratoryTypes?.length) {
+      setActiveIndex(0);
+      return;
+    }
+
+    if (activeIndex >= laboratoryTypes.length) {
+      setActiveIndex(0);
+    }
+  }, [activeIndex, laboratoryTypes]);
+
+  const settingsMap = buildSettingsMap(settings);
+  const eyebrow = getSetting(settingsMap, 'laboratory.eyebrow', 'Laboratoriya Xidmətləri');
+  const title = getSetting(settingsMap, 'laboratory.title', 'Laboratoriya Xidmətləri');
+  const subtitle = getSetting(
+    settingsMap,
+    'laboratory.subtitle',
+    'Geniş spektrli laborator analizlər və dəqiq nəticələr'
+  );
+
+  const displayTypes = useMemo(() => {
+    return (laboratoryTypes ?? [])
+      .filter((item) => item.isActive)
+      .map((item, index) => ({
+        ...item,
+        ...getLaboratoryPresentation(item.icon, index),
+      }));
+  }, [laboratoryTypes]);
+
+  const visibleType = displayTypes[activeIndex];
+  const { data: activeTypeData } = trpc.cms.laboratory.getById.useQuery(
+    { id: visibleType?.id ?? 0 },
+    { enabled: Boolean(visibleType?.id) }
+  );
+  const subTests = activeTypeData?.subTests ?? [];
+
+  if (!displayTypes.length) {
+    return null;
+  }
 
   return (
     <motion.section
@@ -132,73 +60,44 @@ export default function LaboratorySection() {
       transition={{ duration: 0.45 }}
       className="py-24 lg:py-32 bg-gradient-to-br from-white via-[#f0fdf4] to-[#e8f4fc] relative overflow-hidden border-t-2 border-[#00b982]/30"
     >
-      {/* Animated Background Elements */}
-      <motion.div 
-        className="absolute inset-0 pointer-events-none"
-      >
+      <motion.div className="absolute inset-0 pointer-events-none">
         <div className="absolute top-20 right-20 w-96 h-96 bg-[#00b982]/10 rounded-full blur-3xl" />
         <div className="absolute bottom-20 left-20 w-80 h-80 bg-[#14b8a6]/10 rounded-full blur-3xl" />
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gradient-to-r from-[#00b982]/5 to-[#1a365d]/5 rounded-full blur-3xl" />
       </motion.div>
 
       <div className="container mx-auto px-4 lg:px-8 relative z-10">
-        {/* Section Header - Hidden */}
         <div className="mb-16 lg:mb-20 flex justify-center">
-          <div className="text-center">
+          <div className="text-center max-w-3xl">
+            <p className="uppercase tracking-[0.2em] text-sm font-semibold text-[#00b982] mb-3">{eyebrow}</p>
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-[#1a365d] mb-3">
-              Laboratoriya Xidmətləri
+              {title}
             </h2>
             <p className="text-lg md:text-xl text-gray-600 font-medium max-w-2xl mx-auto">
-              Geniş spektrli laborator analizlər və dəqiq nəticələr
+              {subtitle}
             </p>
           </div>
         </div>
-        
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="text-center mb-8 hidden"
-        >
-          <motion.span
-            initial={{ opacity: 0, scale: 0.9 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
-            className="inline-block px-4 py-2 rounded-full bg-[#00b982]/20 text-[#00b982] font-semibold text-sm mb-4 border border-[#00b982]/30"
-          >
-            Laboratoriya Xidmətləri
-          </motion.span>
-          <h2 className="font-extrabold text-4xl md:text-5xl lg:text-6xl text-[#1a365d] mb-4">
-            Müasir <span className="text-[#00b982]">Laboratoriya</span> Testləri
-          </h2>
-          <p className="text-gray-700 text-xl font-medium max-w-2xl mx-auto">
-            500+ növ laboratoriya testi ilə səğlamlığınızı dəqiq və etibarlı şəkildə qiymətləndiririk
-          </p>
-        </motion.div>
 
-        {/* Main Content - Vertical Tabs Layout */}
         <div className="grid lg:grid-cols-12 gap-8">
-          {/* Vertical Tabs */}
           <div className="lg:col-span-4 space-y-3">
-            {laboratoryAnalyses.map((analysis, index) => (
+            {displayTypes.map((analysis, index) => (
               <motion.button
                 key={analysis.id}
                 initial={{ opacity: 0, x: -30 }}
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
-                onClick={() => setActiveTab(index)}
+                transition={{ duration: 0.5, delay: index * 0.08 }}
+                onClick={() => setActiveIndex(index)}
                 onMouseEnter={() => setHoveredTab(index)}
                 onMouseLeave={() => setHoveredTab(null)}
                 className={`w-full text-left p-5 rounded-xl transition-all duration-300 group relative overflow-hidden min-h-[100px] ${
-                  activeTab === index
+                  activeIndex === index
                     ? 'bg-white border border-[#00b982]/50 shadow-lg shadow-[#00b982]/10'
                     : 'bg-white/50 border border-[#00b982]/10 hover:bg-white hover:border-[#00b982]/30'
                 }`}
               >
-                {/* Glow effect on hover */}
-                {(hoveredTab === index || activeTab === index) && (
+                {(hoveredTab === index || activeIndex === index) && (
                   <motion.div
                     layoutId="labTabGlow"
                     className="absolute inset-0"
@@ -206,37 +105,36 @@ export default function LaboratorySection() {
                     transition={{ type: 'spring', stiffness: 300, damping: 30 }}
                   />
                 )}
-                
+
                 <div className="relative z-10 flex items-center gap-4">
-                  <motion.div 
+                  <motion.div
                     className="w-14 h-14 rounded-xl flex items-center justify-center shadow-lg transition-transform duration-300 flex-shrink-0"
-                    style={{ 
+                    style={{
                       backgroundColor: `${analysis.color}20`,
-                      boxShadow: activeTab === index ? `0 8px 20px -8px ${analysis.color}60` : 'none'
+                      boxShadow: activeIndex === index ? `0 8px 20px -8px ${analysis.color}60` : 'none'
                     }}
-                    animate={{ scale: activeTab === index ? 1.1 : 1 }}
+                    animate={{ scale: activeIndex === index ? 1.1 : 1 }}
                   >
                     <analysis.icon className="w-7 h-7" style={{ color: analysis.color }} />
                   </motion.div>
                   <div className="flex-1">
-                    <h3 className={`font-bold text-lg transition-colors ${activeTab === index ? 'text-[#00b982]' : 'text-[#1a365d] group-hover:text-[#00b982]'}`}>
-                      {analysis.title}
+                    <h3 className={`font-bold text-lg transition-colors ${activeIndex === index ? 'text-[#00b982]' : 'text-[#1a365d] group-hover:text-[#00b982]'}`}>
+                      {analysis.titleAz}
                     </h3>
                     <p className="text-gray-500 text-sm line-clamp-2">
-                      {analysis.subtypes.length} test növü
+                      {analysis.descriptionAz}
                     </p>
                   </div>
-                  <ArrowRight className={`w-5 h-5 transition-all duration-300 ${activeTab === index ? 'text-[#00b982] translate-x-0' : 'text-gray-400 -translate-x-2 opacity-0 group-hover:translate-x-0 group-hover:opacity-100'}`} />
+                  <ArrowRight className={`w-5 h-5 transition-all duration-300 ${activeIndex === index ? 'text-[#00b982] translate-x-0' : 'text-gray-400 -translate-x-2 opacity-0 group-hover:translate-x-0 group-hover:opacity-100'}`} />
                 </div>
               </motion.button>
             ))}
           </div>
 
-          {/* 3D Info Card */}
           <div className="lg:col-span-8">
             <AnimatePresence mode="wait">
               <motion.div
-                key={activeTab}
+                key={visibleType.id}
                 initial={{ opacity: 0, rotateY: -10, x: 50 }}
                 animate={{ opacity: 1, rotateY: 0, x: 0 }}
                 exit={{ opacity: 0, rotateY: 10, x: -50 }}
@@ -246,96 +144,57 @@ export default function LaboratorySection() {
               >
                 <motion.div
                   className="bg-white rounded-3xl border border-[#00b982]/20 overflow-hidden shadow-2xl shadow-[#00b982]/10"
-                  whileHover={{ 
-                    rotateY: 2,
-                    rotateX: -2,
-                  }}
+                  whileHover={{ rotateY: 2, rotateX: -2 }}
                   transition={{ duration: 0.4 }}
                   style={{ transformStyle: 'preserve-3d' }}
                 >
-                  {/* Image Header */}
                   <div className="relative h-64 overflow-hidden">
                     <motion.img
-                      key={activeAnalysis.image}
+                      key={visibleType.imageUrl || visibleType.image}
                       initial={{ scale: 1.1, opacity: 0 }}
                       animate={{ scale: 1, opacity: 1 }}
                       transition={{ duration: 0.6 }}
-                      src={activeAnalysis.image}
-                      alt={activeAnalysis.title}
+                      src={visibleType.imageUrl || visibleType.image}
+                      alt={visibleType.titleAz}
                       className="w-full h-full object-cover"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-white/80 via-white/40 to-transparent" />
-                    
-                    {/* Floating Badge */}
-                    <motion.div
-                      initial={{ y: 20, opacity: 0 }}
-                      animate={{ y: 0, opacity: 1 }}
-                      transition={{ delay: 0.3 }}
-                      className="absolute top-4 right-4 px-4 py-2 rounded-full bg-white/20 backdrop-blur-md border border-white/30"
-                    >
-                      <span className="text-white font-semibold text-sm">{activeAnalysis.subtypes.length} Test</span>
-                    </motion.div>
-
-                    {/* Title Overlay */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-black/20 to-transparent" />
                     <div className="absolute bottom-0 left-0 right-0 p-6">
-                      <div 
-                        className="inline-flex items-center gap-3 px-4 py-2 rounded-xl mb-3"
-                        style={{ backgroundColor: activeAnalysis.color }}
+                      <div
+                        className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-semibold"
+                        style={{ backgroundColor: `${visibleType.color}20`, color: visibleType.color }}
                       >
-                        <activeAnalysis.icon className="w-5 h-5 text-white" />
-                        <span className="text-white font-semibold">{activeAnalysis.title}</span>
+                        <visibleType.icon className="w-4 h-4" />
+                        {eyebrow}
                       </div>
+                      <h3 className="text-3xl font-bold text-white mt-3">{visibleType.titleAz}</h3>
                     </div>
                   </div>
 
-                  {/* Content */}
-                  <div className="p-6 space-y-6">
-                    {/* Description */}
-                    <p className="text-gray-700 text-lg leading-relaxed">
-                      {activeAnalysis.description}
+                  <div className="p-6 lg:p-8">
+                    <p className="text-gray-700 text-lg leading-relaxed font-medium">
+                      {visibleType.descriptionAz}
                     </p>
 
-                    {/* Subtypes Grid */}
-                    <div className="grid sm:grid-cols-2 gap-3">
-                      {activeAnalysis.subtypes.map((subtype, index) => (
-                        <motion.div
-                          key={index}
-                          initial={{ opacity: 0, y: 10 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          transition={{ delay: 0.1 + index * 0.05 }}
-                          className="flex flex-col gap-1 p-3 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 transition-colors group cursor-pointer"
-                        >
-                          <div className="flex items-center gap-2">
-                            <div 
-                              className="w-2 h-2 rounded-full"
-                              style={{ backgroundColor: activeAnalysis.color }}
-                            />
-                            <span className="text-gray-800 text-sm font-semibold group-hover:text-[#00b982] transition-colors">{subtype.name}</span>
+                    <div className="mt-8 grid md:grid-cols-2 gap-4">
+                      {subTests.map((test) => (
+                        <div key={test.id} className="flex items-start gap-3 bg-[#f7fffb] rounded-2xl border border-[#00b982]/10 p-4">
+                          <CheckCircle2 className="w-5 h-5 text-[#00b982] mt-0.5 flex-shrink-0" />
+                          <div>
+                            <h4 className="font-semibold text-[#1a365d]">{test.titleAz}</h4>
+                            {test.descriptionAz && (
+                              <p className="text-sm text-gray-600 mt-1">{test.descriptionAz}</p>
+                            )}
                           </div>
-                          <p className="text-gray-500 text-xs ml-4">{subtype.description}</p>
-                        </motion.div>
+                        </div>
                       ))}
                     </div>
 
-                    {/* CTA Button */}
-                    <motion.button
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: 0.5 }}
-                      className="w-full py-3 px-4 rounded-xl font-semibold transition-all duration-300"
-                      style={{ 
-                        backgroundColor: `${activeAnalysis.color}20`,
-                        color: activeAnalysis.color,
-                        border: `2px solid ${activeAnalysis.color}40`
-                      }}
-                      whileHover={{ 
-                        backgroundColor: activeAnalysis.color,
-                        color: 'white',
-                        scale: 1.02
-                      }}
-                    >
-                      Ətraflı Məlumat
-                    </motion.button>
+                    {subTests.length === 0 && (
+                      <div className="mt-8 rounded-2xl border border-dashed border-[#00b982]/20 p-6 text-center text-gray-500">
+                        Bu analiz qrupu üçün alt testlər admin paneldən əlavə oluna bilər.
+                      </div>
+                    )}
                   </div>
                 </motion.div>
               </motion.div>
@@ -343,10 +202,6 @@ export default function LaboratorySection() {
           </div>
         </div>
       </div>
-      
-      {/* Volumetric Section Divider */}
-      <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-b from-transparent via-[#00b982]/5 to-[#f0fdf4] pointer-events-none" />
-      <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-[#00b982]/30 to-transparent" />
     </motion.section>
   );
 }
