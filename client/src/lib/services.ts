@@ -22,6 +22,12 @@ type CmsService = {
   isActive?: boolean;
 };
 
+type DiagnosticDoctorMeta = {
+  name: string;
+  specialty: string;
+  experience: string;
+};
+
 const diagnosticIconMap: Record<string, LucideIcon> = {
   activity: Activity,
   cardio: Heart,
@@ -75,12 +81,50 @@ const laboratoryImages = [
   '/images/lab-analysis.jpg',
 ];
 
-export function getDiagnosticPresentation(icon: string | null | undefined, index: number) {
+const diagnosticDoctorMap: Record<string, DiagnosticDoctorMeta> = {
+  'Ultrasəs Müayinəsi (USM)': {
+    name: 'Dr. Aynur Məmmədova',
+    specialty: 'USM Mütəxəssisi',
+    experience: '12 il təcrübə',
+  },
+  'Kardioloji Diaqnostika': {
+    name: 'Dr. Rəşad Hüseynov',
+    specialty: 'Kardioloq',
+    experience: '18 il təcrübə',
+  },
+  'Nevroloji Müayinə': {
+    name: 'Dr. Leyla Əliyeva',
+    specialty: 'Nevropatoloq',
+    experience: '15 il təcrübə',
+  },
+  'Ginekoloji Müayinə': {
+    name: 'Dr. Səbinə Quliyeva',
+    specialty: 'Ginekoloq',
+    experience: '20 il təcrübə',
+  },
+  'LOR Müayinəsi': {
+    name: 'Dr. Kamran Əhmədov',
+    specialty: 'Otolorinqoloq-Foniatr',
+    experience: '14 il təcrübə',
+  },
+  'Ümumi Həkim Məsləhəti': {
+    name: 'Dr. Nigar Həsənova',
+    specialty: 'Terapevt',
+    experience: '16 il təcrübə',
+  },
+};
+
+export function getDiagnosticPresentation(
+  icon: string | null | undefined,
+  index: number,
+  titleAz?: string | null
+) {
   const key = icon?.trim().toLowerCase() ?? '';
   return {
     icon: diagnosticIconMap[key] ?? diagnosticIconMap[key.split('-')[0]] ?? Activity,
     color: diagnosticColors[index % diagnosticColors.length],
     image: diagnosticImages[index % diagnosticImages.length],
+    doctor: titleAz ? diagnosticDoctorMap[titleAz] ?? null : null,
   };
 }
 

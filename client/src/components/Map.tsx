@@ -53,6 +53,16 @@ interface MapViewProps {
   initialCenter?: google.maps.LatLngLiteral;
   initialZoom?: number;
   onMapReady?: (map: google.maps.Map) => void;
+  title?: string;
+}
+
+function buildOsmEmbedUrl(center: google.maps.LatLngLiteral) {
+  const delta = 0.01;
+  const left = center.lng - delta;
+  const right = center.lng + delta;
+  const top = center.lat + delta;
+  const bottom = center.lat - delta;
+  return `https://www.openstreetmap.org/export/embed.html?bbox=${left}%2C${bottom}%2C${right}%2C${top}&layer=mapnik&marker=${center.lat}%2C${center.lng}`;
 }
 
 export function MapView({
@@ -60,6 +70,7 @@ export function MapView({
   initialCenter = { lat: 40.4093, lng: 49.8671 },
   initialZoom = 15,
   onMapReady,
+  title = "Dialab Klinika Map",
 }: MapViewProps) {
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<google.maps.Map | null>(null);
@@ -103,10 +114,10 @@ export function MapView({
   }, [init]);
 
   if (mode === "iframe") {
-    const src = `https://www.openstreetmap.org/export/embed.html?bbox=49.8571%2C40.4043%2C49.8771%2C40.4143&layer=mapnik&marker=${initialCenter.lat}%2C${initialCenter.lng}`;
+    const src = buildOsmEmbedUrl(initialCenter);
     return (
       <iframe
-        title="Dialab Klinika Map"
+        title={title}
         src={src}
         loading="lazy"
         className={cn("w-full h-[500px] border-0", className)}

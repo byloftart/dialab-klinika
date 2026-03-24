@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowRight, CheckCircle2 } from 'lucide-react';
+import { ArrowRight, CheckCircle2, FlaskConical, ShieldCheck, Sparkles } from 'lucide-react';
 import { trpc } from '@/lib/trpc';
 import { buildSettingsMap, getSetting } from '@/lib/siteSettings';
 import { getLaboratoryPresentation } from '@/lib/services';
@@ -46,6 +46,10 @@ export default function LaboratorySection() {
     { enabled: Boolean(visibleType?.id) }
   );
   const subTests = activeTypeData?.subTests ?? [];
+
+  const openAppointment = () => {
+    document.querySelector('#appointment')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
 
   if (!displayTypes.length) {
     return null;
@@ -106,7 +110,7 @@ export default function LaboratorySection() {
                   />
                 )}
 
-                <div className="relative z-10 flex items-center gap-4">
+                  <div className="relative z-10 flex items-center gap-4">
                   <motion.div
                     className="w-14 h-14 rounded-xl flex items-center justify-center shadow-lg transition-transform duration-300 flex-shrink-0"
                     style={{
@@ -195,6 +199,34 @@ export default function LaboratorySection() {
                         Bu analiz qrupu üçün alt testlər admin paneldən əlavə oluna bilər.
                       </div>
                     )}
+
+                    <div className="mt-10 rounded-[28px] border border-[#00b982]/15 bg-gradient-to-r from-[#f7fffb] via-white to-[#ecfdf5] p-5 lg:p-6 shadow-xl shadow-[#00b982]/8">
+                      <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
+                        <div className="min-w-0">
+                          <div className="inline-flex items-center gap-2 rounded-full bg-white px-3 py-1.5 text-[#00b982] text-sm font-semibold shadow-sm">
+                            <ShieldCheck className="w-4 h-4" />
+                            Dəqiq və etibarlı nəticələr
+                          </div>
+                          <h4 className="mt-4 text-2xl font-bold text-[#1a365d] flex items-center gap-2">
+                            <Sparkles className="w-5 h-5 text-[#00b982]" />
+                            Analiz üçün hazırlıq və ətraflı məlumat
+                          </h4>
+                          <p className="mt-2 text-gray-600 max-w-2xl">
+                            Müayinə öncəsi qaydaları və uyğun vaxtı bir neçə kliklə dəqiqləşdirin. Komandamız sizi doğru analiz növünə yönləndirəcək.
+                          </p>
+                        </div>
+                        <div className="flex flex-wrap gap-3">
+                          <button
+                            type="button"
+                            onClick={openAppointment}
+                            className="inline-flex items-center gap-2 rounded-full bg-[#00b982] px-5 py-3 text-white font-semibold shadow-lg shadow-[#00b982]/20 hover:bg-[#00a572] transition-colors"
+                          >
+                            Ətraflı Məlumat
+                            <ArrowRight className="w-4 h-4" />
+                          </button>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </motion.div>
               </motion.div>

@@ -1,8 +1,8 @@
 import { motion } from 'framer-motion';
-import { MapPin, Phone, Mail, Clock, Facebook, Instagram, Send } from 'lucide-react';
+import { MapPin, Phone, Mail, Clock, Instagram, Send, MessageCircle, ExternalLink } from 'lucide-react';
 import { MapView } from '@/components/Map';
 import { trpc } from '@/lib/trpc';
-import { buildSettingsMap, getSetting } from '@/lib/siteSettings';
+import { buildSettingsMap, getSetting, parseCoordinate } from '@/lib/siteSettings';
 
 export default function Footer() {
   const { data: contactSettings } = trpc.cms.settings.getGroup.useQuery({ group: 'contact' });
@@ -13,17 +13,27 @@ export default function Footer() {
   const hoursMap = buildSettingsMap(hoursSettings);
   const socialMap = buildSettingsMap(socialSettings);
 
-  const address = getSetting(contactMap, 'contact.address', 'Bakı şəhəri, Nəsimi rayonu, Nizami küçəsi 123');
+  const address = getSetting(contactMap, 'contact.address', 'Tbilisi prospekti, 3007 məhəllə, bina 44c');
   const phone1 = getSetting(contactMap, 'contact.phone1', '+994 12 345 67 89');
-  const email = getSetting(contactMap, 'contact.email', 'info@dialab.az');
+  const email = getSetting(contactMap, 'contact.email', 'info@dialab.center');
   const whatsapp = getSetting(contactMap, 'contact.whatsapp', '+994501234567');
+  const telegramUrl = socialMap['social.telegram'] || socialMap['social.facebook'] || 'https://t.me/';
+  const locationTitle = getSetting(contactMap, 'contact.locationTitle', 'Bizim ünvanımız');
+  const mapUrl = getSetting(
+    contactMap,
+    'contact.mapUrl',
+    'https://www.google.com/maps/place/Dialab+Klinika/@40.4025664,49.8081976,431m/data=!3m2!1e3!4b1!4m6!3m5!1s0x4030870013e1a3f5:0xd18b86541ce1e4c2!8m2!3d40.4025664!4d49.8094851!16s%2Fg%2F11z3lkv4f_!18m1!1e1?entry=ttu&g_ep=EgoyMDI2MDMxOC4xIKXMDSoASAFQAw%3D%3D'
+  );
+  const location = {
+    lat: parseCoordinate(contactMap['contact.latitude'], 40.40234),
+    lng: parseCoordinate(contactMap['contact.longitude'], 49.80917),
+  };
 
   const handleMapReady = (map: google.maps.Map) => {
-    const location = { lat: 40.4093, lng: 49.8671 };
     new google.maps.Marker({
       position: location,
       map,
-      title: 'DIALAB Klinika',
+      title: locationTitle,
       icon: {
         url: '/images/dia_logo_symbol.png',
         scaledSize: new google.maps.Size(40, 40),
@@ -58,15 +68,26 @@ export default function Footer() {
 
         <div className="grid lg:grid-cols-2 gap-8 mb-16">
           <motion.div initial={{ opacity: 0, x: -30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.6 }} className="relative h-80 lg:h-auto rounded-2xl overflow-hidden border border-[#00b982]/20">
-            <MapView onMapReady={handleMapReady} className="w-full h-full min-h-[320px]" />
+            <MapView onMapReady={handleMapReady} initialCenter={location} title={locationTitle} className="w-full h-full min-h-[320px]" />
             <div className="absolute bottom-4 left-4 right-4 bg-white/95 backdrop-blur-md rounded-xl p-4 shadow-xl">
               <div className="flex items-start gap-3">
                 <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-[#00b982] to-[#14b8a6] flex items-center justify-center flex-shrink-0">
                   <MapPin className="w-5 h-5 text-white" />
                 </div>
                 <div>
-                  <h4 className="font-bold text-[#1a365d]">DIALAB Klinika</h4>
+                  <h4 className="font-bold text-[#1a365d]">{locationTitle}</h4>
                   <p className="text-gray-600 text-sm">{address}</p>
+                  <div className="mt-3 flex flex-wrap gap-3">
+                    <a
+                      href={mapUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1.5 text-[#00b982] hover:text-[#00a572] transition-colors text-sm font-medium"
+                    >
+                      Xəritədə aç
+                      <ExternalLink className="w-3.5 h-3.5" />
+                    </a>
+                  </div>
                 </div>
               </div>
             </div>
@@ -115,14 +136,14 @@ export default function Footer() {
             <div>
               <h4 className="font-semibold text-[#1a365d] mb-4">Sosial Şəbəkələr</h4>
               <div className="flex gap-3">
-                <a href={getSetting(socialMap, 'social.facebook', 'https://facebook.com/dialabklinika')} target="_blank" rel="noopener noreferrer" className="w-12 h-12 rounded-xl bg-blue-600 flex items-center justify-center hover:bg-blue-700 transition-colors">
-                  <Facebook className="w-6 h-6 text-white" />
+                <a href={telegramUrl} target="_blank" rel="noopener noreferrer" className="w-12 h-12 rounded-xl bg-sky-500 flex items-center justify-center hover:bg-sky-600 transition-colors">
+                  <Send className="w-6 h-6 text-white" />
                 </a>
                 <a href={getSetting(socialMap, 'social.instagram', 'https://instagram.com/dialabklinika')} target="_blank" rel="noopener noreferrer" className="w-12 h-12 rounded-xl bg-gradient-to-br from-pink-500 to-purple-600 flex items-center justify-center hover:opacity-90 transition-opacity">
                   <Instagram className="w-6 h-6 text-white" />
                 </a>
                 <a href={`https://wa.me/${whatsapp.replace(/[^\d]/g, '')}`} target="_blank" rel="noopener noreferrer" className="w-12 h-12 rounded-xl bg-green-600 flex items-center justify-center hover:bg-green-700 transition-colors">
-                  <Send className="w-6 h-6 text-white" />
+                  <MessageCircle className="w-6 h-6 text-white" />
                 </a>
               </div>
             </div>

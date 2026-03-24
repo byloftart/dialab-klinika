@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowRight, CheckCircle2 } from 'lucide-react';
+import { ArrowRight, CheckCircle2, Stethoscope, UserRound } from 'lucide-react';
 import { trpc } from '@/lib/trpc';
 import { buildSettingsMap, getSetting } from '@/lib/siteSettings';
 import { getDiagnosticPresentation } from '@/lib/services';
@@ -16,7 +16,7 @@ export default function DiagnosticsSection() {
       .filter((item) => item.isActive)
       .map((item, index) => ({
         ...item,
-        ...getDiagnosticPresentation(item.icon, index),
+        ...getDiagnosticPresentation(item.icon, index, item.titleAz),
       }));
   }, [diagnostics]);
 
@@ -45,6 +45,10 @@ export default function DiagnosticsSection() {
     'diagnostics.subtitle',
     'Müasir avadanlıqlarla instrumental diaqnostika'
   );
+
+  const openAppointment = () => {
+    document.querySelector('#appointment')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
 
   if (!displayServices.length) {
     return null;
@@ -192,6 +196,41 @@ export default function DiagnosticsSection() {
                     {(activeServiceData?.subServices ?? []).length === 0 && (
                       <div className="mt-8 rounded-2xl border border-dashed border-[#00b982]/20 p-6 text-center text-gray-500">
                         Bu xidmət üçün alt diaqnostika punktları admin paneldən əlavə oluna bilər.
+                      </div>
+                    )}
+
+                    {visibleService.doctor && (
+                      <div className="mt-8 rounded-[28px] border border-[#00b982]/15 bg-gradient-to-br from-white via-[#f8fffc] to-[#eefcf6] p-5 lg:p-6 shadow-xl shadow-[#00b982]/8">
+                        <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
+                          <div className="flex items-start gap-4 min-w-0">
+                            <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-[#00b982]/15 to-[#14b8a6]/10 border border-[#00b982]/15 flex items-center justify-center flex-shrink-0 shadow-inner">
+                              <div className="w-14 h-14 rounded-xl bg-white/90 flex items-center justify-center text-[#00b982] shadow-sm">
+                                <UserRound className="w-7 h-7" />
+                              </div>
+                            </div>
+                            <div className="min-w-0">
+                              <div className="inline-flex items-center gap-2 rounded-full bg-[#f0fdf4] px-3 py-1.5 text-[#00b982] text-sm font-semibold">
+                                <Stethoscope className="w-4 h-4" />
+                                Mütəxəssis həkim
+                              </div>
+                              <h4 className="mt-3 text-2xl font-bold text-[#1a365d]">{visibleService.doctor.name}</h4>
+                              <p className="text-[#00b982] font-semibold mt-1">{visibleService.doctor.specialty}</p>
+                              <p className="text-gray-500 mt-2">
+                                Bu xidmət üzrə qəbul və yönləndirmə üçün birbaşa randevu ala bilərsiniz.
+                              </p>
+                            </div>
+                          </div>
+                          <div className="flex flex-wrap gap-3">
+                            <button
+                              type="button"
+                              onClick={openAppointment}
+                              className="inline-flex items-center gap-2 rounded-full bg-[#00b982] px-5 py-3 text-white font-semibold shadow-lg shadow-[#00b982]/20 hover:bg-[#00a572] transition-colors"
+                            >
+                              Randevu Al
+                              <ArrowRight className="w-4 h-4" />
+                            </button>
+                          </div>
+                        </div>
                       </div>
                     )}
                   </div>

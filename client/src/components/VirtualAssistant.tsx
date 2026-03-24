@@ -15,44 +15,60 @@ import {
   HelpCircle,
   ArrowRight
 } from 'lucide-react';
-
-const quickActions = [
-  {
-    id: 'whatsapp',
-    icon: MessageCircle,
-    label: 'WhatsApp ilə Yazın',
-    description: 'Sürətli cavab alın',
-    color: 'from-green-500 to-green-600',
-    href: 'https://wa.me/994123456789?text=Salam,%20DIALAB%20Klinikadan%20məlumat%20almaq%20istəyirəm.',
-  },
-  {
-    id: 'call',
-    icon: Phone,
-    label: 'Zəng Edin',
-    description: '+994 12 345 67 89',
-    color: 'from-[#00b982] to-[#14b8a6]',
-    href: 'tel:+994123456789',
-  },
-  {
-    id: 'appointment',
-    icon: Calendar,
-    label: 'Randevu Alın',
-    description: 'Onlayn qeydiyyat',
-    color: 'from-[#8b5cf6] to-[#a855f7]',
-    action: 'scroll-to-appointment',
-  },
-  {
-    id: 'faq',
-    icon: HelpCircle,
-    label: 'Tez-tez Verilən Suallar',
-    description: 'Cavabları tapın',
-    color: 'from-[#f59e0b] to-[#f97316]',
-    action: 'scroll-to-faq',
-  },
-];
+import { trpc } from '@/lib/trpc';
+import { buildSettingsMap, getSetting } from '@/lib/siteSettings';
 
 export default function VirtualAssistant() {
   const [isOpen, setIsOpen] = useState(false);
+  const { data: contactSettings } = trpc.cms.settings.getGroup.useQuery({ group: 'contact' });
+  const { data: hoursSettings } = trpc.cms.settings.getGroup.useQuery({ group: 'hours' });
+
+  const contactMap = buildSettingsMap(contactSettings);
+  const hoursMap = buildSettingsMap(hoursSettings);
+
+  const phone = getSetting(contactMap, 'contact.phone1', '+994 12 345 67 89');
+  const whatsapp = getSetting(contactMap, 'contact.whatsapp', '+994501234567');
+  const mapUrl = getSetting(
+    contactMap,
+    'contact.mapUrl',
+    'https://www.google.com/maps/place/Dialab+Klinika/@40.4025664,49.8081976,431m/data=!3m2!1e3!4b1!4m6!3m5!1s0x4030870013e1a3f5:0xd18b86541ce1e4c2!8m2!3d40.4025664!4d49.8094851!16s%2Fg%2F11z3lkv4f_!18m1!1e1?entry=ttu&g_ep=EgoyMDI2MDMxOC4xIKXMDSoASAFQAw%3D%3D'
+  );
+  const weekdayHours = getSetting(hoursMap, 'hours.weekdays', '09:00 - 18:00');
+
+  const quickActions = [
+    {
+      id: 'whatsapp',
+      icon: MessageCircle,
+      label: 'WhatsApp ilə Yazın',
+      description: 'Sürətli cavab alın',
+      color: 'from-green-500 to-green-600',
+      href: `https://wa.me/${whatsapp.replace(/[^\d]/g, '')}?text=Salam,%20DIALAB%20Klinikadan%20məlumat%20almaq%20istəyirəm.`,
+    },
+    {
+      id: 'call',
+      icon: Phone,
+      label: 'Zəng Edin',
+      description: phone,
+      color: 'from-[#00b982] to-[#14b8a6]',
+      href: `tel:${phone.replace(/\s+/g, '')}`,
+    },
+    {
+      id: 'appointment',
+      icon: Calendar,
+      label: 'Randevu Alın',
+      description: 'Onlayn qeydiyyat',
+      color: 'from-[#8b5cf6] to-[#a855f7]',
+      action: 'scroll-to-appointment',
+    },
+    {
+      id: 'faq',
+      icon: HelpCircle,
+      label: 'Tez-tez Verilən Suallar',
+      description: 'Cavabları tapın',
+      color: 'from-[#f59e0b] to-[#f97316]',
+      action: 'scroll-to-faq',
+    },
+  ];
 
   const handleAction = (action: typeof quickActions[0]) => {
     if (action.href) {
@@ -126,7 +142,7 @@ export default function VirtualAssistant() {
             {/* Footer */}
             <div className="px-4 pb-4">
               <p className="text-center text-gray-400 text-xs">
-                İş saatları: B.e - Cümə 09:00-18:00
+                İş saatları: B.e - Cümə {weekdayHours}
               </p>
             </div>
           </motion.div>

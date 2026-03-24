@@ -38,11 +38,15 @@ const SETTINGS_SCHEMA = [
     group: 'contact',
     label: 'Əlaqə məlumatları',
     fields: [
-      { key: 'contact.address', label: 'Ünvan', placeholder: 'Bakı, Nəsimi rayonu, Atatürk prospekti 45' },
+      { key: 'contact.address', label: 'Ünvan', placeholder: 'Tbilisi prospekti, 3007 məhəllə, bina 44c' },
       { key: 'contact.phone1', label: 'Telefon 1', placeholder: '+994 12 345 67 89' },
       { key: 'contact.phone2', label: 'Telefon 2', placeholder: '+994 50 123 45 67' },
-      { key: 'contact.email', label: 'E-mail', placeholder: 'info@dialab.az' },
+      { key: 'contact.email', label: 'E-mail', placeholder: 'info@dialab.center' },
       { key: 'contact.whatsapp', label: 'WhatsApp', placeholder: '+994501234567' },
+      { key: 'contact.locationTitle', label: 'Xəritə blok başlığı', placeholder: 'Bizim ünvanımız' },
+      { key: 'contact.mapUrl', label: 'Google Maps linki', placeholder: 'https://www.google.com/maps/...' },
+      { key: 'contact.latitude', label: 'Enlik (latitude)', placeholder: '40.40234' },
+      { key: 'contact.longitude', label: 'Uzunluq (longitude)', placeholder: '49.80917' },
     ],
   },
   {
@@ -126,7 +130,7 @@ const SETTINGS_SCHEMA = [
     fields: [
       { key: 'appointment.title', label: 'Bölmə başlığı', placeholder: 'Məlumat' },
       { key: 'appointment.faqTitle', label: 'FAQ başlığı', placeholder: 'Tez-tez Verilən Suallar' },
-      { key: 'appointment.faqSubtitle', label: 'FAQ alt başlıq', placeholder: 'Ən çox soruşulan suallar' },
+      { key: 'appointment.faqSubtitle', label: 'FAQ alt başlıq', placeholder: '' },
       {
         key: 'appointment.faqItems',
         label: 'FAQ JSON',
@@ -152,7 +156,7 @@ const SETTINGS_SCHEMA = [
     label: 'Sosial şəbəkələr',
     fields: [
       { key: 'social.instagram', label: 'Instagram URL', placeholder: 'https://instagram.com/dialab' },
-      { key: 'social.facebook', label: 'Facebook URL', placeholder: 'https://facebook.com/dialab' },
+      { key: 'social.telegram', label: 'Telegram URL', placeholder: 'https://t.me/dialab' },
       { key: 'social.youtube', label: 'YouTube URL', placeholder: 'https://youtube.com/@dialab' },
     ],
   },

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { MapPin, Phone, Mail, Clock, Send, Calendar, ChevronRight } from 'lucide-react';
+import { MapPin, Phone, Mail, Clock, Send, Calendar, ChevronRight, ExternalLink } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { trpc } from '@/lib/trpc';
 import { buildSettingsMap, getSetting } from '@/lib/siteSettings';
@@ -44,8 +44,13 @@ export default function InfoBar() {
 
   const phone1 = getSetting(contactMap, 'contact.phone1', '+994 12 345 67 89');
   const phone2 = getSetting(contactMap, 'contact.phone2', '+994 50 123 45 67');
-  const email = getSetting(contactMap, 'contact.email', 'info@dialab.az');
-  const address = getSetting(contactMap, 'contact.address', 'Bakı, Nəsimi rayonu, Atatürk prospekti 45');
+  const email = getSetting(contactMap, 'contact.email', 'info@dialab.center');
+  const address = getSetting(contactMap, 'contact.address', 'Tbilisi prospekti, 3007 məhəllə, bina 44c');
+  const mapUrl = getSetting(
+    contactMap,
+    'contact.mapUrl',
+    'https://www.google.com/maps/place/Dialab+Klinika/@40.4025664,49.8081976,431m/data=!3m2!1e3!4b1!4m6!3m5!1s0x4030870013e1a3f5:0xd18b86541ce1e4c2!8m2!3d40.4025664!4d49.8094851!16s%2Fg%2F11z3lkv4f_!18m1!1e1?entry=ttu&g_ep=EgoyMDI2MDMxOC4xIKXMDSoASAFQAw%3D%3D'
+  );
   const serviceOptions = buildServiceOptions(laboratory, diagnostics);
 
   return (
@@ -67,7 +72,18 @@ export default function InfoBar() {
             <div className="space-y-4 text-sm text-gray-600">
               <div className="flex items-start gap-3">
                 <MapPin className="w-4 h-4 mt-0.5 text-[#00b982]/60 flex-shrink-0" />
-                <span>{address}</span>
+                <div>
+                  <span>{address}</span>
+                  <a
+                    href={mapUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mt-2 inline-flex items-center gap-1.5 text-[#00b982] hover:text-[#00a572] transition-colors font-medium"
+                  >
+                    Xəritədə aç
+                    <ExternalLink className="w-3.5 h-3.5" />
+                  </a>
+                </div>
               </div>
               <div className="flex items-center gap-3">
                 <Phone className="w-4 h-4 text-[#00b982]/60 flex-shrink-0" />

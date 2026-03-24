@@ -27,6 +27,14 @@ const fallbackFaqItems: FaqItem[] = [
     question: 'Nəticələri necə ala bilərəm?',
     answer: 'Nəticələri klinikadan, e-poçt vasitəsilə və ya onlayn formada təqdim edə bilərik.',
   },
+  {
+    question: 'Müayinə üçün əvvəlcədən hazırlaşmaq lazımdırmı?',
+    answer: 'Bəzi analiz və diaqnostik prosedurlar üçün acqarına gəlmək və ya xüsusi hazırlıq qaydalarına əməl etmək tələb oluna bilər. Randevu zamanı sizə uyğun hazırlıq qaydalarını əvvəlcədən bildiririk.',
+  },
+  {
+    question: 'Randevunu dəyişmək və ya ləğv etmək mümkündürmü?',
+    answer: 'Bəli, randevunu telefon və ya WhatsApp vasitəsilə əvvəlcədən dəyişmək və ya ləğv etmək mümkündür. Mümkün olduqda bunu qəbul vaxtından öncə bildirməyiniz xahiş olunur.',
+  },
 ];
 
 export default function AppointmentSection() {
@@ -36,7 +44,7 @@ export default function AppointmentSection() {
   const settingsMap = buildSettingsMap(appointmentSettings);
   const sectionTitle = getSetting(settingsMap, 'appointment.title', 'Məlumat');
   const faqTitle = getSetting(settingsMap, 'appointment.faqTitle', 'Tez-tez Verilən Suallar');
-  const faqSubtitle = getSetting(settingsMap, 'appointment.faqSubtitle', 'Ən çox soruşulan suallar');
+  const faqSubtitle = getSetting(settingsMap, 'appointment.faqSubtitle', '');
   const faqItems = parseJsonSetting<FaqItem[]>(settingsMap['appointment.faqItems'], fallbackFaqItems)
     .filter((item) => item?.question && item?.answer);
 
@@ -85,7 +93,7 @@ export default function AppointmentSection() {
               </div>
               <div>
                 <h3 className="text-2xl font-bold text-[#1a365d]">{faqTitle}</h3>
-                <p className="text-base text-gray-600">{faqSubtitle}</p>
+                {faqSubtitle ? <p className="text-base text-gray-600">{faqSubtitle}</p> : null}
               </div>
             </div>
 

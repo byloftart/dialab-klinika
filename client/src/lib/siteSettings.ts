@@ -80,3 +80,9 @@ export function parseHomeSections(value: string | undefined, fallback: HomeSecti
   const parsed = parseJsonSetting<HomeSectionSetting[]>(value, fallback);
   return parsed.filter((item) => item?.id && typeof item.enabled === 'boolean');
 }
+
+export function parseCoordinate(value: string | undefined, fallback: number) {
+  if (!value) return fallback;
+  const parsed = Number.parseFloat(value);
+  return Number.isFinite(parsed) ? parsed : fallback;
+}
