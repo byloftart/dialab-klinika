@@ -1,5 +1,7 @@
 import { COOKIE_NAME } from "@shared/const";
+import { TRPCError } from "@trpc/server";
 import { getSessionCookieOptions } from "./_core/cookies";
+import { ENV } from "./_core/env";
 import { systemRouter } from "./_core/systemRouter";
 import { uploadRouter } from "./_core/uploadRouter";
 import { adminProcedure, publicProcedure, router } from "./_core/trpc";
@@ -19,6 +21,15 @@ import {
   getStaticPages, getStaticPageById, getStaticPageBySlug, createStaticPage, updateStaticPage, deleteStaticPage,
 } from "./db";
 
+function buildSettingsMap(settings: Array<{ key: string; value: string | null }>) {
+  return settings.reduce<Record<string, string>>((acc, setting) => {
+    if (setting.value != null) {
+      acc[setting.key] = setting.value;
+    }
+    return acc;
+  }, {});
+}
+
 export const appRouter = router({
   system: systemRouter,
   upload: uploadRouter,
@@ -29,6 +40,82 @@ export const appRouter = router({
       const cookieOptions = getSessionCookieOptions(ctx.req);
       ctx.res.clearCookie(COOKIE_NAME, { ...cookieOptions, maxAge: -1 });
       return { success: true } as const;
+    }),
+  }),
+
+  assistant: router({
+    config: publicProcedure.query(async () => {
+      if (ENV.botpressClientId) {
+        return {
+          provider: {
+            type: "botpress" as const,
+            isConfigured: true as const,
+            clientId: ENV.botpressClientId,
+            apiUrl: ENV.botpressApiUrl || undefined,
+            additionalStylesheetUrl: ENV.botpressStylesheetUrl || undefined,
+          },
+        };
+      }
+
+      return {
+        provider: {
+          type: "none" as const,
+          isConfigured: false as const,
+        },
+      };
+    }),
+    submitBooking: publicProcedure.input(z.object({
+      doctor_or_service: z.string().min(2),
+      preferred_date: z.string().optional().or(z.literal("")),
+      preferred_time: z.string().optional().or(z.literal("")),
+      patient_name: z.string().min(2),
+      phone: z.string().min(6),
+      note: z.string().optional().or(z.literal("")),
+    })).mutation(async ({ input }) => {
+      const assistantSettings = buildSettingsMap(await getSiteSettings("assistant"));
+      const webhookUrl = assistantSettings["assistant.bookingWebhookUrl"]?.trim();
+
+      await createAppointment({
+        fullName: input.patient_name,
+        phone: input.phone,
+        appointmentDate: input.preferred_date || undefined,
+        appointmentTime: input.preferred_time || undefined,
+        serviceType: input.doctor_or_service,
+        notes: input.note || undefined,
+      });
+
+      if (webhookUrl) {
+        let response: Response;
+
+        try {
+          response = await fetch(webhookUrl, {
+            method: "POST",
+            headers: {
+              "content-type": "application/json",
+            },
+            body: JSON.stringify({
+              ...input,
+              source: "assistant_widget",
+              submitted_at: new Date().toISOString(),
+            }),
+          });
+        } catch (error) {
+          throw new TRPCError({
+            code: "INTERNAL_SERVER_ERROR",
+            message: "Webhook göndərilmədi",
+            cause: error,
+          });
+        }
+
+        if (!response.ok) {
+          throw new TRPCError({
+            code: "INTERNAL_SERVER_ERROR",
+            message: "Webhook cavabı uğursuz oldu",
+          });
+        }
+      }
+
+      return { success: true };
     }),
   }),
 

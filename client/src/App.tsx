@@ -16,6 +16,7 @@ import Feedback from "./pages/admin/Feedback";
 import SiteSettings from "./pages/admin/SiteSettings";
 import Pages from "./pages/admin/Pages";
 import ContentPage from "./pages/ContentPage";
+import AssistantAdminPage from "./pages/admin/Assistant";
 
 function Router() {
   return (
@@ -34,6 +35,7 @@ function Router() {
       <Route path={"/admin/appointments"} component={Appointments} />
       <Route path={"/admin/feedback"} component={Feedback} />
       <Route path={"/admin/pages"} component={Pages} />
+      <Route path={"/admin/assistant"} component={AssistantAdminPage} />
       <Route path={"/admin/settings"} component={SiteSettings} />
 
       <Route path={"/404"} component={NotFound} />

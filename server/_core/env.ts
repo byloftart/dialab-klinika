@@ -9,4 +9,7 @@ export const ENV = {
   forgeApiKey: process.env.BUILT_IN_FORGE_API_KEY ?? "",
   gcsBucketName: process.env.GCS_BUCKET_NAME ?? "",
   gcsPublicBaseUrl: process.env.GCS_PUBLIC_BASE_URL ?? "",
+  botpressClientId: process.env.BOTPRESS_WEBCHAT_CLIENT_ID ?? "",
+  botpressApiUrl: process.env.BOTPRESS_WEBCHAT_API_URL ?? "",
+  botpressStylesheetUrl: process.env.BOTPRESS_WEBCHAT_STYLESHEET_URL ?? "",
 };
