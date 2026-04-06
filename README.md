@@ -219,6 +219,11 @@ If deploying directly to the production VM:
 
 ## Notes
 
+## Assistant Docs
+
+- Dr. Dia Botpress content map: [docs/dr-dia-botpress-content-map.md](/Users/iram/Projects/Dialab/dialab-klinika-repo-2/docs/dr-dia-botpress-content-map.md)
+- Project handoff snapshot: [docs/project-handoff-2026-04-06.md](/Users/iram/Projects/Dialab/dialab-klinika-repo-2/docs/project-handoff-2026-04-06.md)
+
 - The repo still contains some legacy Manus/Forge-related code paths. They are not the primary deployment path anymore.
 - Auth hardening can be improved later without reworking the current platform architecture.
 - The project currently uses `pnpm` as the intended package manager.

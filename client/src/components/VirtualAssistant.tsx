@@ -138,6 +138,14 @@ const defaultPreparationTips = [
   "Hazırlıq qaydasını dəqiqləşdirmək üçün əvvəlcədən bizimlə əlaqə saxlayın.",
 ];
 
+const launcherPreviewItems = [
+  "Qəbula yazılmaq",
+  "Qiymətlər",
+  "Həkimlər",
+  "Analiz hazırlığı",
+  "Əlaqə və WhatsApp",
+];
+
 function getPulseAnimation(reducedMotion: boolean) {
   if (reducedMotion) {
     return {
@@ -165,9 +173,9 @@ function getButtonMotionProps(reducedMotion: boolean) {
   }
 
   return {
-    whileHover: { scale: 1.03, y: -1 },
+    whileHover: { scale: 1.06, y: -2 },
     whileTap: { scale: 0.98 },
-    transition: { type: "spring" as const, stiffness: 320, damping: 22 },
+    transition: { type: "spring" as const, stiffness: 300, damping: 18 },
   };
 }
 
@@ -178,6 +186,7 @@ export default function VirtualAssistant() {
   const [activeQuickAction, setActiveQuickAction] = useState<QuickActionId | null>(null);
   const [bookingForm, setBookingForm] = useState<BookingFormState>(initialBookingForm);
   const [bookingState, setBookingState] = useState<BookingUiState>({ status: "idle", message: null });
+  const [isLauncherHovered, setIsLauncherHovered] = useState(false);
   const { data: assistantConfig } = trpc.assistant.config.useQuery(undefined, { retry: false });
   const { data: contactSettings } = trpc.cms.settings.getGroup.useQuery({ group: "contact" });
   const { data: socialSettings } = trpc.cms.settings.getGroup.useQuery({ group: "social" });
@@ -369,6 +378,7 @@ export default function VirtualAssistant() {
   };
 
   const isActive = widgetState.isLauncherOpen || widgetState.isPanelReady;
+  const showLauncherPreview = isLauncherHovered && !widgetState.isLauncherOpen;
   const activeChatContent =
     activeQuickAction && activeQuickAction !== "appointment" && activeQuickAction !== "whatsapp"
       ? chatPlaceholderCopy[activeQuickAction]
@@ -537,7 +547,11 @@ export default function VirtualAssistant() {
 
   return (
     <div className="pointer-events-none fixed bottom-4 right-4 z-50 sm:bottom-6 sm:right-6">
-      <div className="pointer-events-auto">
+      <div
+        className="pointer-events-auto"
+        onMouseEnter={() => setIsLauncherHovered(true)}
+        onMouseLeave={() => setIsLauncherHovered(false)}
+      >
         <AnimatePresence>
           {widgetState.isLauncherOpen ? (
             <>
@@ -795,6 +809,35 @@ export default function VirtualAssistant() {
           ) : null}
         </AnimatePresence>
 
+        <AnimatePresence>
+          {showLauncherPreview ? (
+            <motion.div
+              initial={reducedMotion ? { opacity: 1 } : { opacity: 0, x: 14, scale: 0.96 }}
+              animate={reducedMotion ? { opacity: 1 } : { opacity: 1, x: 0, scale: 1 }}
+              exit={reducedMotion ? { opacity: 0 } : { opacity: 0, x: 10, scale: 0.98 }}
+              transition={{ duration: reducedMotion ? 0 : 0.2, ease: "easeOut" }}
+              className="absolute bottom-3 right-[92px] hidden w-[246px] rounded-[24px] border border-[#8eece4]/50 bg-white/95 p-4 shadow-[0_20px_44px_rgba(20,55,87,0.18)] backdrop-blur-md sm:block"
+            >
+              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#00b982]">
+                Dr. Dia
+              </p>
+              <p className="mt-2 text-sm font-semibold text-[#1a365d]">
+                Kömək edə bildiyi mövzular
+              </p>
+              <div className="mt-3 space-y-2">
+                {launcherPreviewItems.map((item) => (
+                  <div
+                    key={item}
+                    className="rounded-2xl border border-[#dff8f5] bg-[#f8fffe] px-3 py-2 text-sm text-[#1a365d]"
+                  >
+                    {item}
+                  </div>
+                ))}
+              </div>
+            </motion.div>
+          ) : null}
+        </AnimatePresence>
+
         <motion.button
           type="button"
           onClick={handleLauncherClick}
@@ -803,34 +846,89 @@ export default function VirtualAssistant() {
           title={launcherConfig.launcherLabel}
           data-visual-variant={launcherConfig.visualVariant}
           className={[
-            "group relative flex h-14 w-14 items-center justify-center overflow-hidden rounded-full",
-            "border border-[#00b982]/20 bg-white text-[#1a365d]",
+            "group relative flex h-[76px] w-[76px] items-center justify-center rounded-full",
             isActive
-              ? "shadow-[0_14px_28px_rgba(0,185,130,0.2)]"
-              : "shadow-[0_12px_24px_rgba(26,54,93,0.14)]",
+              ? "shadow-[0_16px_34px_rgba(0,185,130,0.26)]"
+              : "shadow-[0_14px_30px_rgba(26,54,93,0.18)]",
+            "before:absolute before:inset-[5px] before:rounded-full before:border before:border-white/85 before:content-['']",
+            "after:absolute after:inset-[1px] after:rounded-full after:border after:border-[#7fe6df]/55 after:content-['']",
             "outline-none focus-visible:ring-4 focus-visible:ring-[#00b982]/25 focus-visible:ring-offset-2",
             "focus-visible:ring-offset-white",
             "transition-shadow duration-200",
           ].join(" ")}
+          onFocus={() => setIsLauncherHovered(true)}
+          onBlur={() => setIsLauncherHovered(false)}
           {...buttonMotionProps}
         >
           <motion.span
-            className="absolute inset-0 rounded-full bg-[linear-gradient(145deg,rgba(255,255,255,1),rgba(240,253,244,0.92))]"
-            animate={reducedMotion ? undefined : { scale: widgetState.isLauncherOpen ? 0.98 : 1 }}
-            transition={{ duration: 0.24, ease: "easeOut" }}
+            className="absolute inset-[10px] rounded-full bg-[radial-gradient(circle,rgba(92,244,230,0.44)_0%,rgba(92,244,230,0.18)_48%,rgba(92,244,230,0)_78%)] blur-md"
+            animate={
+              reducedMotion
+                ? undefined
+                : widgetState.isLauncherOpen
+                  ? { scale: 1.03, opacity: 0.7 }
+                  : { scale: 1, opacity: 1 }
+            }
+            transition={{ duration: 0.28, ease: "easeOut" }}
             aria-hidden="true"
           />
 
           <motion.span
-            className="absolute inset-0 rounded-full bg-[#00b982]/20"
+            className="absolute inset-[6px] rounded-full border border-[#b9f4ef]/75"
+            aria-hidden="true"
+            animate={
+              reducedMotion
+                ? undefined
+                : isLauncherHovered
+                  ? { borderColor: "rgba(0,185,130,0.58)", opacity: 1 }
+                  : { borderColor: "rgba(185,244,239,0.75)", opacity: 0.9 }
+            }
+            transition={{ duration: 0.22, ease: "easeOut" }}
+          />
+
+          <motion.span
+            className="absolute inset-[12px] rounded-full bg-[#79efe5]/24 blur-md"
             aria-hidden="true"
             animate={pulseAnimation.animate}
             transition={pulseAnimation.transition}
           />
 
-          <div className="relative flex items-center justify-center rounded-full bg-[#1a365d] p-3 text-white">
-            <MessageCircle className="h-5 w-5" aria-hidden="true" />
-          </div>
+          <motion.span
+            className="absolute left-1/2 top-1/2 h-[28px] w-[28px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(circle,rgba(255,84,84,0.42)_0%,rgba(227,29,29,0.2)_48%,rgba(227,29,29,0)_76%)] blur-md"
+            aria-hidden="true"
+            animate={
+              reducedMotion
+                ? undefined
+                : {
+                    scale: [0.96, 1.18, 0.96],
+                    opacity: [0.45, 0.88, 0.45],
+                  }
+            }
+            transition={{
+              duration: 1.9,
+              repeat: Infinity,
+              ease: "easeInOut",
+            }}
+          />
+
+          <motion.img
+            src="/images/assistant-launcher-transparent.png"
+            alt=""
+            aria-hidden="true"
+            className="relative h-full w-full select-none object-contain drop-shadow-[0_10px_24px_rgba(0,185,130,0.18)]"
+            animate={
+              reducedMotion
+                ? undefined
+                : {
+                    scale: widgetState.isLauncherOpen ? 0.97 : isLauncherHovered ? 1.04 : 1,
+                    filter: isLauncherHovered
+                      ? "drop-shadow(0 16px 28px rgba(79,237,225,0.28))"
+                      : "drop-shadow(0 10px 24px rgba(0,185,130,0.18))",
+                  }
+            }
+            transition={{ duration: 0.24, ease: "easeOut" }}
+            draggable={false}
+          />
         </motion.button>
       </div>
     </div>
