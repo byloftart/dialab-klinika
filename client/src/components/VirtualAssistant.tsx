@@ -31,7 +31,7 @@ type AssistantWidgetState = {
   isPanelReady: boolean;
 };
 
-type AssistantView = "home" | "chat" | "booking";
+type AssistantView = "home" | "prices" | "doctors" | "preparation" | "contacts" | "chat" | "booking";
 
 type QuickActionId =
   | "appointment"
@@ -138,14 +138,6 @@ const defaultPreparationTips = [
   "Hazırlıq qaydasını dəqiqləşdirmək üçün əvvəlcədən bizimlə əlaqə saxlayın.",
 ];
 
-const launcherPreviewItems = [
-  "Qəbula yazılmaq",
-  "Qiymətlər",
-  "Həkimlər",
-  "Analiz hazırlığı",
-  "Əlaqə və WhatsApp",
-];
-
 function getPulseAnimation(reducedMotion: boolean) {
   if (reducedMotion) {
     return {
@@ -156,11 +148,11 @@ function getPulseAnimation(reducedMotion: boolean) {
 
   return {
     animate: {
-      scale: [1, 1.08, 1],
-      opacity: [0.24, 0, 0.24],
+      scale: [1, 1.18, 1],
+      opacity: [0.42, 0.08, 0.42],
     },
     transition: {
-      duration: 2.8,
+      duration: 2.2,
       repeat: Infinity,
       ease: "easeInOut" as const,
     },
@@ -173,7 +165,7 @@ function getButtonMotionProps(reducedMotion: boolean) {
   }
 
   return {
-    whileHover: { scale: 1.06, y: -2 },
+    whileHover: { scale: 1.09, y: -3 },
     whileTap: { scale: 0.98 },
     transition: { type: "spring" as const, stiffness: 300, damping: 18 },
   };
@@ -192,15 +184,32 @@ export default function VirtualAssistant() {
   const { data: socialSettings } = trpc.cms.settings.getGroup.useQuery({ group: "social" });
   const { data: hoursSettings } = trpc.cms.settings.getGroup.useQuery({ group: "hours" });
   const { data: assistantSettings } = trpc.cms.settings.getGroup.useQuery({ group: "assistant" });
+  const { data: contentSettings } = trpc.cms.settings.getGroup.useQuery({ group: "content" });
   const { data: laboratory } = trpc.cms.laboratory.list.useQuery();
   const { data: diagnostics } = trpc.cms.diagnostics.list.useQuery();
+  const { data: doctors } = trpc.cms.doctors.list.useQuery();
   const bookingMutation = trpc.assistant.submitBooking.useMutation();
 
   const contactMap = buildSettingsMap(contactSettings);
   const socialMap = buildSettingsMap(socialSettings);
   const hoursMap = buildSettingsMap(hoursSettings);
   const assistantMap = buildSettingsMap(assistantSettings);
+  const contentMap = buildSettingsMap(contentSettings);
   const services = useMemo(() => buildServiceOptions(laboratory, diagnostics), [diagnostics, laboratory]);
+  const pricesPageSlug = getSetting(contentMap, "content.pricesPageSlug", "prices");
+  const preparationPageSlug = getSetting(contentMap, "content.preparationPageSlug", "preparation");
+  const pricesPageHref = `/pages/${pricesPageSlug}`;
+  const preparationPageHref = `/pages/${preparationPageSlug}`;
+  const pricesCtaLabel = getSetting(contentMap, "content.pricesCtaLabel", "Tam qiymət siyahısı");
+  const preparationCtaLabel = getSetting(contentMap, "content.preparationCtaLabel", "Hazırlıq qaydalarını aç");
+  const { data: pricesPage } = trpc.cms.pages.getBySlug.useQuery(
+    { slug: pricesPageSlug },
+    { enabled: Boolean(pricesPageSlug) }
+  );
+  const { data: preparationPage } = trpc.cms.pages.getBySlug.useQuery(
+    { slug: preparationPageSlug },
+    { enabled: Boolean(preparationPageSlug) }
+  );
 
   const widgetEnabled = parseBooleanSetting(assistantMap["assistant.enabled"], true);
   const launcherVisible = parseBooleanSetting(assistantMap["assistant.launcherVisible"], true);
@@ -326,7 +335,7 @@ export default function VirtualAssistant() {
       return;
     }
 
-    setActiveView("chat");
+    setActiveView(getViewForQuickAction(actionId));
   };
 
   const handleBookingFormChange = (field: keyof BookingFormState, value: string) => {
@@ -384,16 +393,71 @@ export default function VirtualAssistant() {
       ? chatPlaceholderCopy[activeQuickAction]
       : null;
 
-  const renderQuickActionContent = () => {
-    if (activeQuickAction === "prices") {
+  const getViewForQuickAction = (actionId: QuickActionId): AssistantView => {
+    switch (actionId) {
+      case "appointment":
+        return "booking";
+      case "prices":
+        return "prices";
+      case "doctors":
+        return "doctors";
+      case "preparation":
+        return "preparation";
+      case "contacts":
+        return "contacts";
+      default:
+        return "home";
+    }
+  };
+
+  const renderHomeContent = () => {
+    return (
+      <div className="space-y-3">
+        <div className="rounded-2xl border border-[#00b982]/14 bg-white p-4">
+          <p className="text-sm font-medium text-[#1a365d]">Bir mövzu seçin</p>
+          <p className="mt-1 text-sm leading-6 text-gray-600">
+            Qəbul, qiymətlər, həkimlər, hazırlıq və əlaqə üzrə uyğun bölməni açın və ya birbaşa sual verin.
+          </p>
+        </div>
+
+        <button
+          type="button"
+          onClick={() => openChatMode(null)}
+          className="flex w-full items-center justify-between rounded-2xl border border-[#1a365d]/15 bg-[#f7fafc] px-4 py-3 text-left transition-colors hover:border-[#1a365d]/30 hover:bg-white"
+        >
+          <div>
+            <div className="text-sm font-semibold text-[#1a365d]">Sual ver</div>
+            <div className="mt-1 text-xs text-gray-500">Canlı söhbət ekranını aç</div>
+          </div>
+          <MessageCircle className="h-4 w-4 text-[#00b982]" />
+        </button>
+      </div>
+    );
+  };
+
+  const renderLocalViewContent = () => {
+    if (activeView === "prices") {
       return (
         <div className="space-y-3">
           <div className="rounded-2xl border border-[#00b982]/14 bg-white p-4">
             <p className="text-sm font-medium text-[#1a365d]">Qiymətlər üzrə istiqamət seçin</p>
             <p className="mt-1 text-sm leading-6 text-gray-600">
-              Uyğun xidmət kateqoriyasına keçərək ətraflı siyahını aça bilərsiniz.
+              {pricesPage?.excerptAz || "Uyğun xidmət kateqoriyasına keçərək ətraflı siyahını aça bilərsiniz."}
             </p>
           </div>
+
+          <a
+            href={pricesPageHref}
+            className="flex items-center justify-between rounded-2xl border border-[#00b982]/20 bg-[#f7fffb] px-4 py-3 text-left transition-colors hover:border-[#00b982]/40 hover:bg-white"
+          >
+            <div>
+              <div className="text-sm font-semibold text-[#1a365d]">{pricesCtaLabel}</div>
+              <div className="mt-1 text-xs text-gray-500">
+                {pricesPage?.titleAz || "Qiymət və xidmət kateqoriyalarını aç"}
+              </div>
+            </div>
+            <ExternalLink className="h-4 w-4 text-[#00b982]" />
+          </a>
 
           <div className="grid grid-cols-1 gap-2">
             <button
@@ -420,18 +484,51 @@ export default function VirtualAssistant() {
               <Stethoscope className="h-4 w-4 text-[#00b982]" />
             </button>
           </div>
+
+          <button
+            type="button"
+            onClick={() => openChatMode("prices")}
+            className="flex w-full items-center justify-between rounded-2xl border border-[#1a365d]/15 bg-[#f7fafc] px-4 py-3 text-left transition-colors hover:border-[#1a365d]/30 hover:bg-white"
+          >
+            <div>
+              <div className="text-sm font-semibold text-[#1a365d]">Qiymətlə bağlı sual ver</div>
+              <div className="mt-1 text-xs text-gray-500">Dr. Dia ilə söhbətə keçin</div>
+            </div>
+            <MessageCircle className="h-4 w-4 text-[#00b982]" />
+          </button>
         </div>
       );
     }
 
-    if (activeQuickAction === "doctors") {
+    if (activeView === "doctors") {
       return (
         <div className="space-y-3">
           <div className="rounded-2xl border border-[#00b982]/14 bg-white p-4">
             <p className="text-sm font-medium text-[#1a365d]">Həkim seçimi üçün yardım</p>
             <p className="mt-1 text-sm leading-6 text-gray-600">
-              Uyğun mütəxəssis üçün ya qəbul müraciəti yaradın, ya da canlı söhbətə keçin.
+              Uyğun mütəxəssis üçün aktual CMS məlumatları əsasında istiqamət seçə bilərsiniz.
             </p>
+          </div>
+
+          <div className="space-y-2">
+            {(doctors ?? []).slice(0, 4).map((doctor) => (
+              <div
+                key={doctor.id}
+                className="rounded-2xl border border-gray-200 bg-white px-4 py-3"
+              >
+                <div className="text-sm font-semibold text-[#1a365d]">{doctor.nameAz}</div>
+                <div className="mt-1 text-xs text-[#00b982]">{doctor.specialtyAz}</div>
+                {doctor.experienceYears ? (
+                  <div className="mt-1 text-xs text-gray-500">{doctor.experienceYears} il təcrübə</div>
+                ) : null}
+              </div>
+            ))}
+
+            {(doctors ?? []).length === 0 ? (
+              <div className="rounded-2xl border border-dashed border-gray-200 bg-white px-4 py-3 text-sm text-gray-500">
+                Həkim siyahısı yenilənəndən sonra burada görünəcək.
+              </div>
+            ) : null}
           </div>
 
           <button
@@ -445,19 +542,44 @@ export default function VirtualAssistant() {
             </div>
             <CalendarDays className="h-4 w-4 text-[#00b982]" />
           </button>
+
+          <button
+            type="button"
+            onClick={() => openChatMode("doctors")}
+            className="flex w-full items-center justify-between rounded-2xl border border-[#1a365d]/15 bg-[#f7fafc] px-4 py-3 text-left transition-colors hover:border-[#1a365d]/30 hover:bg-white"
+          >
+            <div>
+              <div className="text-sm font-semibold text-[#1a365d]">Həkimlə bağlı sual ver</div>
+              <div className="mt-1 text-xs text-gray-500">Dr. Dia ilə söhbətə keçin</div>
+            </div>
+            <MessageCircle className="h-4 w-4 text-[#00b982]" />
+          </button>
         </div>
       );
     }
 
-    if (activeQuickAction === "preparation") {
+    if (activeView === "preparation") {
       return (
         <div className="space-y-3">
           <div className="rounded-2xl border border-[#00b982]/14 bg-white p-4">
             <p className="text-sm font-medium text-[#1a365d]">Hazırlıq qaydaları</p>
             <p className="mt-1 text-sm leading-6 text-gray-600">
-              Dəqiq qaydalar analiz və müayinə növünə görə dəyişə bilər.
+              {preparationPage?.excerptAz || "Dəqiq qaydalar analiz və müayinə növünə görə dəyişə bilər."}
             </p>
           </div>
+
+          <a
+            href={preparationPageHref}
+            className="flex items-center justify-between rounded-2xl border border-[#00b982]/20 bg-[#f7fffb] px-4 py-3 text-left transition-colors hover:border-[#00b982]/40 hover:bg-white"
+          >
+            <div>
+              <div className="text-sm font-semibold text-[#1a365d]">{preparationCtaLabel}</div>
+              <div className="mt-1 text-xs text-gray-500">
+                {preparationPage?.titleAz || "Analiz və müayinəyə hazırlıq səhifəsini aç"}
+              </div>
+            </div>
+            <ExternalLink className="h-4 w-4 text-[#00b982]" />
+          </a>
 
           <div className="space-y-2">
             {defaultPreparationTips.map((tip) => (
@@ -470,11 +592,23 @@ export default function VirtualAssistant() {
               </div>
             ))}
           </div>
+
+          <button
+            type="button"
+            onClick={() => openChatMode("preparation")}
+            className="flex w-full items-center justify-between rounded-2xl border border-[#1a365d]/15 bg-[#f7fafc] px-4 py-3 text-left transition-colors hover:border-[#1a365d]/30 hover:bg-white"
+          >
+            <div>
+              <div className="text-sm font-semibold text-[#1a365d]">Hazırlıqla bağlı sual ver</div>
+              <div className="mt-1 text-xs text-gray-500">Dr. Dia ilə söhbətə keçin</div>
+            </div>
+            <MessageCircle className="h-4 w-4 text-[#00b982]" />
+          </button>
         </div>
       );
     }
 
-    if (activeQuickAction === "contacts") {
+    if (activeView === "contacts") {
       return (
         <div className="space-y-3">
           <div className="rounded-2xl border border-[#00b982]/14 bg-white p-4">
@@ -529,10 +663,26 @@ export default function VirtualAssistant() {
               <ExternalLink className="h-4 w-4 text-[#00b982]" />
             </a>
           </div>
+
+          <button
+            type="button"
+            onClick={() => openChatMode("contacts")}
+            className="flex w-full items-center justify-between rounded-2xl border border-[#1a365d]/15 bg-[#f7fafc] px-4 py-3 text-left transition-colors hover:border-[#1a365d]/30 hover:bg-white"
+          >
+            <div>
+              <div className="text-sm font-semibold text-[#1a365d]">Əlaqə ilə bağlı sual ver</div>
+              <div className="mt-1 text-xs text-gray-500">Dr. Dia ilə söhbətə keçin</div>
+            </div>
+            <MessageCircle className="h-4 w-4 text-[#00b982]" />
+          </button>
         </div>
       );
     }
 
+    return renderHomeContent();
+  };
+
+  const renderChatContent = () => {
     return (
       <div className="rounded-2xl border border-dashed border-[#00b982]/24 bg-white px-4 py-5">
         <p className="text-sm font-medium text-[#1a365d]">
@@ -600,31 +750,7 @@ export default function VirtualAssistant() {
                   </div>
 
                   <div className="flex-1 min-h-0 overflow-y-auto overscroll-contain px-5 py-5 touch-pan-y sm:px-6">
-                      <div className="rounded-[24px] border border-[#00b982]/12 bg-[linear-gradient(180deg,#f8fffb_0%,#ffffff_100%)] p-5">
-                        <div className="flex items-start gap-3">
-                          <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#1a365d] text-white">
-                            <Stethoscope className="h-5 w-5" />
-                          </div>
-                          <div className="flex-1">
-                            <h3 className="text-base font-semibold text-[#1a365d]">
-                              {welcomeTitle}
-                            </h3>
-                            <p className="mt-1 text-sm leading-6 text-gray-600">
-                              {welcomeText}
-                            </p>
-                            <button
-                              type="button"
-                              onClick={() => openChatMode(null)}
-                              className="mt-3 inline-flex items-center gap-2 rounded-full bg-[#1a365d] px-3 py-2 text-xs font-semibold text-white transition-colors hover:bg-[#16304f]"
-                            >
-                              <MessageCircle className="h-3.5 w-3.5" />
-                              Sual ver
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-
-                      <div className="mt-5">
+                      <div>
                         <div className="mb-3 flex items-center justify-between">
                           <h4 className="text-sm font-semibold text-[#1a365d]">Tez seçimlər</h4>
                           {activeView !== "home" ? (
@@ -771,7 +897,7 @@ export default function VirtualAssistant() {
                               </button>
                             </form>
                           </div>
-                        ) : (
+                        ) : activeView === "chat" ? (
                           <div className="space-y-4">
                             <div>
                               <div className="mb-4 flex items-center gap-2">
@@ -779,7 +905,7 @@ export default function VirtualAssistant() {
                                 <h4 className="text-sm font-semibold text-[#1a365d]">Söhbət sahəsi</h4>
                               </div>
 
-                              {renderQuickActionContent()}
+                              {renderChatContent()}
                             </div>
 
                             <BotpressWebchatPanel
@@ -788,6 +914,10 @@ export default function VirtualAssistant() {
                               botName="Dr. Dia"
                               botDescription={activeChatContent?.body ?? "Klinika ilə bağlı suallarınızı verə bilərsiniz."}
                             />
+                          </div>
+                        ) : (
+                          <div>
+                            {renderLocalViewContent()}
                           </div>
                         )}
                       </div>
@@ -812,27 +942,23 @@ export default function VirtualAssistant() {
         <AnimatePresence>
           {showLauncherPreview ? (
             <motion.div
-              initial={reducedMotion ? { opacity: 1 } : { opacity: 0, x: 14, scale: 0.96 }}
-              animate={reducedMotion ? { opacity: 1 } : { opacity: 1, x: 0, scale: 1 }}
-              exit={reducedMotion ? { opacity: 0 } : { opacity: 0, x: 10, scale: 0.98 }}
+              initial={reducedMotion ? { opacity: 1 } : { opacity: 0, y: 14, scale: 0.96 }}
+              animate={reducedMotion ? { opacity: 1 } : { opacity: 1, y: 0, scale: 1 }}
+              exit={reducedMotion ? { opacity: 0 } : { opacity: 0, y: 10, scale: 0.98 }}
               transition={{ duration: reducedMotion ? 0 : 0.2, ease: "easeOut" }}
-              className="absolute bottom-3 right-[92px] hidden w-[246px] rounded-[24px] border border-[#8eece4]/50 bg-white/95 p-4 shadow-[0_20px_44px_rgba(20,55,87,0.18)] backdrop-blur-md sm:block"
+              className="absolute bottom-[92px] right-0 hidden w-[280px] sm:block"
             >
-              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#00b982]">
-                Dr. Dia
-              </p>
-              <p className="mt-2 text-sm font-semibold text-[#1a365d]">
-                Kömək edə bildiyi mövzular
-              </p>
-              <div className="mt-3 space-y-2">
-                {launcherPreviewItems.map((item) => (
-                  <div
-                    key={item}
-                    className="rounded-2xl border border-[#dff8f5] bg-[#f8fffe] px-3 py-2 text-sm text-[#1a365d]"
-                  >
-                    {item}
-                  </div>
-                ))}
+              <div className="relative rounded-[24px] border border-[#8eece4]/50 bg-white/95 px-4 py-3 shadow-[0_20px_44px_rgba(20,55,87,0.18)] backdrop-blur-md">
+                <div className="absolute -bottom-2 right-8 h-4 w-4 rotate-45 border-b border-r border-[#8eece4]/50 bg-white/95" />
+                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#00b982]">
+                  Dr. Dia
+                </p>
+                <p className="mt-2 text-sm font-semibold leading-5 text-[#1a365d]">
+                  {welcomeTitle}
+                </p>
+                <p className="mt-1 text-sm leading-6 text-gray-600">
+                  {welcomeText}
+                </p>
               </div>
             </motion.div>
           ) : null}
@@ -846,13 +972,13 @@ export default function VirtualAssistant() {
           title={launcherConfig.launcherLabel}
           data-visual-variant={launcherConfig.visualVariant}
           className={[
-            "group relative flex h-[76px] w-[76px] items-center justify-center rounded-full",
+            "group relative flex h-[88px] w-[88px] items-center justify-center rounded-full",
             isActive
-              ? "shadow-[0_16px_34px_rgba(0,185,130,0.26)]"
-              : "shadow-[0_14px_30px_rgba(26,54,93,0.18)]",
-            "before:absolute before:inset-[5px] before:rounded-full before:border before:border-white/85 before:content-['']",
-            "after:absolute after:inset-[1px] after:rounded-full after:border after:border-[#7fe6df]/55 after:content-['']",
-            "outline-none focus-visible:ring-4 focus-visible:ring-[#00b982]/25 focus-visible:ring-offset-2",
+              ? "shadow-[0_20px_48px_rgba(0,185,130,0.38)]"
+              : "shadow-[0_18px_40px_rgba(26,54,93,0.24)]",
+            "before:absolute before:inset-[5px] before:rounded-full before:border before:border-white/92 before:content-['']",
+            "after:absolute after:inset-[1px] after:rounded-full after:border after:border-[#7fe6df]/75 after:content-['']",
+            "outline-none focus-visible:ring-4 focus-visible:ring-[#00b982]/35 focus-visible:ring-offset-2",
             "focus-visible:ring-offset-white",
             "transition-shadow duration-200",
           ].join(" ")}
@@ -861,51 +987,51 @@ export default function VirtualAssistant() {
           {...buttonMotionProps}
         >
           <motion.span
-            className="absolute inset-[10px] rounded-full bg-[radial-gradient(circle,rgba(92,244,230,0.44)_0%,rgba(92,244,230,0.18)_48%,rgba(92,244,230,0)_78%)] blur-md"
+            className="absolute inset-[6px] rounded-full bg-[radial-gradient(circle,rgba(92,244,230,0.72)_0%,rgba(92,244,230,0.34)_46%,rgba(92,244,230,0)_78%)] blur-lg"
             animate={
               reducedMotion
                 ? undefined
                 : widgetState.isLauncherOpen
-                  ? { scale: 1.03, opacity: 0.7 }
-                  : { scale: 1, opacity: 1 }
+                  ? { scale: 1.08, opacity: 0.92 }
+                  : { scale: 1.02, opacity: 1 }
             }
             transition={{ duration: 0.28, ease: "easeOut" }}
             aria-hidden="true"
           />
 
           <motion.span
-            className="absolute inset-[6px] rounded-full border border-[#b9f4ef]/75"
+            className="absolute inset-[5px] rounded-full border border-[#b9f4ef]/85"
             aria-hidden="true"
             animate={
               reducedMotion
                 ? undefined
                 : isLauncherHovered
-                  ? { borderColor: "rgba(0,185,130,0.58)", opacity: 1 }
-                  : { borderColor: "rgba(185,244,239,0.75)", opacity: 0.9 }
+                  ? { borderColor: "rgba(0,185,130,0.82)", opacity: 1 }
+                  : { borderColor: "rgba(185,244,239,0.82)", opacity: 0.96 }
             }
             transition={{ duration: 0.22, ease: "easeOut" }}
           />
 
           <motion.span
-            className="absolute inset-[12px] rounded-full bg-[#79efe5]/24 blur-md"
+            className="absolute inset-[8px] rounded-full bg-[#79efe5]/40 blur-[14px]"
             aria-hidden="true"
             animate={pulseAnimation.animate}
             transition={pulseAnimation.transition}
           />
 
           <motion.span
-            className="absolute left-1/2 top-1/2 h-[28px] w-[28px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(circle,rgba(255,84,84,0.42)_0%,rgba(227,29,29,0.2)_48%,rgba(227,29,29,0)_76%)] blur-md"
+            className="absolute left-1/2 top-1/2 h-[34px] w-[34px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(circle,rgba(255,84,84,0.56)_0%,rgba(227,29,29,0.26)_48%,rgba(227,29,29,0)_78%)] blur-lg"
             aria-hidden="true"
             animate={
               reducedMotion
                 ? undefined
                 : {
-                    scale: [0.96, 1.18, 0.96],
-                    opacity: [0.45, 0.88, 0.45],
+                    scale: [0.94, 1.24, 0.94],
+                    opacity: [0.58, 1, 0.58],
                   }
             }
             transition={{
-              duration: 1.9,
+              duration: 1.6,
               repeat: Infinity,
               ease: "easeInOut",
             }}
@@ -915,15 +1041,15 @@ export default function VirtualAssistant() {
             src="/images/assistant-launcher-transparent.png"
             alt=""
             aria-hidden="true"
-            className="relative h-full w-full select-none object-contain drop-shadow-[0_10px_24px_rgba(0,185,130,0.18)]"
+            className="relative h-full w-full select-none object-contain drop-shadow-[0_16px_34px_rgba(0,185,130,0.26)]"
             animate={
               reducedMotion
                 ? undefined
                 : {
-                    scale: widgetState.isLauncherOpen ? 0.97 : isLauncherHovered ? 1.04 : 1,
+                    scale: widgetState.isLauncherOpen ? 0.98 : isLauncherHovered ? 1.06 : 1.01,
                     filter: isLauncherHovered
-                      ? "drop-shadow(0 16px 28px rgba(79,237,225,0.28))"
-                      : "drop-shadow(0 10px 24px rgba(0,185,130,0.18))",
+                      ? "drop-shadow(0 20px 34px rgba(79,237,225,0.42))"
+                      : "drop-shadow(0 16px 34px rgba(0,185,130,0.26))",
                   }
             }
             transition={{ duration: 0.24, ease: "easeOut" }}
