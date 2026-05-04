@@ -1,0 +1,123 @@
+# AGENTS.md
+
+This repository is the Dialab clinic website and CMS project.
+
+Use this file as the operating guide for AI coding agents working in this checkout.
+
+## Project
+
+- Local repo: `/Users/iram/Projects/Dialab/dialab-klinika-repo-2`
+- Production VM: `diavm`
+- Production app path: `/home/iram/apps/dialab`
+- Production PM2 app: `dialab`
+- Production PM2 user: `iram`
+- Active assistant: Dr. Dia
+- Current assistant runtime: Hermes gateway with Mistral API behind it
+- Hermes PM2 process: `hermes-dr-dia`
+
+## Core Rules
+
+- Inspect the real repo structure before planning or editing.
+- Preserve unrelated dirty worktree changes. Do not reset or revert files you did not intentionally change.
+- Do not commit, deploy, or roll back unrelated changes unless explicitly asked.
+- Never print, save in docs, or commit API keys, passwords, Botpress credentials, Hermes API keys, or LLM keys.
+- Prefer focused edits that match existing code style.
+- Use `rg` for search.
+- Use `apply_patch` for manual edits.
+
+## Dr. Dia Scope
+
+Dr. Dia is a clinic navigation and appointment assistant.
+
+Allowed topics:
+
+- clinic navigation
+- services
+- doctors
+- prices when confirmed in CMS/knowledge context
+- preparation rules when confirmed
+- contacts
+- appointment request direction
+- operator escalation
+
+Do not allow the assistant to:
+
+- diagnose
+- prescribe treatment
+- interpret lab results as medical conclusions
+- invent prices
+- invent appointment slots
+- invent doctors
+- confirm services not present in CMS/knowledge context
+
+If data is missing or uncertain, avoid negative phrasing such as “this information is absent.” Prefer a helpful operator handoff through the buttons below the chat:
+
+- `Qəbul` for booking/request form
+- `WhatsApp` or `Telegram` for operator clarification
+
+## Production Commands
+
+PM2 must run as `iram`, not root.
+
+Check Dialab:
+
+```bash
+gcloud compute ssh diavm --zone=europe-north1-c --command='sudo -u iram bash -lc "export PM2_HOME=/home/iram/.pm2; cd /home/iram/apps/dialab && pm2 status dialab"'
+```
+
+Check Hermes:
+
+```bash
+gcloud compute ssh diavm --zone=europe-north1-c --command='sudo -u iram env HOME=/home/iram PM2_HOME=/home/iram/.pm2 PATH=/home/iram/.local/bin:/usr/local/bin:/usr/bin:/bin bash -lc "pm2 status hermes-dr-dia"'
+```
+
+Build on production:
+
+```bash
+gcloud compute ssh diavm --zone=europe-north1-c --command='sudo -u iram env HOME=/home/iram bash -lc "cd /home/iram/apps/dialab && pnpm check && pnpm build"'
+```
+
+Restart production:
+
+```bash
+gcloud compute ssh diavm --zone=europe-north1-c --command='sudo -u iram bash -lc "export PM2_HOME=/home/iram/.pm2; cd /home/iram/apps/dialab && pm2 restart dialab --update-env && pm2 status dialab"'
+```
+
+Verify public site:
+
+```bash
+curl -I https://dialab.center
+```
+
+Verify assistant provider:
+
+```bash
+curl -s 'https://dialab.center/api/trpc/assistant.config?batch=1&input=%7B%220%22%3A%7B%22json%22%3Anull%7D%7D'
+```
+
+## Local Verification
+
+Before reporting completion for code changes:
+
+```bash
+pnpm check
+pnpm build
+```
+
+For Hermes-specific backend helper changes:
+
+```bash
+pnpm vitest run server/_core/hermesAssistant.test.ts
+```
+
+## Documentation
+
+Important handoff docs:
+
+- `docs/project-handoff-2026-05-04-dr-dia-hermes-mistral-production.md`
+- `docs/project-handoff-2026-05-04-dr-dia-botpress-activation.md`
+- `docs/project-handoff-2026-05-02-dr-dia-widget.md`
+- `docs/project-handoff-2026-04-06.md`
+- `docs/dr-dia-botpress-content-map.md`
+
+When finishing substantial work, save a concise handoff in `docs/`.

@@ -157,6 +157,19 @@ Expected provider:
 4. Improve quick-action handoff from the website widget into Botpress context if needed.
 5. Keep `Qəbul`, `Xidmətlər`, `Həkimlər` as the top three quick actions unless the user changes the product decision.
 
+## Hermes Direction Update
+
+The next target direction is to replace Botpress as the assistant brain with a Hermes Agent integration while keeping the Dialab website in control of the patient-facing widget UI.
+
+- Target provider: Hermes Agent running on the same GCP VM `diavm` under user `iram`.
+- First working LLM provider after setup: Mistral API through Hermes custom OpenAI-compatible endpoint, model `mistral-medium-latest`.
+- DeepSeek API was configured first with `deepseek-v4-flash`, but the supplied key returned `HTTP 402: Insufficient Balance`, so it was not used for production switching.
+- Dialab backend should call Hermes through a local API URL such as `http://127.0.0.1:8642/v1`.
+- The website widget should become a first-party Dr. Dia chat UI instead of relying on the Botpress iframe as the primary experience.
+- Botpress may remain as rollback/fallback during migration, then be removed in a later cleanup.
+- Project preference: this is a test-oriented clinic project; prioritize fast full-capability agent integration and avoid unnecessary process overhead such as mandatory password rotation or extended security gates unless needed for basic operation.
+- Still do not print or commit API keys, passwords, or unrelated dirty changes.
+
 ## Starter Prompt For Next Thread
 
 Use this prompt in a new Codex thread:

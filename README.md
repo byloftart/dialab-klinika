@@ -1,75 +1,147 @@
 # DIALAB Klinika
 
-Production website and CMS for DIALAB medical center.
+Production website, CMS, and Dr. Dia assistant for DIALAB clinic.
 
 - Production site: [https://dialab.center](https://dialab.center)
-- Repository: [https://github.com/byloftart/dialab-klinika](https://github.com/byloftart/dialab-klinika)
-- Stack: `React 19`, `Vite`, `Express`, `tRPC`, `Drizzle ORM`, `MySQL`, `GCS`
+- Local repo: `/Users/iram/Projects/Dialab/dialab-klinika-repo-2`
+- Production VM: `diavm`
+- Production app path: `/home/iram/apps/dialab`
+- Runtime: `GCP VM + Nginx + PM2 + Node/Express`
+- Frontend: `React`, `Vite`, `Tailwind`
+- Backend: `Express`, `tRPC`, `Drizzle ORM`, `MySQL`
+- Assistant: `Dr. Dia` through `Hermes` with Mistral API
 
-## Current Status
+## Current Production Architecture
 
-The project is no longer a static landing page. It now includes:
+```text
+Browser
+  -> Nginx
+  -> Node / Express
+  -> tRPC API
+  -> Cloud SQL MySQL / GCS / Hermes
+```
 
-- public website with editable homepage sections
-- admin panel for diagnostics, laboratory, gallery, doctors, appointments, feedback
-- editable site settings for header, footer, about, FAQ, section order, and more
-- editable static pages at `/pages/:slug`
-- image uploads stored in `Google Cloud Storage`
-- production deployment on `GCP VM + Nginx + PM2`
-- database hosted in `Cloud SQL MySQL`
+Assistant flow:
 
-## Production Architecture
+```text
+Dr. Dia widget
+  -> Dialab tRPC assistant.chat
+  -> Hermes gateway on diavm
+  -> Mistral API
+  -> Dialab response formatter and guards
+  -> Dr. Dia chat UI
+```
 
-- App server: GCP VM running `Ubuntu 24.04 LTS`
-- Web server: `Nginx`
-- Process manager: `PM2`
-- App runtime: `Node.js 22`
-- Database: `Cloud SQL MySQL`
-- Media storage: `Google Cloud Storage`
-- Domain: `dialab.center`
+Production PM2 processes:
 
-Request flow:
+- `dialab`: website and backend
+- `hermes-dr-dia`: local Hermes gateway
 
-`Browser -> Nginx -> Node/Express -> tRPC/API -> Cloud SQL / GCS`
+Important: PM2 production commands must run under the `iram` user, not root.
 
 ## Repository Structure
 
 ```text
-dialab-klinika/
-├── client/                 # React frontend
-│   ├── src/components/     # Public and admin components
-│   ├── src/pages/          # Public and admin routes
-│   └── src/lib/            # Frontend helpers
-├── server/                 # Express + tRPC backend
-│   ├── _core/              # Runtime, auth, upload, env
-│   ├── db.ts               # Database access helpers
-│   ├── routers.ts          # tRPC routes
-│   └── storage.ts          # GCS-backed uploads
-├── drizzle/                # Schema and SQL migrations
-├── scripts/                # Migration/bootstrap scripts
-├── ecosystem.config.cjs    # PM2 config
-└── package.json
+dialab-klinika-repo-2/
+├── AGENTS.md
+├── README.md
+├── client/
+│   ├── src/components/
+│   ├── src/components/assistant/
+│   ├── src/pages/
+│   └── src/lib/
+├── server/
+│   ├── _core/
+│   ├── db.ts
+│   ├── routers.ts
+│   └── storage.ts
+├── shared/
+├── drizzle/
+├── scripts/
+├── docs/
+└── ecosystem.config.cjs
 ```
 
-## Main CMS Capabilities
+## Main Capabilities
 
-Admin panel currently controls:
+Public website:
 
-- hero slider images and text
-- header texts and navigation
-- about section text, stats, media, and video URL
-- homepage section order and visibility
+- homepage sections
+- services
+- laboratory
+- diagnostics
+- doctors
+- media/gallery
+- feedback/contact
+- static content pages
+
+Admin CMS:
+
+- site settings
+- homepage content
 - laboratory services and sub-tests
 - diagnostic services and sub-services
-- feedback form and FAQ text
-- contact info, working hours, socials, footer
-- additional content pages
+- doctors
+- appointments
+- feedback
+- media uploads
+- static pages
+
+Dr. Dia:
+
+- clinic navigation
+- service guidance
+- doctor guidance
+- appointment request direction
+- contact/operator direction
+- same-language replies in Azerbaijani, Russian, or English
+- CMS/knowledge-aware guardrails
+
+## Dr. Dia Rules
+
+Allowed:
+
+- services
+- doctors
+- prices when confirmed
+- preparation when confirmed
+- clinic contacts
+- working hours
+- appointment request help
+- operator escalation
+
+Not allowed:
+
+- diagnosis
+- treatment prescription
+- interpretation of lab results as medical conclusion
+- invented services
+- invented prices
+- invented slots
+- invented doctors
+
+If a service or detail is not confirmed in CMS/knowledge context, Dr. Dia should not present it as available. The assistant should recommend clarifying through the operator using `WhatsApp` or `Telegram` below the chat.
+
+CTA rules:
+
+- appointment or booking: use `Qəbul`
+- operator clarification: use `WhatsApp` or `Telegram`
+
+## Important Assistant Files
+
+- `client/src/components/VirtualAssistant.tsx`
+- `client/src/components/assistant/HermesChatPanel.tsx`
+- `client/src/lib/assistant.ts`
+- `server/_core/hermesAssistant.ts`
+- `server/_core/hermesAssistant.test.ts`
+- `server/_core/env.ts`
+- `server/routers.ts`
 
 ## Environment Variables
 
-Use `.env.example` as the base template.
+Use `.env.example` as the public template. Never commit real secrets.
 
-Required for the current production-style setup:
+Core:
 
 - `DATABASE_URL`
 - `JWT_SECRET`
@@ -77,153 +149,156 @@ Required for the current production-style setup:
 - `GCS_PUBLIC_BASE_URL`
 - `PORT`
 
-Optional or legacy variables still referenced by parts of the codebase:
+Assistant:
 
-- `VITE_APP_ID`
-- `OAUTH_SERVER_URL`
-- `OWNER_OPEN_ID`
-- `BUILT_IN_FORGE_API_URL`
-- `BUILT_IN_FORGE_API_KEY`
-- `VITE_ANALYTICS_ENDPOINT`
-- `VITE_ANALYTICS_WEBSITE_ID`
+- `ASSISTANT_PROVIDER=hermes`
+- `HERMES_API_BASE_URL`
+- `HERMES_API_KEY`
+- `HERMES_MODEL`
+
+Do not document or commit Mistral, DeepSeek, Hermes, Botpress, database, or JWT secrets.
 
 ## Local Development
 
-### Requirements
-
-- `Node.js 22+`
-- `pnpm`
-- reachable MySQL database
-
-### Install
+Install:
 
 ```bash
 pnpm install
-cp .env.example .env
 ```
 
-### Run
+Run locally:
 
 ```bash
 pnpm dev
 ```
 
-App runs at:
-
-- frontend + backend: [http://localhost:3000](http://localhost:3000)
-
-### Checks
+Check:
 
 ```bash
 pnpm check
-pnpm test
 pnpm build
 ```
 
-## Database and Migrations
-
-Schema lives in [drizzle/schema.ts](/Users/iram/Projects/Dialab/dialab-klinika-repo-2/drizzle/schema.ts).
-
-Apply migrations:
+Hermes helper test:
 
 ```bash
-pnpm db:migrate
+pnpm vitest run server/_core/hermesAssistant.test.ts
 ```
 
-This script:
+## Production Operations
 
-1. applies SQL migrations from `drizzle/`
-2. creates the first admin user only if no admin exists
-
-Latest important migration:
-
-- `0003_add_lab_images_and_static_pages.sql`
-
-## Deployment
-
-### Current production workflow
+Check website process:
 
 ```bash
-git pull
-pnpm install --frozen-lockfile
-pnpm db:migrate
-pnpm build
-pm2 restart dialab --update-env
+gcloud compute ssh diavm --zone=europe-north1-c --command='sudo -u iram bash -lc "export PM2_HOME=/home/iram/.pm2; cd /home/iram/apps/dialab && pm2 status dialab"'
 ```
 
-### Process management
+Check Hermes process:
 
 ```bash
-pm2 status
-pm2 logs dialab
-pm2 restart dialab --update-env
+gcloud compute ssh diavm --zone=europe-north1-c --command='sudo -u iram env HOME=/home/iram PM2_HOME=/home/iram/.pm2 PATH=/home/iram/.local/bin:/usr/local/bin:/usr/bin:/bin bash -lc "pm2 status hermes-dr-dia"'
 ```
 
-### Nginx
+Build production app:
 
-Nginx proxies public traffic on `80/443` to the Node app on `localhost:3000`.
+```bash
+gcloud compute ssh diavm --zone=europe-north1-c --command='sudo -u iram env HOME=/home/iram bash -lc "cd /home/iram/apps/dialab && pnpm check && pnpm build"'
+```
 
-### Media uploads
+Restart website:
 
-Uploads are handled by [server/storage.ts](/Users/iram/Projects/Dialab/dialab-klinika-repo-2/server/storage.ts) and stored in GCS, not in local `dist/`.
+```bash
+gcloud compute ssh diavm --zone=europe-north1-c --command='sudo -u iram bash -lc "export PM2_HOME=/home/iram/.pm2; cd /home/iram/apps/dialab && pm2 restart dialab --update-env && pm2 status dialab"'
+```
 
-## Important Routes
+Verify public site:
 
-Public:
+```bash
+curl -I https://dialab.center
+```
 
-- `/`
-- `/login`
-- `/pages/:slug`
-- `/api/health`
+Verify active assistant provider:
 
-Admin:
+```bash
+curl -s 'https://dialab.center/api/trpc/assistant.config?batch=1&input=%7B%220%22%3A%7B%22json%22%3Anull%7D%7D'
+```
 
-- `/admin`
-- `/admin/laboratory`
-- `/admin/diagnostics`
-- `/admin/doctors`
-- `/admin/gallery`
-- `/admin/pages`
-- `/admin/appointments`
-- `/admin/feedback`
-- `/admin/settings`
+Expected assistant provider:
 
-## Important Files
+```json
+{
+  "provider": {
+    "type": "hermes",
+    "isConfigured": true,
+    "model": "dr-dia-hermes"
+  }
+}
+```
 
-- [client/src/pages/Home.tsx](/Users/iram/Projects/Dialab/dialab-klinika-repo-2/client/src/pages/Home.tsx)
-- [client/src/pages/admin/SiteSettings.tsx](/Users/iram/Projects/Dialab/dialab-klinika-repo-2/client/src/pages/admin/SiteSettings.tsx)
-- [client/src/pages/admin/Pages.tsx](/Users/iram/Projects/Dialab/dialab-klinika-repo-2/client/src/pages/admin/Pages.tsx)
-- [server/routers.ts](/Users/iram/Projects/Dialab/dialab-klinika-repo-2/server/routers.ts)
-- [server/db.ts](/Users/iram/Projects/Dialab/dialab-klinika-repo-2/server/db.ts)
-- [server/storage.ts](/Users/iram/Projects/Dialab/dialab-klinika-repo-2/server/storage.ts)
-- [drizzle/schema.ts](/Users/iram/Projects/Dialab/dialab-klinika-repo-2/drizzle/schema.ts)
-- [ecosystem.config.cjs](/Users/iram/Projects/Dialab/dialab-klinika-repo-2/ecosystem.config.cjs)
+## Deployment Style
 
-## Recovery on Another Computer
+The current production app path is not treated as a clean git checkout during active Codex sessions. For focused updates, copy only reviewed files to the VM, then run production check/build/restart.
 
-To continue work elsewhere:
+Do not deploy unrelated dirty worktree files accidentally.
 
-1. clone the repository
-2. copy `.env.example` to `.env` and fill real values
-3. run `pnpm install`
-4. run `pnpm db:migrate`
-5. run `pnpm dev`
+Typical file copy:
 
-If deploying directly to the production VM:
+```bash
+gcloud compute scp path/to/file diavm:/home/iram/apps/dialab/path/to/file --zone=europe-north1-c
+```
 
-1. pull latest GitHub changes
-2. verify env file is present on server
-3. run `pnpm db:migrate`
-4. run `pnpm build`
-5. run `pm2 restart dialab --update-env`
+Then:
 
-## Notes
+```bash
+gcloud compute ssh diavm --zone=europe-north1-c --command='sudo -u iram env HOME=/home/iram bash -lc "cd /home/iram/apps/dialab && pnpm check && pnpm build"'
+gcloud compute ssh diavm --zone=europe-north1-c --command='sudo -u iram bash -lc "export PM2_HOME=/home/iram/.pm2; cd /home/iram/apps/dialab && pm2 restart dialab --update-env"'
+```
 
-## Assistant Docs
+## Documentation
 
-- Dr. Dia Botpress content map: [docs/dr-dia-botpress-content-map.md](/Users/iram/Projects/Dialab/dialab-klinika-repo-2/docs/dr-dia-botpress-content-map.md)
-- Project handoff snapshot: [docs/project-handoff-2026-04-06.md](/Users/iram/Projects/Dialab/dialab-klinika-repo-2/docs/project-handoff-2026-04-06.md)
+Agent instructions:
 
-- The repo still contains some legacy Manus/Forge-related code paths. They are not the primary deployment path anymore.
-- Auth hardening can be improved later without reworking the current platform architecture.
-- The project currently uses `pnpm` as the intended package manager.
+- `AGENTS.md`
+
+Current assistant handoffs:
+
+- `docs/project-handoff-2026-05-04-dr-dia-hermes-mistral-production.md`
+- `docs/project-handoff-2026-05-04-dr-dia-botpress-activation.md`
+- `docs/project-handoff-2026-05-02-dr-dia-widget.md`
+
+Knowledge/content map:
+
+- `docs/dr-dia-botpress-content-map.md`
+
+Older historical snapshots:
+
+- `docs/project-handoff-2026-04-06.md`
+- `docs/project-handoff-2026-04-10.md`
+
+## Git Hygiene
+
+Current working rule:
+
+- keep feature changes grouped
+- do not mix assistant runtime, CMS catalog, admin UI, and media/font changes in one commit
+- do not reset unrelated local changes without review
+
+Recommended commit groups:
+
+1. Dr. Dia Hermes/Mistral backend integration
+2. Dr. Dia widget UX and chat persistence
+3. CMS/service/doctor catalog updates
+4. Admin/media/font/site UI updates
+5. Documentation and project operations files
+
+## Recovery Checklist
+
+If a future agent resumes this project:
+
+1. Read `AGENTS.md`.
+2. Read `docs/project-handoff-2026-05-04-dr-dia-hermes-mistral-production.md`.
+3. Run `git status --short`.
+4. Identify whether the requested change belongs to assistant, CMS/catalog, admin UI, or docs.
+5. Edit only the relevant files.
+6. Run local checks.
+7. If deploying, use the `iram` PM2 workflow above.
