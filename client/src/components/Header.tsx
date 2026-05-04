@@ -10,6 +10,7 @@ const fallbackNavItems: NavItemSetting[] = [
   { id: 'gallery', label: 'Haqqımızda', href: '#gallery' },
   { id: 'laboratory', label: 'Laboratoriya', href: '#laboratory' },
   { id: 'diagnostics', label: 'Diaqnostika', href: '#diagnostics' },
+  { id: 'doctors', label: 'Həkimlər', href: '#doctors' },
   { id: 'appointment', label: 'Məlumat', href: '#appointment' },
   { id: 'contact', label: 'Əlaqə', href: '#contact' },
 ];
@@ -30,6 +31,7 @@ export default function Header() {
       { id: 'gallery', enabled: true },
       { id: 'laboratory', enabled: true },
       { id: 'diagnostics', enabled: true },
+      { id: 'doctors', enabled: true },
       { id: 'appointment', enabled: true },
     ])
       .filter((item) => item.enabled)

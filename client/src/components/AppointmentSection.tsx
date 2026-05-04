@@ -55,7 +55,7 @@ export default function AppointmentSection() {
       whileInView={{ opacity: 1 }}
       viewport={{ once: true, amount: 0.2 }}
       transition={{ duration: 0.45 }}
-      className="py-24 lg:py-32 bg-gradient-to-b from-[#f0fdf4] to-white relative overflow-hidden border-t-2 border-[#00b982]/30"
+      className="py-24 lg:py-32 bg-gradient-to-b from-[#deeae8] to-[#e8f0f4] relative overflow-hidden border-t-2 border-[#00b982]/30"
     >
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute top-0 right-0 w-96 h-96 bg-[#00b982]/10 rounded-full blur-3xl" />
@@ -88,7 +88,7 @@ export default function AppointmentSection() {
             transition={{ duration: 0.6 }}
           >
             <div className="flex items-center gap-3 mb-8">
-              <div className="w-12 h-12 rounded-xl bg-[#00b982]/10 flex items-center justify-center">
+                <div className="w-12 h-12 rounded-xl border border-[#00b982]/18 bg-white/72 shadow-[0_14px_30px_-22px_rgba(15,31,53,0.35)] flex items-center justify-center">
                 <HelpCircle className="w-6 h-6 text-[#00b982]" />
               </div>
               <div>
@@ -105,17 +105,17 @@ export default function AppointmentSection() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: index * 0.1, duration: 0.4 }}
-                  className="bg-white rounded-2xl shadow-lg shadow-black/5 overflow-hidden border border-gray-100"
+                  className="overflow-hidden rounded-2xl border border-[#cfddd8] bg-white shadow-[0_18px_38px_-24px_rgba(15,31,53,0.24)]"
                 >
                   <button
                     onClick={() => setExpandedFaq(expandedFaq === index ? null : index)}
-                    className="w-full flex items-center justify-between p-5 text-left hover:bg-gray-50 transition-colors"
+                    className="w-full flex items-center justify-between p-5 text-left transition-colors hover:bg-[#f6fbf9]"
                   >
                     <span className="font-semibold text-[#1a365d] pr-4 text-base">{item.question}</span>
                     <motion.div
                       animate={{ rotate: expandedFaq === index ? 180 : 0 }}
                       transition={{ duration: 0.3 }}
-                      className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center flex-shrink-0"
+                      className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full border border-[#d5e2dd] bg-[#f5faf8]"
                     >
                       <ChevronDown className="w-5 h-5 text-gray-500" />
                     </motion.div>

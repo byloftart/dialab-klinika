@@ -20,7 +20,7 @@ export default function ContentPage() {
           </div>
         ) : page ? (
           <>
-            <section className="relative py-20 lg:py-28 bg-gradient-to-br from-white via-[#f0fdf4] to-[#e8f4fc] border-b border-[#00b982]/10">
+            <section className="relative py-20 lg:py-28 bg-gradient-to-br from-[#eef5f7] via-[#e5f1ef] to-[#dbe8f2] border-b border-[#00b982]/10">
               <div className="container mx-auto px-4 lg:px-8 grid lg:grid-cols-2 gap-10 items-center">
                 <div>
                   <p className="uppercase tracking-[0.2em] text-sm font-semibold text-[#00b982] mb-3">Səhifə</p>

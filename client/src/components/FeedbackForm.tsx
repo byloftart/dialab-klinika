@@ -95,7 +95,7 @@ export default function FeedbackForm() {
       transition={{ duration: 0.6 }}
       className="w-full"
     >
-      <div className="bg-white rounded-3xl shadow-xl shadow-black/5 overflow-hidden border border-gray-100">
+      <div className="overflow-hidden rounded-3xl border border-[#cfddd8] bg-white shadow-[0_22px_46px_-28px_rgba(15,31,53,0.26)]">
         {/* Form Header */}
         <div className="bg-gradient-to-r from-[#00b982] to-[#14b8a6] p-6">
           <div className="flex items-center gap-4">
@@ -149,7 +149,7 @@ export default function FeedbackForm() {
                     value={formData.name}
                     onChange={(e) => handleInputChange('name', e.target.value)}
                     placeholder="Adınızı daxil edin"
-                    className="w-full pl-12 pr-4 py-3 rounded-xl border border-gray-200 focus:border-[#00b982] focus:ring-4 focus:ring-[#00b982]/10 outline-none transition-all"
+                    className="w-full rounded-xl border border-[#d7e1dd] bg-[#fbfefd] py-3 pl-12 pr-4 outline-none transition-all focus:border-[#00b982] focus:ring-4 focus:ring-[#00b982]/10"
                   />
                 </div>
               </div>
@@ -165,7 +165,7 @@ export default function FeedbackForm() {
                       value={formData.email}
                       onChange={(e) => handleInputChange('email', e.target.value)}
                       placeholder="email@example.com"
-                      className="w-full pl-12 pr-4 py-3 rounded-xl border border-gray-200 focus:border-[#00b982] focus:ring-4 focus:ring-[#00b982]/10 outline-none transition-all"
+                      className="w-full rounded-xl border border-[#d7e1dd] bg-[#fbfefd] py-3 pl-12 pr-4 outline-none transition-all focus:border-[#00b982] focus:ring-4 focus:ring-[#00b982]/10"
                     />
                   </div>
                 </div>
@@ -178,7 +178,7 @@ export default function FeedbackForm() {
                       value={formData.phone}
                       onChange={(e) => handleInputChange('phone', e.target.value)}
                       placeholder="+994 XX XXX XX XX"
-                      className="w-full pl-12 pr-4 py-3 rounded-xl border border-gray-200 focus:border-[#00b982] focus:ring-4 focus:ring-[#00b982]/10 outline-none transition-all"
+                      className="w-full rounded-xl border border-[#d7e1dd] bg-[#fbfefd] py-3 pl-12 pr-4 outline-none transition-all focus:border-[#00b982] focus:ring-4 focus:ring-[#00b982]/10"
                     />
                   </div>
                 </div>
@@ -193,7 +193,7 @@ export default function FeedbackForm() {
                     value={formData.subject}
                     onChange={(e) => handleInputChange('subject', e.target.value)}
                     placeholder={subjectPlaceholder}
-                    className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-[#00b982] focus:ring-4 focus:ring-[#00b982]/10 outline-none transition-all"
+                    className="w-full rounded-xl border border-[#d7e1dd] bg-[#fbfefd] px-4 py-3 outline-none transition-all focus:border-[#00b982] focus:ring-4 focus:ring-[#00b982]/10"
                   />
                 </div>
               </div>
@@ -208,7 +208,7 @@ export default function FeedbackForm() {
                     onChange={(e) => handleInputChange('message', e.target.value)}
                     rows={4}
                     placeholder="Mesajınızı yazın..."
-                    className="w-full pl-12 pr-4 py-3 rounded-xl border border-gray-200 focus:border-[#00b982] focus:ring-4 focus:ring-[#00b982]/10 outline-none transition-all resize-none"
+                    className="w-full resize-none rounded-xl border border-[#d7e1dd] bg-[#fbfefd] py-3 pl-12 pr-4 outline-none transition-all focus:border-[#00b982] focus:ring-4 focus:ring-[#00b982]/10"
                   />
                 </div>
               </div>

@@ -120,7 +120,7 @@ export default function MediaGallery() {
       whileInView={{ opacity: 1 }}
       viewport={{ once: true, amount: 0.2 }}
       transition={{ duration: 0.7 }}
-      className="relative py-24 lg:py-32 overflow-hidden bg-gradient-to-br from-white via-[#f0fdf4] to-[#e8f4fc] border-t-2 border-[#00b982]/30"
+      className="relative py-24 lg:py-32 overflow-hidden bg-gradient-to-br from-[#eef5f7] via-[#e5f1ef] to-[#dbe8f2] border-t-2 border-[#00b982]/30"
     >
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute top-20 right-20 w-80 h-80 bg-[#00b982]/8 rounded-full blur-3xl" />
@@ -168,7 +168,7 @@ export default function MediaGallery() {
             onMouseEnter={() => setIsPaused(true)}
             onMouseLeave={() => setIsPaused(false)}
           >
-            <div className="relative overflow-hidden rounded-2xl border border-[#00b982]/20 shadow-xl shadow-black/10 flex-1 min-h-[380px] bg-white">
+            <div className="relative min-h-[380px] flex-1 overflow-hidden rounded-2xl border border-[#cfddd8] bg-white shadow-[0_22px_48px_-28px_rgba(15,31,53,0.24)]">
               <AnimatePresence mode="wait">
                 <motion.div
                   key={galleryItems[currentIndex]?.id}

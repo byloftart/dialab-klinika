@@ -50,7 +50,7 @@ export default function Footer() {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, amount: 0.2 }}
       transition={{ duration: 0.45 }}
-      className="relative bg-gradient-to-br from-white via-[#f0fdf4] to-[#e8f4fc] overflow-hidden border-t-2 border-[#00b982]/30"
+      className="relative bg-gradient-to-br from-[#edf4f7] via-[#e4efee] to-[#d9e6f0] overflow-hidden border-t-2 border-[#00b982]/30"
     >
       <motion.div className="absolute inset-0 pointer-events-none">
         <div className="absolute top-20 right-20 w-96 h-96 bg-[#00b982]/10 rounded-full blur-3xl" />

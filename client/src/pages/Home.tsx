@@ -17,6 +17,7 @@ import InfoBar from '@/components/InfoBar';
 import MediaGallery from '@/components/MediaGallery';
 import LaboratorySection from '@/components/LaboratorySection';
 import DiagnosticsSection from '@/components/DiagnosticsSection';
+import DoctorsSection from '@/components/DoctorsSection';
 import AppointmentSection from '@/components/AppointmentSection';
 import Footer from '@/components/Footer';
 import VirtualAssistant from '@/components/VirtualAssistant';
@@ -29,6 +30,7 @@ const fallbackSections: HomeSectionSetting[] = [
   { id: 'gallery', enabled: true },
   { id: 'laboratory', enabled: true },
   { id: 'diagnostics', enabled: true },
+  { id: 'doctors', enabled: true },
   { id: 'appointment', enabled: true },
 ];
 
@@ -43,11 +45,12 @@ export default function Home() {
     gallery: MediaGallery,
     laboratory: LaboratorySection,
     diagnostics: DiagnosticsSection,
+    doctors: DoctorsSection,
     appointment: AppointmentSection,
   } as const;
 
   return (
-    <div className="min-h-screen bg-white overflow-x-hidden">
+    <div className="min-h-screen overflow-x-hidden bg-[linear-gradient(180deg,#f1f7f8_0%,#e7f1f1_52%,#e1edf4_100%)]">
       <Header />
 
       <main>
