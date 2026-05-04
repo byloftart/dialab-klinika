@@ -4,6 +4,11 @@ export type AssistantProvider =
       isConfigured: false;
     }
   | {
+      type: "hermes";
+      isConfigured: true;
+      model: string;
+    }
+  | {
       type: "botpress";
       isConfigured: true;
       clientId: string;
@@ -15,6 +20,11 @@ export type AssistantChatContext = {
   entryPoint: "welcome" | "quick_action";
   quickActionId?: string | null;
   label?: string;
+};
+
+export type AssistantChatMessage = {
+  role: "user" | "assistant";
+  content: string;
 };
 
 export type BookingSubmissionPayload = {

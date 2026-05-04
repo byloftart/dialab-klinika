@@ -2,10 +2,12 @@ import { COOKIE_NAME } from "@shared/const";
 import { TRPCError } from "@trpc/server";
 import { getSessionCookieOptions } from "./_core/cookies";
 import { ENV } from "./_core/env";
+import { buildDrDiaSystemPrompt, callHermesChat, type HermesChatMessage } from "./_core/hermesAssistant";
 import { systemRouter } from "./_core/systemRouter";
 import { uploadRouter } from "./_core/uploadRouter";
 import { adminProcedure, publicProcedure, router } from "./_core/trpc";
 import { z } from "zod";
+import { doctorsCatalog } from "../shared/doctorsCatalog";
 import {
   getDiagnosticServices, getDiagnosticServiceById, getDiagnosticSubServices,
   createDiagnosticService, updateDiagnosticService, deleteDiagnosticService,
@@ -30,6 +32,226 @@ function buildSettingsMap(settings: Array<{ key: string; value: string | null }>
   }, {});
 }
 
+function formatSetting(settings: Record<string, string>, key: string, label: string) {
+  const value = settings[key]?.trim();
+  return value ? `${label}: ${value}` : null;
+}
+
+function detectUserLanguage(text: string) {
+  const normalized = text.toLowerCase();
+
+  if (/[а-яё]/i.test(text)) {
+    return "Russian";
+  }
+
+  if (/[əöüğşçı]/i.test(text)) {
+    return "Azerbaijani";
+  }
+
+  if (/\b(hello|hi|what|which|where|when|how|can|could|do|does|have|need|price|service|doctor|appointment|diagnostic|analysis|test|clinic)\b/.test(normalized)) {
+    return "English";
+  }
+
+  return "Azerbaijani";
+}
+
+function compactContactInstructions(content: string, language: string) {
+  const hasContactIntent = /(\+994|\bwhatsapp\b|\btelegram\b|\bemail\b|\bmail\b|телефон|позвон|звон|почт|запис|appointment|book|call|phone|əlaqə|zəng|qəbul)/i.test(content);
+
+  if (!hasContactIntent) {
+    return content;
+  }
+
+  const cleaned = content
+    .split("\n")
+    .map((line) => line.trim())
+    .filter((line) => {
+      if (!line) {
+        return true;
+      }
+
+      return !/(\+?\d[\d\s().-]{7,}|@|https?:\/\/|mailto:|tel:|\bemail\b|\bmail\b|\bphone\b|\bcall\b|телефон|позвон|звон|почт|\bwhatsapp\b|\btelegram\b|zəng|sizə tezliklə kömək|тезликле|soon help)/i.test(line);
+    })
+    .join("\n")
+    .replace(/\n{3,}/g, "\n\n")
+    .trim();
+
+  if (/(кнопк|button|düym|qəbul|запис|appointment)/i.test(cleaned)) {
+    return cleaned;
+  }
+
+  if (/(кнопк|button|düym|qəbul|запис|appointment)/i.test(cleaned)) {
+    return softenMissingInfoPhrases(cleaned, language);
+  }
+
+  const bookingIntent = /(запис|при[её]м|appointment|book|qəbul|randevu)/i.test(content);
+  const buttonHint =
+    language === "Russian"
+      ? bookingIntent
+        ? "Для записи используйте кнопку Qəbul под чатом."
+        : "Для уточнения у оператора используйте кнопки WhatsApp или Telegram под чатом."
+      : language === "English"
+        ? bookingIntent
+          ? "For booking, use the Qəbul button below the chat."
+          : "To clarify with the operator, use the WhatsApp or Telegram buttons below the chat."
+        : bookingIntent
+          ? "Qəbul üçün çatın altındakı Qəbul düyməsindən istifadə edin."
+          : "Operatorla dəqiqləşdirmək üçün çatın altındakı WhatsApp və ya Telegram düyməsindən istifadə edin.";
+
+  if (cleaned.includes(buttonHint)) {
+    return cleaned;
+  }
+
+  return softenMissingInfoPhrases([cleaned, buttonHint].filter(Boolean).join("\n\n"), language);
+}
+
+function isHomeVisitQuestion(text: string) {
+  return /(осмотр|осмотреть|выезд|домой|на дому|дома|прийти|приходите|home visit|come to my home|at home|visit me|evə gəl|evde|evdə|evdə müayinə|evə çağır)/i.test(text);
+}
+
+function buildHomeVisitFallback(language: string) {
+  if (language === "Russian") {
+    return "Услуга домашнего осмотра не подтверждена в текущей базе клиники. Чтобы уточнить возможность индивидуально, обратитесь напрямую к оператору через кнопки под чатом: WhatsApp или Telegram.";
+  }
+
+  if (language === "English") {
+    return "A home examination service is not confirmed in the current clinic knowledge base. To clarify this individually, contact the operator using the buttons below the chat: WhatsApp or Telegram.";
+  }
+
+  return "Evdə müayinə xidməti klinikanın cari məlumat bazasında təsdiqlənmir. Bunu fərdi qaydada dəqiqləşdirmək üçün çatın altındakı WhatsApp və ya Telegram düymələri ilə operatora yazın.";
+}
+
+function isReceptionTimeQuestion(text: string) {
+  return /(qəbul saat|qebul saat|qəbul.*başlay|qebul.*başlay|при[её]м.*нач|когда.*при[её]м|appointment.*start|reception.*start)/i.test(text);
+}
+
+async function buildReceptionTimeAnswer(language: string) {
+  const hoursMap = buildSettingsMap(await getSiteSettings("hours"));
+  const weekdays = hoursMap["hours.weekdays"]?.trim() || "09:00 - 18:00";
+  const saturday = hoursMap["hours.saturday"]?.trim();
+
+  if (language === "Russian") {
+    return [
+      `Прием ориентируется на график клиники: в будние дни ${weekdays}.`,
+      saturday ? `По субботам: ${saturday}.` : null,
+      "Для точного времени конкретного врача используйте кнопку Qəbul под чатом.",
+    ].filter(Boolean).join("\n\n");
+  }
+
+  if (language === "English") {
+    return [
+      `Appointments follow the clinic schedule: weekdays ${weekdays}.`,
+      saturday ? `Saturday: ${saturday}.` : null,
+      "For a specific doctor's exact time, use the Qəbul button below the chat.",
+    ].filter(Boolean).join("\n\n");
+  }
+
+  return [
+    `Qəbul klinikanın iş qrafikinə uyğun aparılır: həftəiçi ${weekdays}.`,
+    saturday ? `Şənbə: ${saturday}.` : null,
+    "Konkret həkimin dəqiq vaxtı üçün çatın altındakı Qəbul düyməsindən istifadə edin.",
+  ].filter(Boolean).join("\n\n");
+}
+
+function isBranchQuestion(text: string) {
+  return /(филиал|филиалы|другие адрес|branch|branches|filial|başqa ünvan|başqa filial)/i.test(text);
+}
+
+function buildBranchAnswer(language: string) {
+  if (language === "Russian") {
+    return "Да, филиал имеется. Чтобы получить актуальный адрес, график и удобный вариант обращения, уточните у оператора через кнопки WhatsApp или Telegram под чатом.";
+  }
+
+  if (language === "English") {
+    return "Yes, a branch is available. For the current address, schedule, and the most convenient option, please clarify with the operator using the WhatsApp or Telegram buttons below the chat.";
+  }
+
+  return "Bəli, filial mövcuddur. Aktual ünvan, iş qrafiki və sizin üçün rahat müraciət variantını dəqiqləşdirmək üçün çatın altındakı WhatsApp və ya Telegram düyməsi ilə operatora yazın.";
+}
+
+function softenMissingInfoPhrases(content: string, language: string) {
+  if (!/(нет|не указан|не указана|не представлены|не найден|yoxdur|göstərilməyib|mövcud kontekst|not available|not provided|not found)/i.test(content)) {
+    return content;
+  }
+
+  const operatorHint =
+    language === "Russian"
+      ? "Для точного уточнения этой информации рекомендуем написать оператору через WhatsApp или Telegram под чатом."
+      : language === "English"
+        ? "For an exact clarification, please contact the operator using WhatsApp or Telegram below the chat."
+        : "Bu məlumatı dəqiqləşdirmək üçün çatın altındakı WhatsApp və ya Telegram düyməsi ilə operatora yazmağınız tövsiyə olunur.";
+
+  const cleaned = content
+    .split("\n")
+    .map((line) => line.trim())
+    .filter((line) => line && !/(нет|не указан|не указана|не представлены|не найден|yoxdur|göstərilməyib|mövcud kontekst|not available|not provided|not found)/i.test(line))
+    .join("\n")
+    .trim();
+
+  return [cleaned, operatorHint].filter(Boolean).join("\n\n");
+}
+
+async function buildDrDiaClinicContext() {
+  const [
+    contactSettings,
+    hoursSettings,
+    assistantSettings,
+    laboratory,
+    diagnostics,
+    doctors,
+  ] = await Promise.all([
+    getSiteSettings("contact"),
+    getSiteSettings("hours"),
+    getSiteSettings("assistant"),
+    getLaboratoryAnalysisTypes(),
+    getDiagnosticServices(),
+    getDoctors(true),
+  ]);
+
+  const contactMap = buildSettingsMap(contactSettings);
+  const hoursMap = buildSettingsMap(hoursSettings);
+  const assistantMap = buildSettingsMap(assistantSettings);
+
+  const contactLines = [
+    formatSetting(contactMap, "contact.phone1", "Telefon"),
+    formatSetting(contactMap, "contact.phone2", "Əlavə telefon"),
+    formatSetting(contactMap, "contact.whatsapp", "WhatsApp"),
+    formatSetting(contactMap, "contact.address", "Ünvan"),
+    formatSetting(hoursMap, "hours.weekdays", "Həftəiçi iş saatı"),
+    formatSetting(hoursMap, "hours.saturday", "Şənbə iş saatı"),
+    formatSetting(hoursMap, "hours.sunday", "Bazar iş saatı"),
+    formatSetting(assistantMap, "assistant.whatsappUrl", "WhatsApp linki"),
+    formatSetting(assistantMap, "assistant.telegramUrl", "Telegram linki"),
+    formatSetting(assistantMap, "assistant.instagramUrl", "Instagram linki"),
+  ].filter(Boolean);
+
+  const laboratoryLines = laboratory
+    .slice(0, 40)
+    .map((item) => `- ${item.titleAz}${item.descriptionAz ? `: ${item.descriptionAz}` : ""}`);
+
+  const diagnosticsLines = diagnostics
+    .slice(0, 40)
+    .map((item) => `- ${item.titleAz}${item.descriptionAz ? `: ${item.descriptionAz}` : ""}`);
+
+  const doctorLines = doctors
+    .slice(0, 40)
+    .map((doctor) => `- ${doctor.nameAz}, ${doctor.specialtyAz}${doctor.experienceYears ? `, ${doctor.experienceYears} il təcrübə` : ""}`);
+
+  return [
+    "Əlaqə və iş saatları:",
+    contactLines.length ? contactLines.join("\n") : "Təsdiqlənmiş əlaqə məlumatı tapılmadı.",
+    "",
+    "Laboratoriya xidmətləri:",
+    laboratoryLines.length ? laboratoryLines.join("\n") : "Laboratoriya siyahısı hazırda boşdur.",
+    "",
+    "Diaqnostika xidmətləri:",
+    diagnosticsLines.length ? diagnosticsLines.join("\n") : "Diaqnostika siyahısı hazırda boşdur.",
+    "",
+    "Həkimlər:",
+    doctorLines.length ? doctorLines.join("\n") : "Aktiv həkim siyahısı hazırda boşdur.",
+  ].join("\n");
+}
+
 export const appRouter = router({
   system: systemRouter,
   upload: uploadRouter,
@@ -45,6 +267,25 @@ export const appRouter = router({
 
   assistant: router({
     config: publicProcedure.query(async () => {
+      if (ENV.assistantProvider === "hermes") {
+        if (ENV.hermesApiBaseUrl && ENV.hermesApiKey) {
+          return {
+            provider: {
+              type: "hermes" as const,
+              isConfigured: true as const,
+              model: ENV.hermesModel,
+            },
+          };
+        }
+
+        return {
+          provider: {
+            type: "none" as const,
+            isConfigured: false as const,
+          },
+        };
+      }
+
       if (ENV.botpressClientId) {
         return {
           provider: {
@@ -62,6 +303,73 @@ export const appRouter = router({
           type: "none" as const,
           isConfigured: false as const,
         },
+      };
+    }),
+    chat: publicProcedure.input(z.object({
+      messages: z.array(z.object({
+        role: z.enum(["user", "assistant"]),
+        content: z.string().min(1).max(1200),
+      })).min(1).max(20),
+      context: z.object({
+        entryPoint: z.enum(["welcome", "quick_action"]),
+        quickActionId: z.string().nullable().optional(),
+        label: z.string().optional(),
+      }).optional(),
+    })).mutation(async ({ input }) => {
+      if (ENV.assistantProvider !== "hermes" || !ENV.hermesApiBaseUrl || !ENV.hermesApiKey) {
+        throw new TRPCError({
+          code: "PRECONDITION_FAILED",
+          message: "Hermes aktiv deyil",
+        });
+      }
+
+      const clinicContext = await buildDrDiaClinicContext();
+      const contextHint = input.context?.label
+        ? `İstifadəçi widget-da "${input.context.label}" istiqamətindən gəlib.`
+        : "İstifadəçi ümumi Dr. Dia söhbətindən gəlib.";
+      const lastUserMessage = [...input.messages].reverse().find((message) => message.role === "user");
+      const userLanguage = detectUserLanguage(lastUserMessage?.content ?? "");
+
+      if (lastUserMessage && isHomeVisitQuestion(lastUserMessage.content)) {
+        return {
+          content: buildHomeVisitFallback(userLanguage),
+        };
+      }
+
+      if (lastUserMessage && isReceptionTimeQuestion(lastUserMessage.content)) {
+        return {
+          content: await buildReceptionTimeAnswer(userLanguage),
+        };
+      }
+
+      if (lastUserMessage && isBranchQuestion(lastUserMessage.content)) {
+        return {
+          content: buildBranchAnswer(userLanguage),
+        };
+      }
+
+      const messages: HermesChatMessage[] = [
+        {
+          role: "system",
+          content: [
+            buildDrDiaSystemPrompt(clinicContext),
+            "",
+            `Cari söhbət konteksti: ${contextHint}`,
+            `Son istifadəçi mesajının dili: ${userLanguage}. Bu cavabı yalnız ${userLanguage} dilində yaz.`,
+          ].join("\n"),
+        },
+        ...input.messages,
+      ];
+
+      const response = await callHermesChat({
+        baseUrl: ENV.hermesApiBaseUrl,
+        apiKey: ENV.hermesApiKey,
+        model: ENV.hermesModel,
+        messages,
+      });
+
+      return {
+        content: compactContactInstructions(softenMissingInfoPhrases(response.content, userLanguage), userLanguage),
       };
     }),
     submitBooking: publicProcedure.input(z.object({
@@ -317,11 +625,42 @@ export const appRouter = router({
     doctors: router({
       list: adminProcedure.query(async () => getDoctors()),
       getById: adminProcedure.input(z.object({ id: z.number() })).query(async ({ input }) => getDoctorById(input.id)),
+      seedCatalog: adminProcedure.mutation(async () => {
+        const existingDoctors = await getDoctors();
+
+        for (let index = 0; index < doctorsCatalog.length; index += 1) {
+          const doctor = doctorsCatalog[index];
+          const existingDoctor = existingDoctors.find((item) => item.nameAz === doctor.nameAz);
+          const payload = {
+            nameAz: doctor.nameAz,
+            specialtyAz: doctor.specialtyAz,
+            bioAz: doctor.bioAz ?? undefined,
+            photoUrl: doctor.photoUrl ?? undefined,
+            whatsappUrl: doctor.whatsappUrl ?? undefined,
+            telegramUrl: doctor.telegramUrl ?? undefined,
+            instagramUrl: doctor.instagramUrl ?? undefined,
+            experienceYears: doctor.experienceYears ?? 0,
+            order: doctor.order ?? index,
+            isActive: doctor.isActive,
+          };
+
+          if (existingDoctor) {
+            await updateDoctor(existingDoctor.id, payload);
+          } else {
+            await createDoctor(payload);
+          }
+        }
+
+        return { success: true, count: doctorsCatalog.length };
+      }),
       create: adminProcedure.input(z.object({
         nameAz: z.string().min(1),
         specialtyAz: z.string().min(1),
         bioAz: z.string().optional(),
         photoUrl: z.string().optional(),
+        whatsappUrl: z.string().optional(),
+        telegramUrl: z.string().optional(),
+        instagramUrl: z.string().optional(),
         experienceYears: z.number().optional(),
         order: z.number().optional(),
         isActive: z.boolean().optional(),
@@ -335,6 +674,9 @@ export const appRouter = router({
         specialtyAz: z.string().optional(),
         bioAz: z.string().optional(),
         photoUrl: z.string().optional(),
+        whatsappUrl: z.string().optional(),
+        telegramUrl: z.string().optional(),
+        instagramUrl: z.string().optional(),
         experienceYears: z.number().optional(),
         order: z.number().optional(),
         isActive: z.boolean().optional(),

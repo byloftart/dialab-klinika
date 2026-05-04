@@ -7,13 +7,15 @@ import {
   FlaskConical,
   MessageCircle,
   Phone,
+  Send,
   Stethoscope,
   UserRound,
   X,
 } from "lucide-react";
 import BotpressWebchatPanel from "@/components/assistant/BotpressWebchatPanel";
+import HermesChatPanel, { getInitialAssistantMessage } from "@/components/assistant/HermesChatPanel";
 import { buildServiceOptions } from "@/lib/services";
-import { parseBooleanSetting, type AssistantChatContext, type BookingSubmissionPayload } from "@/lib/assistant";
+import { parseBooleanSetting, type AssistantChatContext, type AssistantChatMessage, type BookingSubmissionPayload } from "@/lib/assistant";
 import { trpc } from "@/lib/trpc";
 import { buildSettingsMap, getSetting } from "@/lib/siteSettings";
 
@@ -143,6 +145,10 @@ export default function VirtualAssistant() {
   const [activeQuickAction, setActiveQuickAction] = useState<QuickActionId | null>(null);
   const [bookingForm, setBookingForm] = useState<BookingFormState>(initialBookingForm);
   const [bookingState, setBookingState] = useState<BookingUiState>({ status: "idle", message: null });
+  const [chatMessages, setChatMessages] = useState<AssistantChatMessage[]>(() => [
+    getInitialAssistantMessage({ entryPoint: "welcome", quickActionId: null, label: "Ümumi söhbət" }),
+  ]);
+  const [chatDraft, setChatDraft] = useState("");
   const [isLauncherHovered, setIsLauncherHovered] = useState(false);
   const { data: assistantConfig } = trpc.assistant.config.useQuery(undefined, { retry: false });
   const { data: contactSettings } = trpc.cms.settings.getGroup.useQuery({ group: "contact" });
@@ -178,12 +184,15 @@ export default function VirtualAssistant() {
   const whatsappUrl =
     assistantMap["assistant.whatsappUrl"] ||
     `https://wa.me/${whatsappNumber.replace(/[^\d]/g, "")}?text=Salam,%20Dr.%20Dia%20vasit%C9%99sil%C9%99%20m%C3%BCraci%C9%99t%20edir%C9%99m.`;
+  const telegramUrl = assistantMap["assistant.telegramUrl"] || "https://t.me/dialab";
   const phone = getSetting(contactMap, "contact.phone1", "+994 12 345 67 89");
   const weekdayHours = getSetting(hoursMap, "hours.weekdays", "09:00 - 18:00");
-  const welcomeTitle = assistantMap["assistant.welcomeTitle"] || "Salam, mən Dr. Dia.";
   const welcomeText =
     assistantMap["assistant.welcomeText"] ||
     "Qəbul, xidmətlər və əlaqə ilə bağlı sizə istiqamət vermək üçün buradayam.";
+  const launcherPreviewText =
+    assistantMap["assistant.launcherPreviewText"] ||
+    "Sualınız varsa, Dr. Dia sizə kömək etməyə hazırdır.";
   const bookingSuccessMessage =
     assistantMap["assistant.bookingSuccessMessage"] ||
     "Müraciətiniz qəbul edildi. Tezliklə sizinlə əlaqə saxlayacağıq.";
@@ -197,6 +206,67 @@ export default function VirtualAssistant() {
     quickActionId: activeQuickAction,
     label: activeQuickAction ? quickActions.find((item) => item.id === activeQuickAction)?.label : "Ümumi söhbət",
   };
+  const assistantProvider = assistantConfig?.provider ?? { type: "none" as const, isConfigured: false as const };
+  const phoneHref = `tel:${phone.replace(/\s+/g, "")}`;
+
+  const renderChatActionDock = () => (
+    <div className="border-t border-[#dcefeb] bg-white/80 px-5 py-4 sm:px-6">
+      <div className="grid grid-cols-3 gap-2">
+        {quickActions.map((action) => (
+          <button
+            key={action.id}
+            type="button"
+            onClick={() => handleQuickActionClick(action.id)}
+            className={[
+              "inline-flex min-h-[42px] items-center justify-center gap-1.5 rounded-2xl border px-2 text-xs font-semibold transition-colors",
+              activeQuickAction === action.id
+                ? "border-[#00b982]/35 bg-[#e8fffa] text-[#1a365d]"
+                : "border-[#dcefeb] bg-white text-[#1a365d] hover:border-[#00b982]/30 hover:bg-[#f7fffb]",
+            ].join(" ")}
+          >
+            <span className="text-[#00a572]">
+              {action.id === "appointment" ? (
+                <CalendarDays className="h-3.5 w-3.5" />
+              ) : action.id === "services" ? (
+                <Stethoscope className="h-3.5 w-3.5" />
+              ) : (
+                <UserRound className="h-3.5 w-3.5" />
+              )}
+            </span>
+            <span className="truncate">{action.label}</span>
+          </button>
+        ))}
+      </div>
+
+      <div className="mt-2 grid grid-cols-3 gap-2 text-xs text-gray-600">
+        <a
+          href={phoneHref}
+          className="inline-flex min-w-0 items-center justify-center gap-1.5 rounded-2xl border border-[#dcefeb] bg-white px-2 py-2 transition-colors hover:border-[#00b982]/30 hover:text-[#1a365d]"
+        >
+          <Phone className="h-3.5 w-3.5 text-[#00b982]" />
+          <span className="truncate">Zəng</span>
+        </a>
+        <a
+          href={whatsappUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex min-w-0 items-center justify-center gap-1.5 rounded-2xl border border-[#dcefeb] bg-white px-2 py-2 transition-colors hover:border-[#00b982]/30 hover:text-[#1a365d]"
+        >
+          <MessageCircle className="h-3.5 w-3.5 text-[#00b982]" />
+          <span className="truncate">WhatsApp</span>
+        </a>
+        <a
+          href={telegramUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex min-w-0 items-center justify-center gap-1.5 rounded-2xl border border-[#dcefeb] bg-white px-2 py-2 transition-colors hover:border-[#00b982]/30 hover:text-[#1a365d]"
+        >
+          <Send className="h-3.5 w-3.5 text-[#00b982]" />
+          <span className="truncate">Telegram</span>
+        </a>
+      </div>
+    </div>
+  );
 
   useEffect(() => {
     if (!widgetState.isLauncherOpen) {
@@ -280,7 +350,7 @@ export default function VirtualAssistant() {
       return;
     }
 
-    setActiveView(getViewForQuickAction(actionId));
+    openChatMode(actionId);
   };
 
   const handleBookingFormChange = (field: keyof BookingFormState, value: string) => {
@@ -571,13 +641,10 @@ export default function VirtualAssistant() {
                           />
                         </div>
                         <div className="min-w-0">
-                          <p className="text-xs font-semibold uppercase tracking-[0.22em] text-[#00b982]">
+                          <h2 className="text-3xl font-semibold leading-9 text-[#1a365d]">
                             Dr. Dia
-                          </p>
-                          <h2 className="mt-1 text-xl font-semibold leading-7 text-[#1a365d]">
-                            Sualınızı yazın
                           </h2>
-                          <p className="mt-1 text-sm leading-5 text-gray-600">
+                          <p className="mt-1.5 text-sm leading-5 text-gray-600">
                             {welcomeText}
                           </p>
                         </div>
@@ -593,23 +660,44 @@ export default function VirtualAssistant() {
                     </div>
                   </div>
 
-                  <div className="flex-1 min-h-0 overflow-y-auto overscroll-contain px-5 py-5 touch-pan-y sm:px-6">
+                  <div
+                    className={[
+                      "flex-1 min-h-0 px-5 py-5 sm:px-6",
+                      activeView === "chat"
+                        ? "overflow-hidden"
+                        : "overflow-y-auto overscroll-contain touch-pan-y",
+                    ].join(" ")}
+                  >
                       {activeView === "chat" ? (
-                        <div className="space-y-3">
-                          {renderChatContent()}
-                          <BotpressWebchatPanel
-                            provider={assistantConfig?.provider ?? { type: "none", isConfigured: false }}
-                            chatContext={chatContext}
-                            botName="Dr. Dia"
-                            botDescription={activeChatContent?.body ?? "Klinika ilə bağlı suallarınızı verə bilərsiniz."}
-                          />
+                        <div className="h-full min-h-0">
+                          {assistantProvider.type === "hermes" ? (
+                            <HermesChatPanel
+                              provider={assistantProvider}
+                              chatContext={chatContext}
+                              messages={chatMessages}
+                              setMessages={setChatMessages}
+                              draft={chatDraft}
+                              setDraft={setChatDraft}
+                            />
+                          ) : (
+                            <>
+                              {renderChatContent()}
+                              <BotpressWebchatPanel
+                                provider={assistantProvider}
+                                chatContext={chatContext}
+                                botName="Dr. Dia"
+                                botDescription={activeChatContent?.body ?? "Klinika ilə bağlı suallarınızı verə bilərsiniz."}
+                              />
+                            </>
+                          )}
                         </div>
                       ) : null}
 
-                      <div className={activeView === "chat" ? "mt-4" : ""}>
+                      {activeView !== "chat" ? (
+                      <div>
                         <div className="mb-3 flex items-center justify-between">
                           <h4 className="text-sm font-semibold text-[#1a365d]">Sürətli seçimlər</h4>
-                          {activeView !== "chat" ? (
+                          {activeView !== "home" ? (
                             <button
                               type="button"
                               onClick={resetToHome}
@@ -649,6 +737,7 @@ export default function VirtualAssistant() {
                           ))}
                         </div>
                       </div>
+                      ) : null}
 
                       {activeView !== "chat" ? (
                       <div className="mt-5 rounded-[24px] border border-[#dcefeb] bg-white p-4 shadow-[0_16px_42px_rgba(26,54,93,0.08)]">
@@ -772,6 +861,9 @@ export default function VirtualAssistant() {
                       ) : null}
                     </div>
 
+                  {activeView === "chat" ? renderChatActionDock() : null}
+
+                  {activeView !== "chat" ? (
                   <div className="grid grid-cols-3 gap-2 border-t border-[#dcefeb] bg-white/80 px-5 py-3 text-xs text-gray-500 sm:px-6">
                     <a
                       href={`tel:${phone.replace(/\s+/g, "")}`}
@@ -794,6 +886,7 @@ export default function VirtualAssistant() {
                       <span className="truncate">{weekdayHours}</span>
                     </div>
                   </div>
+                  ) : null}
                 </div>
               </motion.section>
             </>
@@ -811,14 +904,8 @@ export default function VirtualAssistant() {
             >
               <div className="relative rounded-[24px] border border-[#8eece4]/50 bg-white/95 px-4 py-3 shadow-[0_20px_44px_rgba(20,55,87,0.18)] backdrop-blur-md">
                 <div className="absolute -bottom-2 right-8 h-4 w-4 rotate-45 border-b border-r border-[#8eece4]/50 bg-white/95" />
-                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#00b982]">
-                  Dr. Dia
-                </p>
-                <p className="mt-2 text-sm font-semibold leading-5 text-[#1a365d]">
-                  {welcomeTitle}
-                </p>
-                <p className="mt-1 text-sm leading-6 text-gray-600">
-                  {welcomeText}
+                <p className="text-sm font-semibold leading-6 text-[#1a365d]">
+                  {launcherPreviewText}
                 </p>
               </div>
             </motion.div>
@@ -830,7 +917,6 @@ export default function VirtualAssistant() {
           onClick={handleLauncherClick}
           aria-label={launcherConfig.launcherAriaLabel}
           aria-pressed={widgetState.isLauncherOpen}
-          title={launcherConfig.launcherLabel}
           data-visual-variant={launcherConfig.visualVariant}
           className={[
             "group relative flex h-[88px] w-[88px] items-center justify-center rounded-full",

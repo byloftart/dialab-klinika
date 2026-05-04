@@ -14,4 +14,8 @@ export const ENV = {
   botpressClientId: process.env.BOTPRESS_WEBCHAT_CLIENT_ID ?? "",
   botpressApiUrl: process.env.BOTPRESS_WEBCHAT_API_URL ?? "",
   botpressStylesheetUrl: process.env.BOTPRESS_WEBCHAT_STYLESHEET_URL ?? "",
+  assistantProvider: process.env.ASSISTANT_PROVIDER ?? "",
+  hermesApiBaseUrl: process.env.HERMES_API_BASE_URL ?? "",
+  hermesApiKey: process.env.HERMES_API_KEY ?? "",
+  hermesModel: process.env.HERMES_MODEL ?? "deepseek-v4-flash",
 };
