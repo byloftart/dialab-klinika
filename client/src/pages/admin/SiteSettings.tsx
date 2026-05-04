@@ -29,7 +29,7 @@ const SETTINGS_SCHEMA = [
       {
         key: 'home.sections',
         label: 'Bölmələrin sırası və görünməsi (JSON)',
-        placeholder: '[{"id":"hero","enabled":true},{"id":"infoBar","enabled":true},{"id":"gallery","enabled":true},{"id":"laboratory","enabled":true},{"id":"diagnostics","enabled":true},{"id":"appointment","enabled":true}]',
+        placeholder: '[{"id":"hero","enabled":true},{"id":"infoBar","enabled":true},{"id":"gallery","enabled":true},{"id":"laboratory","enabled":true},{"id":"diagnostics","enabled":true},{"id":"doctors","enabled":true},{"id":"appointment","enabled":true}]',
         multiline: true,
       },
     ],
@@ -115,6 +115,15 @@ const SETTINGS_SCHEMA = [
     ],
   },
   {
+    group: 'doctors',
+    label: 'Həkimlər bölməsi',
+    fields: [
+      { key: 'doctors.eyebrow', label: 'Kiçik başlıq', placeholder: 'Bizim Heyət' },
+      { key: 'doctors.title', label: 'Başlıq', placeholder: 'Həkimlərimiz' },
+      { key: 'doctors.subtitle', label: 'Alt başlıq', placeholder: 'Klinikamızın peşəkar mütəxəssisləri ilə tanış olun.' },
+    ],
+  },
+  {
     group: 'infoBar',
     label: 'Info Bar bölməsi',
     fields: [
@@ -137,6 +146,16 @@ const SETTINGS_SCHEMA = [
         placeholder: '[{"question":"...","answer":"..."}]',
         multiline: true,
       },
+    ],
+  },
+  {
+    group: 'content',
+    label: 'Məzmun səhifələri',
+    fields: [
+      { key: 'content.pricesPageSlug', label: 'Qiymət səhifəsi slug', placeholder: 'prices' },
+      { key: 'content.preparationPageSlug', label: 'Hazırlıq səhifəsi slug', placeholder: 'preparation' },
+      { key: 'content.pricesCtaLabel', label: 'Qiymət CTA mətni', placeholder: 'Tam qiymət siyahısı' },
+      { key: 'content.preparationCtaLabel', label: 'Hazırlıq CTA mətni', placeholder: 'Hazırlıq qaydalarını aç' },
     ],
   },
   {

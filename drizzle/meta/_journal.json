@@ -29,6 +29,20 @@
       "when": 1773042000000,
       "tag": "0003_add_lab_images_and_static_pages",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "5",
+      "when": 1775648600000,
+      "tag": "0004_add_service_active_flags",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "5",
+      "when": 1775649000000,
+      "tag": "0005_add_doctor_social_links",
+      "breakpoints": true
     }
   ]
 }
