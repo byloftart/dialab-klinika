@@ -5,11 +5,8 @@ import {
   ChevronLeft,
   ExternalLink,
   FlaskConical,
-  MapPin,
   MessageCircle,
   Phone,
-  Send,
-  ShieldCheck,
   Stethoscope,
   UserRound,
   X,
@@ -31,15 +28,12 @@ type AssistantWidgetState = {
   isPanelReady: boolean;
 };
 
-type AssistantView = "home" | "prices" | "doctors" | "preparation" | "contacts" | "chat" | "booking";
+type AssistantView = "home" | "services" | "doctors" | "chat" | "booking";
 
 type QuickActionId =
   | "appointment"
-  | "prices"
-  | "doctors"
-  | "preparation"
-  | "contacts"
-  | "whatsapp";
+  | "services"
+  | "doctors";
 
 type BookingFormState = {
   doctorOrService: string;
@@ -83,60 +77,31 @@ const quickActions: Array<{
 }> = [
   {
     id: "appointment",
-    label: "Qəbula yazılmaq",
-    description: "Müraciət formunu doldurun",
+    label: "Qəbul",
+    description: "Müraciət formu",
   },
   {
-    id: "prices",
-    label: "Qiymətləri öyrən",
-    description: "Xidmətlər üzrə yönləndirmə",
+    id: "services",
+    label: "Xidmətlər",
+    description: "Analiz və müayinələr",
   },
   {
     id: "doctors",
     label: "Həkimlər",
-    description: "Mütəxəssis seçimi üçün kömək",
-  },
-  {
-    id: "preparation",
-    label: "Analizlərə hazırlıq",
-    description: "Hazırlıq qaydaları haqqında məlumat",
-  },
-  {
-    id: "contacts",
-    label: "Əlaqə",
-    description: "Ünvan və əlaqə kanalları",
-  },
-  {
-    id: "whatsapp",
-    label: "WhatsApp",
-    description: "Birbaşa yazışma kanalına keçid",
+    description: "Mütəxəssis seçimi",
   },
 ];
 
-const chatPlaceholderCopy: Record<Exclude<QuickActionId, "appointment" | "whatsapp">, { title: string; body: string }> = {
-  prices: {
-    title: "Qiymətlər üzrə istiqamət",
-    body: "Laboratoriya və diaqnostika xidmətlərini sayt bölmələri üzrə daha rahat tapa bilərsiniz.",
+const chatPlaceholderCopy: Record<Exclude<QuickActionId, "appointment">, { title: string; body: string }> = {
+  services: {
+    title: "Xidmətlər üzrə istiqamət",
+    body: "Laboratoriya, diaqnostika və qiymətlərlə bağlı sualınızı yazın.",
   },
   doctors: {
     title: "Həkim seçimi üçün kömək",
-    body: "Uyğun mütəxəssis istiqaməti üçün əvvəlcə qısa yönləndirmə, sonra isə canlı söhbət mümkündür.",
-  },
-  preparation: {
-    title: "Hazırlıq qaydaları",
-    body: "Analiz və müayinədən əvvəl əsas hazırlıq prinsiplərini burada görə bilərsiniz.",
-  },
-  contacts: {
-    title: "Əlaqə məlumatları",
-    body: "Telefon, ünvan və sosial kanallar üzrə birbaşa keçidlər buradadır.",
+    body: "Uyğun mütəxəssis və qəbul müraciəti ilə bağlı sualınızı yazın.",
   },
 };
-
-const defaultPreparationTips = [
-  "Bəzi analizlər üçün acqarına gəlmək tələb oluna bilər.",
-  "Daimi qəbul etdiyiniz dərmanları əvvəlcədən qeyd edin.",
-  "Hazırlıq qaydasını dəqiqləşdirmək üçün əvvəlcədən bizimlə əlaqə saxlayın.",
-];
 
 function getPulseAnimation(reducedMotion: boolean) {
   if (reducedMotion) {
@@ -174,14 +139,13 @@ function getButtonMotionProps(reducedMotion: boolean) {
 export default function VirtualAssistant() {
   const reducedMotion = useReducedMotion();
   const [widgetState, setWidgetState] = useState<AssistantWidgetState>(initialWidgetState);
-  const [activeView, setActiveView] = useState<AssistantView>("home");
+  const [activeView, setActiveView] = useState<AssistantView>("chat");
   const [activeQuickAction, setActiveQuickAction] = useState<QuickActionId | null>(null);
   const [bookingForm, setBookingForm] = useState<BookingFormState>(initialBookingForm);
   const [bookingState, setBookingState] = useState<BookingUiState>({ status: "idle", message: null });
   const [isLauncherHovered, setIsLauncherHovered] = useState(false);
   const { data: assistantConfig } = trpc.assistant.config.useQuery(undefined, { retry: false });
   const { data: contactSettings } = trpc.cms.settings.getGroup.useQuery({ group: "contact" });
-  const { data: socialSettings } = trpc.cms.settings.getGroup.useQuery({ group: "social" });
   const { data: hoursSettings } = trpc.cms.settings.getGroup.useQuery({ group: "hours" });
   const { data: assistantSettings } = trpc.cms.settings.getGroup.useQuery({ group: "assistant" });
   const { data: contentSettings } = trpc.cms.settings.getGroup.useQuery({ group: "content" });
@@ -191,24 +155,16 @@ export default function VirtualAssistant() {
   const bookingMutation = trpc.assistant.submitBooking.useMutation();
 
   const contactMap = buildSettingsMap(contactSettings);
-  const socialMap = buildSettingsMap(socialSettings);
   const hoursMap = buildSettingsMap(hoursSettings);
   const assistantMap = buildSettingsMap(assistantSettings);
   const contentMap = buildSettingsMap(contentSettings);
   const services = useMemo(() => buildServiceOptions(laboratory, diagnostics), [diagnostics, laboratory]);
   const pricesPageSlug = getSetting(contentMap, "content.pricesPageSlug", "prices");
-  const preparationPageSlug = getSetting(contentMap, "content.preparationPageSlug", "preparation");
   const pricesPageHref = `/pages/${pricesPageSlug}`;
-  const preparationPageHref = `/pages/${preparationPageSlug}`;
   const pricesCtaLabel = getSetting(contentMap, "content.pricesCtaLabel", "Tam qiymət siyahısı");
-  const preparationCtaLabel = getSetting(contentMap, "content.preparationCtaLabel", "Hazırlıq qaydalarını aç");
   const { data: pricesPage } = trpc.cms.pages.getBySlug.useQuery(
     { slug: pricesPageSlug },
     { enabled: Boolean(pricesPageSlug) }
-  );
-  const { data: preparationPage } = trpc.cms.pages.getBySlug.useQuery(
-    { slug: preparationPageSlug },
-    { enabled: Boolean(preparationPageSlug) }
   );
 
   const widgetEnabled = parseBooleanSetting(assistantMap["assistant.enabled"], true);
@@ -223,12 +179,6 @@ export default function VirtualAssistant() {
     assistantMap["assistant.whatsappUrl"] ||
     `https://wa.me/${whatsappNumber.replace(/[^\d]/g, "")}?text=Salam,%20Dr.%20Dia%20vasit%C9%99sil%C9%99%20m%C3%BCraci%C9%99t%20edir%C9%99m.`;
   const phone = getSetting(contactMap, "contact.phone1", "+994 12 345 67 89");
-  const address = getSetting(contactMap, "contact.address", "Tbilisi prospekti, 3007 məhəllə, bina 44c");
-  const mapUrl = getSetting(contactMap, "contact.mapUrl", "https://www.google.com/maps");
-  const instagramUrl =
-    assistantMap["assistant.instagramUrl"] || getSetting(socialMap, "social.instagram", "https://instagram.com/dialabklinika");
-  const telegramUrl =
-    assistantMap["assistant.telegramUrl"] || getSetting(socialMap, "social.telegram", "https://t.me/");
   const weekdayHours = getSetting(hoursMap, "hours.weekdays", "09:00 - 18:00");
   const welcomeTitle = assistantMap["assistant.welcomeTitle"] || "Salam, mən Dr. Dia.";
   const welcomeText =
@@ -293,7 +243,7 @@ export default function VirtualAssistant() {
   };
 
   const resetToHome = () => {
-    setActiveView("home");
+    setActiveView("chat");
     setActiveQuickAction(null);
     setBookingState({ status: "idle", message: null });
   };
@@ -327,11 +277,6 @@ export default function VirtualAssistant() {
 
     if (actionId === "appointment") {
       setActiveView("booking");
-      return;
-    }
-
-    if (actionId === "whatsapp") {
-      window.open(whatsappUrl, "_blank", "noopener,noreferrer");
       return;
     }
 
@@ -389,7 +334,7 @@ export default function VirtualAssistant() {
   const isActive = widgetState.isLauncherOpen || widgetState.isPanelReady;
   const showLauncherPreview = isLauncherHovered && !widgetState.isLauncherOpen;
   const activeChatContent =
-    activeQuickAction && activeQuickAction !== "appointment" && activeQuickAction !== "whatsapp"
+    activeQuickAction && activeQuickAction !== "appointment"
       ? chatPlaceholderCopy[activeQuickAction]
       : null;
 
@@ -397,16 +342,12 @@ export default function VirtualAssistant() {
     switch (actionId) {
       case "appointment":
         return "booking";
-      case "prices":
-        return "prices";
+      case "services":
+        return "services";
       case "doctors":
         return "doctors";
-      case "preparation":
-        return "preparation";
-      case "contacts":
-        return "contacts";
       default:
-        return "home";
+        return "chat";
     }
   };
 
@@ -436,11 +377,11 @@ export default function VirtualAssistant() {
   };
 
   const renderLocalViewContent = () => {
-    if (activeView === "prices") {
+    if (activeView === "services") {
       return (
         <div className="space-y-3">
           <div className="rounded-2xl border border-[#00b982]/14 bg-white p-4">
-            <p className="text-sm font-medium text-[#1a365d]">Qiymətlər üzrə istiqamət seçin</p>
+            <p className="text-sm font-medium text-[#1a365d]">Xidmətlər üzrə istiqamət seçin</p>
             <p className="mt-1 text-sm leading-6 text-gray-600">
               {pricesPage?.excerptAz || "Uyğun xidmət kateqoriyasına keçərək ətraflı siyahını aça bilərsiniz."}
             </p>
@@ -487,11 +428,11 @@ export default function VirtualAssistant() {
 
           <button
             type="button"
-            onClick={() => openChatMode("prices")}
+            onClick={() => openChatMode("services")}
             className="flex w-full items-center justify-between rounded-2xl border border-[#1a365d]/15 bg-[#f7fafc] px-4 py-3 text-left transition-colors hover:border-[#1a365d]/30 hover:bg-white"
           >
             <div>
-              <div className="text-sm font-semibold text-[#1a365d]">Qiymətlə bağlı sual ver</div>
+              <div className="text-sm font-semibold text-[#1a365d]">Xidmətlə bağlı sual ver</div>
               <div className="mt-1 text-xs text-gray-500">Dr. Dia ilə söhbətə keçin</div>
             </div>
             <MessageCircle className="h-4 w-4 text-[#00b982]" />
@@ -558,127 +499,6 @@ export default function VirtualAssistant() {
       );
     }
 
-    if (activeView === "preparation") {
-      return (
-        <div className="space-y-3">
-          <div className="rounded-2xl border border-[#00b982]/14 bg-white p-4">
-            <p className="text-sm font-medium text-[#1a365d]">Hazırlıq qaydaları</p>
-            <p className="mt-1 text-sm leading-6 text-gray-600">
-              {preparationPage?.excerptAz || "Dəqiq qaydalar analiz və müayinə növünə görə dəyişə bilər."}
-            </p>
-          </div>
-
-          <a
-            href={preparationPageHref}
-            className="flex items-center justify-between rounded-2xl border border-[#00b982]/20 bg-[#f7fffb] px-4 py-3 text-left transition-colors hover:border-[#00b982]/40 hover:bg-white"
-          >
-            <div>
-              <div className="text-sm font-semibold text-[#1a365d]">{preparationCtaLabel}</div>
-              <div className="mt-1 text-xs text-gray-500">
-                {preparationPage?.titleAz || "Analiz və müayinəyə hazırlıq səhifəsini aç"}
-              </div>
-            </div>
-            <ExternalLink className="h-4 w-4 text-[#00b982]" />
-          </a>
-
-          <div className="space-y-2">
-            {defaultPreparationTips.map((tip) => (
-              <div
-                key={tip}
-                className="flex items-start gap-2 rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm leading-6 text-gray-600"
-              >
-                <ShieldCheck className="mt-0.5 h-4 w-4 flex-shrink-0 text-[#00b982]" />
-                <span>{tip}</span>
-              </div>
-            ))}
-          </div>
-
-          <button
-            type="button"
-            onClick={() => openChatMode("preparation")}
-            className="flex w-full items-center justify-between rounded-2xl border border-[#1a365d]/15 bg-[#f7fafc] px-4 py-3 text-left transition-colors hover:border-[#1a365d]/30 hover:bg-white"
-          >
-            <div>
-              <div className="text-sm font-semibold text-[#1a365d]">Hazırlıqla bağlı sual ver</div>
-              <div className="mt-1 text-xs text-gray-500">Dr. Dia ilə söhbətə keçin</div>
-            </div>
-            <MessageCircle className="h-4 w-4 text-[#00b982]" />
-          </button>
-        </div>
-      );
-    }
-
-    if (activeView === "contacts") {
-      return (
-        <div className="space-y-3">
-          <div className="rounded-2xl border border-[#00b982]/14 bg-white p-4">
-            <p className="text-sm font-medium text-[#1a365d]">Əlaqə seçimləri</p>
-            <p className="mt-1 text-sm leading-6 text-gray-600">
-              Bizimlə əlaqə saxlamaq və ya ünvanı açmaq üçün uyğun kanalı seçin.
-            </p>
-          </div>
-
-          <a
-            href={`tel:${phone.replace(/\s+/g, "")}`}
-            className="flex items-center justify-between rounded-2xl border border-gray-200 bg-white px-4 py-3 transition-colors hover:border-[#00b982]/30 hover:bg-[#f8fffb]"
-          >
-            <div>
-              <div className="text-sm font-semibold text-[#1a365d]">Telefon</div>
-              <div className="mt-1 text-xs text-gray-500">{phone}</div>
-            </div>
-            <Phone className="h-4 w-4 text-[#00b982]" />
-          </a>
-
-          <a
-            href={mapUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center justify-between rounded-2xl border border-gray-200 bg-white px-4 py-3 transition-colors hover:border-[#00b982]/30 hover:bg-[#f8fffb]"
-          >
-            <div>
-              <div className="text-sm font-semibold text-[#1a365d]">Ünvan</div>
-              <div className="mt-1 text-xs text-gray-500">{address}</div>
-            </div>
-            <MapPin className="h-4 w-4 text-[#00b982]" />
-          </a>
-
-          <div className="grid grid-cols-2 gap-2">
-            <a
-              href={telegramUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center justify-between rounded-2xl border border-gray-200 bg-white px-4 py-3 transition-colors hover:border-[#00b982]/30 hover:bg-[#f8fffb]"
-            >
-              <span className="text-sm font-semibold text-[#1a365d]">Telegram</span>
-              <Send className="h-4 w-4 text-[#00b982]" />
-            </a>
-
-            <a
-              href={instagramUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center justify-between rounded-2xl border border-gray-200 bg-white px-4 py-3 transition-colors hover:border-[#00b982]/30 hover:bg-[#f8fffb]"
-            >
-              <span className="text-sm font-semibold text-[#1a365d]">Instagram</span>
-              <ExternalLink className="h-4 w-4 text-[#00b982]" />
-            </a>
-          </div>
-
-          <button
-            type="button"
-            onClick={() => openChatMode("contacts")}
-            className="flex w-full items-center justify-between rounded-2xl border border-[#1a365d]/15 bg-[#f7fafc] px-4 py-3 text-left transition-colors hover:border-[#1a365d]/30 hover:bg-white"
-          >
-            <div>
-              <div className="text-sm font-semibold text-[#1a365d]">Əlaqə ilə bağlı sual ver</div>
-              <div className="mt-1 text-xs text-gray-500">Dr. Dia ilə söhbətə keçin</div>
-            </div>
-            <MessageCircle className="h-4 w-4 text-[#00b982]" />
-          </button>
-        </div>
-      );
-    }
-
     return renderHomeContent();
   };
 
@@ -725,35 +545,71 @@ export default function VirtualAssistant() {
                 exit={reducedMotion ? { opacity: 0 } : { opacity: 0, y: 12, scale: 0.98 }}
                 transition={{ duration: reducedMotion ? 0 : 0.22, ease: "easeOut" }}
                 className={[
-                  "fixed inset-x-3 bottom-20 h-[min(82vh,720px)] overflow-hidden rounded-[28px] border border-[#00b982]/14 bg-white shadow-[0_24px_80px_rgba(26,54,93,0.2)]",
-                  "sm:inset-x-auto sm:right-6 sm:w-[420px] sm:bottom-24",
+                  "fixed inset-x-3 bottom-20 h-[min(86vh,760px)] overflow-hidden rounded-[30px] border border-[#8eece4]/45 bg-[#f7fffb] shadow-[0_28px_90px_rgba(26,54,93,0.22)]",
+                  "sm:inset-x-auto sm:right-6 sm:w-[440px] sm:bottom-24",
                 ].join(" ")}
               >
                 <div className="flex h-full min-h-0 flex-col">
-                  <div className="flex items-start justify-between border-b border-gray-100 px-5 py-4 sm:px-6">
-                    <div>
-                      <p className="text-xs font-semibold uppercase tracking-[0.22em] text-[#00b982]">
-                        Dr. Dia
-                      </p>
-                      <h2 className="mt-1 text-lg font-semibold text-[#1a365d]">
-                        Rəqəmsal köməkçi
-                      </h2>
+                  <div className="relative overflow-hidden border-b border-[#8eece4]/35 bg-[linear-gradient(145deg,#e9fffb_0%,#f7fffb_48%,#ffffff_100%)] px-5 pb-5 pt-4 sm:px-6">
+                    <div
+                      className="absolute -right-14 -top-14 h-36 w-36 rounded-full bg-[#79efe5]/30 blur-2xl"
+                      aria-hidden="true"
+                    />
+                    <div className="relative flex items-start justify-between gap-4">
+                      <div className="flex min-w-0 items-center gap-4">
+                        <div className="relative flex h-20 w-20 flex-shrink-0 items-center justify-center rounded-full bg-white shadow-[0_18px_42px_rgba(0,185,130,0.22)]">
+                          <div
+                            className="absolute inset-1 rounded-full bg-[radial-gradient(circle,rgba(121,239,229,0.55)_0%,rgba(121,239,229,0.14)_68%,rgba(121,239,229,0)_100%)]"
+                            aria-hidden="true"
+                          />
+                          <img
+                            src="/images/assistant-launcher-transparent.png"
+                            alt=""
+                            aria-hidden="true"
+                            className="relative h-full w-full select-none object-contain"
+                            draggable={false}
+                          />
+                        </div>
+                        <div className="min-w-0">
+                          <p className="text-xs font-semibold uppercase tracking-[0.22em] text-[#00b982]">
+                            Dr. Dia
+                          </p>
+                          <h2 className="mt-1 text-xl font-semibold leading-7 text-[#1a365d]">
+                            Sualınızı yazın
+                          </h2>
+                          <p className="mt-1 text-sm leading-5 text-gray-600">
+                            {welcomeText}
+                          </p>
+                        </div>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={closePanel}
+                        className="relative rounded-full border border-white/80 bg-white/80 p-2 text-gray-500 shadow-sm transition-colors hover:bg-white hover:text-[#1a365d]"
+                        aria-label="Paneli bağla"
+                      >
+                        <X className="h-4 w-4" />
+                      </button>
                     </div>
-                    <button
-                      type="button"
-                      onClick={closePanel}
-                      className="rounded-full border border-gray-200 p-2 text-gray-500 transition-colors hover:bg-gray-50 hover:text-[#1a365d]"
-                      aria-label="Paneli bağla"
-                    >
-                      <X className="h-4 w-4" />
-                    </button>
                   </div>
 
                   <div className="flex-1 min-h-0 overflow-y-auto overscroll-contain px-5 py-5 touch-pan-y sm:px-6">
-                      <div>
+                      {activeView === "chat" ? (
+                        <div className="space-y-3">
+                          {renderChatContent()}
+                          <BotpressWebchatPanel
+                            provider={assistantConfig?.provider ?? { type: "none", isConfigured: false }}
+                            chatContext={chatContext}
+                            botName="Dr. Dia"
+                            botDescription={activeChatContent?.body ?? "Klinika ilə bağlı suallarınızı verə bilərsiniz."}
+                          />
+                        </div>
+                      ) : null}
+
+                      <div className={activeView === "chat" ? "mt-4" : ""}>
                         <div className="mb-3 flex items-center justify-between">
-                          <h4 className="text-sm font-semibold text-[#1a365d]">Tez seçimlər</h4>
-                          {activeView !== "home" ? (
+                          <h4 className="text-sm font-semibold text-[#1a365d]">Sürətli seçimlər</h4>
+                          {activeView !== "chat" ? (
                             <button
                               type="button"
                               onClick={resetToHome}
@@ -765,27 +621,37 @@ export default function VirtualAssistant() {
                           ) : null}
                         </div>
 
-                        <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+                        <div className="grid grid-cols-3 gap-2">
                           {quickActions.map((action) => (
                             <button
                               key={action.id}
                               type="button"
                               onClick={() => handleQuickActionClick(action.id)}
                               className={[
-                                "rounded-2xl border px-4 py-3 text-left transition-colors",
+                                "min-h-[82px] rounded-2xl border px-3 py-3 text-left transition-colors",
                                 activeQuickAction === action.id
-                                  ? "border-[#00b982]/30 bg-[#f4fffb]"
-                                  : "border-gray-200 bg-white hover:border-[#00b982]/20 hover:bg-gray-50",
+                                  ? "border-[#00b982]/35 bg-white shadow-[0_12px_28px_rgba(0,185,130,0.12)]"
+                                  : "border-[#dcefeb] bg-white/82 hover:border-[#00b982]/25 hover:bg-white",
                               ].join(" ")}
                             >
-                              <div className="text-sm font-semibold text-[#1a365d]">{action.label}</div>
-                              <div className="mt-1 text-xs leading-5 text-gray-500">{action.description}</div>
+                              <div className="mb-2 inline-flex h-8 w-8 items-center justify-center rounded-full bg-[#e8fffa] text-[#00a572]">
+                                {action.id === "appointment" ? (
+                                  <CalendarDays className="h-4 w-4" />
+                                ) : action.id === "services" ? (
+                                  <Stethoscope className="h-4 w-4" />
+                                ) : (
+                                  <UserRound className="h-4 w-4" />
+                                )}
+                              </div>
+                              <div className="text-sm font-semibold leading-5 text-[#1a365d]">{action.label}</div>
+                              <div className="mt-1 text-[11px] leading-4 text-gray-500">{action.description}</div>
                             </button>
                           ))}
                         </div>
                       </div>
 
-                      <div className="mt-5 rounded-[24px] border border-gray-100 bg-[#fbfcfd] p-4">
+                      {activeView !== "chat" ? (
+                      <div className="mt-5 rounded-[24px] border border-[#dcefeb] bg-white p-4 shadow-[0_16px_42px_rgba(26,54,93,0.08)]">
                         {activeView === "booking" ? (
                           <div>
                             <div className="mb-4 flex items-center justify-between gap-2">
@@ -897,40 +763,35 @@ export default function VirtualAssistant() {
                               </button>
                             </form>
                           </div>
-                        ) : activeView === "chat" ? (
-                          <div className="space-y-4">
-                            <div>
-                              <div className="mb-4 flex items-center gap-2">
-                                <MessageCircle className="h-4 w-4 text-[#00b982]" />
-                                <h4 className="text-sm font-semibold text-[#1a365d]">Söhbət sahəsi</h4>
-                              </div>
-
-                              {renderChatContent()}
-                            </div>
-
-                            <BotpressWebchatPanel
-                              provider={assistantConfig?.provider ?? { type: "none", isConfigured: false }}
-                              chatContext={chatContext}
-                              botName="Dr. Dia"
-                              botDescription={activeChatContent?.body ?? "Klinika ilə bağlı suallarınızı verə bilərsiniz."}
-                            />
-                          </div>
                         ) : (
                           <div>
                             {renderLocalViewContent()}
                           </div>
                         )}
                       </div>
+                      ) : null}
                     </div>
 
-                  <div className="flex items-center justify-between border-t border-gray-100 px-5 py-4 text-xs text-gray-500 sm:px-6">
-                    <div className="inline-flex items-center gap-2">
+                  <div className="grid grid-cols-3 gap-2 border-t border-[#dcefeb] bg-white/80 px-5 py-3 text-xs text-gray-500 sm:px-6">
+                    <a
+                      href={`tel:${phone.replace(/\s+/g, "")}`}
+                      className="inline-flex min-w-0 items-center gap-2 rounded-full px-1 py-1 transition-colors hover:text-[#1a365d]"
+                    >
                       <Phone className="h-3.5 w-3.5 text-[#00b982]" />
-                      <span>{phone}</span>
-                    </div>
-                    <div className="inline-flex items-center gap-2">
+                      <span className="truncate">Zəng</span>
+                    </a>
+                    <a
+                      href={whatsappUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex min-w-0 items-center gap-2 rounded-full px-1 py-1 transition-colors hover:text-[#1a365d]"
+                    >
+                      <MessageCircle className="h-3.5 w-3.5 text-[#00b982]" />
+                      <span className="truncate">WhatsApp</span>
+                    </a>
+                    <div className="inline-flex min-w-0 items-center gap-2 rounded-full px-1 py-1">
                       <UserRound className="h-3.5 w-3.5 text-[#00b982]" />
-                      <span>{weekdayHours}</span>
+                      <span className="truncate">{weekdayHours}</span>
                     </div>
                   </div>
                 </div>
