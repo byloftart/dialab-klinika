@@ -1,15 +1,42 @@
 import { useEffect, useMemo, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowRight, CheckCircle2, FlaskConical, ShieldCheck, Sparkles } from 'lucide-react';
+import { ArrowRight, CheckCircle2 } from 'lucide-react';
 import { trpc } from '@/lib/trpc';
 import { buildSettingsMap, getSetting } from '@/lib/siteSettings';
 import { getLaboratoryPresentation } from '@/lib/services';
+import { laboratoryCatalog } from '@shared/serviceCatalog';
+
+type FallbackLaboratoryType = {
+  id: number;
+  titleAz: string;
+  descriptionAz: string;
+  imageUrl: string | null;
+  icon: string | null;
+  order: number | null;
+  isActive: boolean;
+  subTests: Array<[string, string]>;
+};
+
+type RenderLaboratoryType = {
+  id: number;
+  titleAz: string;
+  descriptionAz: string;
+  imageUrl?: string | null;
+  image?: string;
+  icon: React.ElementType;
+  color: string;
+  order?: number | null;
+  isActive?: boolean;
+  subTests?: Array<[string, string]>;
+};
 
 export default function LaboratorySection() {
   const [activeIndex, setActiveIndex] = useState(0);
   const [hoveredTab, setHoveredTab] = useState<number | null>(null);
   const { data: settings } = trpc.cms.settings.getGroup.useQuery({ group: 'laboratory' });
   const { data: laboratoryTypes } = trpc.cms.laboratory.list.useQuery();
+  const cmsLaboratoryTypes = (laboratoryTypes ?? []).filter((item) => item.isActive);
+  const isUsingFallbackCatalog = cmsLaboratoryTypes.length === 0;
 
   useEffect(() => {
     if (!laboratoryTypes?.length) {
@@ -23,29 +50,45 @@ export default function LaboratorySection() {
   }, [activeIndex, laboratoryTypes]);
 
   const settingsMap = buildSettingsMap(settings);
-  const eyebrow = getSetting(settingsMap, 'laboratory.eyebrow', 'Laboratoriya Xidmətləri');
-  const title = getSetting(settingsMap, 'laboratory.title', 'Laboratoriya Xidmətləri');
-  const subtitle = getSetting(
-    settingsMap,
-    'laboratory.subtitle',
-    'Geniş spektrli laborator analizlər və dəqiq nəticələr'
-  );
+  const rawTitle = getSetting(settingsMap, 'laboratory.title', 'LABORATORİYA');
+  const title = rawTitle.toUpperCase() === 'LABORATORIYA XIDMƏTLƏRI' ? 'LABORATORİYA' : rawTitle.toUpperCase();
 
-  const displayTypes = useMemo(() => {
-    return (laboratoryTypes ?? [])
-      .filter((item) => item.isActive)
+  const displayTypes = useMemo<RenderLaboratoryType[]>(() => {
+    const sourceItems: Array<
+      | (typeof cmsLaboratoryTypes)[number]
+      | FallbackLaboratoryType
+    > = isUsingFallbackCatalog
+      ? laboratoryCatalog.map((item, index) => ({
+          id: -(index + 1),
+          titleAz: item.titleAz,
+          descriptionAz: item.descriptionAz,
+          imageUrl: null,
+          icon: item.icon,
+          order: item.order,
+          isActive: true,
+          subTests: item.subTests,
+        }))
+      : cmsLaboratoryTypes;
+
+    return sourceItems
       .map((item, index) => ({
         ...item,
         ...getLaboratoryPresentation(item.icon, index),
       }));
-  }, [laboratoryTypes]);
+  }, [cmsLaboratoryTypes, isUsingFallbackCatalog]);
 
   const visibleType = displayTypes[activeIndex];
   const { data: activeTypeData } = trpc.cms.laboratory.getById.useQuery(
     { id: visibleType?.id ?? 0 },
-    { enabled: Boolean(visibleType?.id) }
+    { enabled: Boolean(visibleType?.id) && !isUsingFallbackCatalog && (visibleType?.id ?? 0) > 0 }
   );
-  const subTests = activeTypeData?.subTests ?? [];
+  const subTests = isUsingFallbackCatalog
+    ? ((visibleType?.subTests ?? []) as Array<[string, string]>).map(([titleAz, descriptionAz], index) => ({
+        id: index,
+        titleAz,
+        descriptionAz,
+      }))
+    : (activeTypeData?.subTests ?? []);
 
   const openAppointment = () => {
     document.querySelector('#appointment')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -62,7 +105,7 @@ export default function LaboratorySection() {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, amount: 0.2 }}
       transition={{ duration: 0.45 }}
-      className="py-24 lg:py-32 bg-gradient-to-br from-white via-[#f0fdf4] to-[#e8f4fc] relative overflow-hidden border-t-2 border-[#00b982]/30"
+      className="py-24 lg:py-32 bg-gradient-to-br from-[#eef5f7] via-[#e5f1ef] to-[#dbe8f2] relative overflow-hidden border-t-2 border-[#00b982]/30"
     >
       <motion.div className="absolute inset-0 pointer-events-none">
         <div className="absolute top-20 right-20 w-96 h-96 bg-[#00b982]/10 rounded-full blur-3xl" />
@@ -73,13 +116,9 @@ export default function LaboratorySection() {
       <div className="container mx-auto px-4 lg:px-8 relative z-10">
         <div className="mb-16 lg:mb-20 flex justify-center">
           <div className="text-center max-w-3xl">
-            <p className="uppercase tracking-[0.2em] text-sm font-semibold text-[#00b982] mb-3">{eyebrow}</p>
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-[#1a365d] mb-3">
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold uppercase tracking-[0.04em] text-[#1a365d]">
               {title}
             </h2>
-            <p className="text-lg md:text-xl text-gray-600 font-medium max-w-2xl mx-auto">
-              {subtitle}
-            </p>
           </div>
         </div>
 
@@ -95,10 +134,10 @@ export default function LaboratorySection() {
                 onClick={() => setActiveIndex(index)}
                 onMouseEnter={() => setHoveredTab(index)}
                 onMouseLeave={() => setHoveredTab(null)}
-                className={`w-full text-left p-5 rounded-xl transition-all duration-300 group relative overflow-hidden min-h-[100px] ${
+                className={`w-full text-left px-5 py-6 rounded-2xl transition-all duration-300 group relative overflow-hidden min-h-[96px] ${
                   activeIndex === index
-                    ? 'bg-white border border-[#00b982]/50 shadow-lg shadow-[#00b982]/10'
-                    : 'bg-white/50 border border-[#00b982]/10 hover:bg-white hover:border-[#00b982]/30'
+                    ? 'bg-white border border-[#00b982]/55 shadow-[0_18px_36px_-24px_rgba(0,185,130,0.32)]'
+                    : 'bg-white/72 border border-[#cddbd7] shadow-[0_12px_28px_-26px_rgba(15,31,53,0.18)] hover:bg-white hover:border-[#00b982]/28 hover:shadow-[0_18px_34px_-26px_rgba(15,31,53,0.22)]'
                 }`}
               >
                 {(hoveredTab === index || activeIndex === index) && (
@@ -121,13 +160,10 @@ export default function LaboratorySection() {
                   >
                     <analysis.icon className="w-7 h-7" style={{ color: analysis.color }} />
                   </motion.div>
-                  <div className="flex-1">
-                    <h3 className={`font-bold text-lg transition-colors ${activeIndex === index ? 'text-[#00b982]' : 'text-[#1a365d] group-hover:text-[#00b982]'}`}>
+                  <div className="flex-1 min-w-0">
+                    <h3 className={`font-bold text-[1.42rem] leading-[1.05] line-clamp-2 transition-colors ${activeIndex === index ? 'text-[#00b982]' : 'text-[#1a365d] group-hover:text-[#00b982]'}`}>
                       {analysis.titleAz}
                     </h3>
-                    <p className="text-gray-500 text-sm line-clamp-2">
-                      {analysis.descriptionAz}
-                    </p>
                   </div>
                   <ArrowRight className={`w-5 h-5 transition-all duration-300 ${activeIndex === index ? 'text-[#00b982] translate-x-0' : 'text-gray-400 -translate-x-2 opacity-0 group-hover:translate-x-0 group-hover:opacity-100'}`} />
                 </div>
@@ -147,12 +183,12 @@ export default function LaboratorySection() {
                 style={{ perspective: '1000px' }}
               >
                 <motion.div
-                  className="bg-white rounded-3xl border border-[#00b982]/20 overflow-hidden shadow-2xl shadow-[#00b982]/10"
+                  className="overflow-hidden rounded-3xl border border-[#cddbd7] bg-white shadow-[0_24px_54px_-30px_rgba(15,31,53,0.24)]"
                   whileHover={{ rotateY: 2, rotateX: -2 }}
                   transition={{ duration: 0.4 }}
                   style={{ transformStyle: 'preserve-3d' }}
                 >
-                  <div className="relative h-64 overflow-hidden">
+                  <div className="relative h-72 overflow-hidden">
                     <motion.img
                       key={visibleType.imageUrl || visibleType.image}
                       initial={{ scale: 1.1, opacity: 0 }}
@@ -160,34 +196,30 @@ export default function LaboratorySection() {
                       transition={{ duration: 0.6 }}
                       src={visibleType.imageUrl || visibleType.image}
                       alt={visibleType.titleAz}
-                      className="w-full h-full object-cover"
+                      className="w-full h-full object-cover scale-[1.04] blur-[1.5px]"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-black/20 to-transparent" />
-                    <div className="absolute bottom-0 left-0 right-0 p-6">
-                      <div
-                        className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-semibold"
-                        style={{ backgroundColor: `${visibleType.color}20`, color: visibleType.color }}
-                      >
-                        <visibleType.icon className="w-4 h-4" />
-                        {eyebrow}
+                    <div className="absolute inset-0 bg-gradient-to-br from-[#0f1f35]/60 via-[#142b4a]/35 to-black/35" />
+                    <div className="absolute inset-0 flex items-center justify-center p-8 text-center">
+                      <div className="max-w-3xl">
+                        <h3 className="text-4xl font-bold leading-tight text-white md:text-5xl">
+                          {visibleType.titleAz}
+                        </h3>
+                        <p className="mt-4 text-base font-medium leading-relaxed text-white/90 md:text-lg">
+                          {visibleType.descriptionAz}
+                        </p>
                       </div>
-                      <h3 className="text-3xl font-bold text-white mt-3">{visibleType.titleAz}</h3>
                     </div>
                   </div>
 
                   <div className="p-6 lg:p-8">
-                    <p className="text-gray-700 text-lg leading-relaxed font-medium">
-                      {visibleType.descriptionAz}
-                    </p>
-
-                    <div className="mt-8 grid md:grid-cols-2 gap-4">
+                    <div className="grid md:grid-cols-2 gap-5">
                       {subTests.map((test) => (
-                        <div key={test.id} className="flex items-start gap-3 bg-[#f7fffb] rounded-2xl border border-[#00b982]/10 p-4">
+                        <div key={test.id} className="flex min-h-[84px] items-center gap-3 rounded-2xl border border-[#d4e2de] bg-[#f8fcfb] px-5 py-5 shadow-[0_14px_30px_-26px_rgba(15,31,53,0.2)]">
                           <CheckCircle2 className="w-5 h-5 text-[#00b982] mt-0.5 flex-shrink-0" />
                           <div>
-                            <h4 className="font-semibold text-[#1a365d]">{test.titleAz}</h4>
+                            <h4 className="text-lg font-semibold leading-snug text-[#1a365d]">{test.titleAz}</h4>
                             {test.descriptionAz && (
-                              <p className="text-sm text-gray-600 mt-1">{test.descriptionAz}</p>
+                              <p className="mt-1 text-sm text-gray-600">{test.descriptionAz}</p>
                             )}
                           </div>
                         </div>
@@ -200,32 +232,15 @@ export default function LaboratorySection() {
                       </div>
                     )}
 
-                    <div className="mt-10 rounded-[28px] border border-[#00b982]/15 bg-gradient-to-r from-[#f7fffb] via-white to-[#ecfdf5] p-5 lg:p-6 shadow-xl shadow-[#00b982]/8">
-                      <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
-                        <div className="min-w-0">
-                          <div className="inline-flex items-center gap-2 rounded-full bg-white px-3 py-1.5 text-[#00b982] text-sm font-semibold shadow-sm">
-                            <ShieldCheck className="w-4 h-4" />
-                            Dəqiq və etibarlı nəticələr
-                          </div>
-                          <h4 className="mt-4 text-2xl font-bold text-[#1a365d] flex items-center gap-2">
-                            <Sparkles className="w-5 h-5 text-[#00b982]" />
-                            Analiz üçün hazırlıq və ətraflı məlumat
-                          </h4>
-                          <p className="mt-2 text-gray-600 max-w-2xl">
-                            Müayinə öncəsi qaydaları və uyğun vaxtı bir neçə kliklə dəqiqləşdirin. Komandamız sizi doğru analiz növünə yönləndirəcək.
-                          </p>
-                        </div>
-                        <div className="flex flex-wrap gap-3">
-                          <button
-                            type="button"
-                            onClick={openAppointment}
-                            className="inline-flex items-center gap-2 rounded-full bg-[#00b982] px-5 py-3 text-white font-semibold shadow-lg shadow-[#00b982]/20 hover:bg-[#00a572] transition-colors"
-                          >
-                            Ətraflı Məlumat
-                            <ArrowRight className="w-4 h-4" />
-                          </button>
-                        </div>
-                      </div>
+                    <div className="mt-8 flex justify-end">
+                      <button
+                        type="button"
+                        onClick={openAppointment}
+                        className="inline-flex items-center gap-2 rounded-full bg-[#00b982] px-5 py-3 text-white font-semibold shadow-lg shadow-[#00b982]/20 hover:bg-[#00a572] transition-colors"
+                      >
+                        Randevu Al
+                        <ArrowRight className="w-4 h-4" />
+                      </button>
                     </div>
                   </div>
                 </motion.div>

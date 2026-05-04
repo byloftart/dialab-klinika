@@ -1,29 +1,71 @@
 import { useEffect, useMemo, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowRight, CheckCircle2, Stethoscope, UserRound } from 'lucide-react';
+import { ArrowRight, CheckCircle2 } from 'lucide-react';
 import { trpc } from '@/lib/trpc';
 import { buildSettingsMap, getSetting } from '@/lib/siteSettings';
 import { getDiagnosticPresentation } from '@/lib/services';
+import { diagnosticsCatalog } from '@shared/serviceCatalog';
+
+type FallbackDiagnosticService = {
+  id: number;
+  titleAz: string;
+  descriptionAz: string;
+  imageUrl: string | null;
+  icon: string | null;
+  order: number | null;
+  isActive: boolean;
+  subServices: string[];
+};
+
+type RenderDiagnosticService = {
+  id: number;
+  titleAz: string;
+  descriptionAz: string;
+  imageUrl?: string | null;
+  image?: string;
+  icon: React.ElementType;
+  color: string;
+  order?: number | null;
+  isActive?: boolean;
+  subServices?: string[];
+};
 
 export default function DiagnosticsSection() {
   const [activeIndex, setActiveIndex] = useState(0);
   const [hoveredTab, setHoveredTab] = useState<number | null>(null);
   const { data: settings } = trpc.cms.settings.getGroup.useQuery({ group: 'diagnostics' });
   const { data: diagnostics } = trpc.cms.diagnostics.list.useQuery();
+  const cmsDiagnostics = (diagnostics ?? []).filter((item) => item.isActive);
+  const isUsingFallbackCatalog = cmsDiagnostics.length === 0;
 
-  const displayServices = useMemo(() => {
-    return (diagnostics ?? [])
-      .filter((item) => item.isActive)
+  const displayServices = useMemo<RenderDiagnosticService[]>(() => {
+    const sourceItems: Array<
+      | (typeof cmsDiagnostics)[number]
+      | FallbackDiagnosticService
+    > = isUsingFallbackCatalog
+      ? diagnosticsCatalog.map((item, index) => ({
+          id: -(index + 1),
+          titleAz: item.titleAz,
+          descriptionAz: item.descriptionAz,
+          imageUrl: null,
+          icon: item.icon,
+          order: item.order,
+          isActive: true,
+          subServices: item.subServices,
+        }))
+      : cmsDiagnostics;
+
+    return sourceItems
       .map((item, index) => ({
         ...item,
-        ...getDiagnosticPresentation(item.icon, index, item.titleAz),
+        ...getDiagnosticPresentation(item.icon, index),
       }));
-  }, [diagnostics]);
+  }, [cmsDiagnostics, isUsingFallbackCatalog]);
 
   const visibleService = displayServices[activeIndex];
   const { data: activeServiceData } = trpc.cms.diagnostics.getById.useQuery(
     { id: visibleService?.id ?? 0 },
-    { enabled: Boolean(visibleService?.id) }
+    { enabled: Boolean(visibleService?.id) && !isUsingFallbackCatalog && (visibleService?.id ?? 0) > 0 }
   );
 
   useEffect(() => {
@@ -38,13 +80,8 @@ export default function DiagnosticsSection() {
   }, [activeIndex, displayServices.length]);
 
   const settingsMap = buildSettingsMap(settings);
-  const eyebrow = getSetting(settingsMap, 'diagnostics.eyebrow', 'Tibbi Diaqnostika');
-  const title = getSetting(settingsMap, 'diagnostics.title', 'Tibbi Diaqnostika');
-  const subtitle = getSetting(
-    settingsMap,
-    'diagnostics.subtitle',
-    'Müasir avadanlıqlarla instrumental diaqnostika'
-  );
+  const rawTitle = getSetting(settingsMap, 'diagnostics.title', 'Diaqnostika');
+  const title = rawTitle.trim().toLowerCase() === 'tibbi diaqnostika' ? 'Diaqnostika' : rawTitle;
 
   const openAppointment = () => {
     document.querySelector('#appointment')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -61,7 +98,7 @@ export default function DiagnosticsSection() {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, amount: 0.2 }}
       transition={{ duration: 0.45 }}
-      className="py-24 lg:py-32 bg-gradient-to-br from-white via-[#f0fdf4] to-[#e8f4fc] relative overflow-hidden border-t-2 border-[#00b982]/30"
+      className="py-24 lg:py-32 bg-gradient-to-br from-[#eef5f7] via-[#e5f1ef] to-[#dbe8f2] relative overflow-hidden border-t-2 border-[#00b982]/30"
     >
       <motion.div className="absolute inset-0 pointer-events-none">
         <div className="absolute top-20 right-20 w-96 h-96 bg-[#00b982]/10 rounded-full blur-3xl" />
@@ -72,13 +109,9 @@ export default function DiagnosticsSection() {
       <div className="container mx-auto px-4 lg:px-8 relative z-10">
         <div className="mb-16 lg:mb-20 flex justify-center">
           <div className="text-center max-w-3xl">
-            <p className="uppercase tracking-[0.2em] text-sm font-semibold text-[#00b982] mb-3">{eyebrow}</p>
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-[#1a365d] mb-3">
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-[#1a365d]">
               {title}
             </h2>
-            <p className="text-lg md:text-xl text-gray-600 font-medium max-w-2xl mx-auto">
-              {subtitle}
-            </p>
           </div>
         </div>
 
@@ -94,10 +127,10 @@ export default function DiagnosticsSection() {
                 onClick={() => setActiveIndex(index)}
                 onMouseEnter={() => setHoveredTab(index)}
                 onMouseLeave={() => setHoveredTab(null)}
-                className={`w-full text-left p-5 rounded-xl transition-all duration-300 group relative overflow-hidden min-h-[100px] ${
+                className={`w-full text-left px-5 py-6 rounded-2xl transition-all duration-300 group relative overflow-hidden min-h-[96px] ${
                   activeIndex === index
-                    ? 'bg-white border border-[#00b982]/50 shadow-lg shadow-[#00b982]/10'
-                    : 'bg-white/50 border border-[#00b982]/10 hover:bg-white hover:border-[#00b982]/30'
+                    ? 'bg-white border border-[#00b982]/55 shadow-[0_18px_36px_-24px_rgba(0,185,130,0.32)]'
+                    : 'bg-white/72 border border-[#cddbd7] shadow-[0_12px_28px_-26px_rgba(15,31,53,0.18)] hover:bg-white hover:border-[#00b982]/28 hover:shadow-[0_18px_34px_-26px_rgba(15,31,53,0.22)]'
                 }`}
               >
                 {(hoveredTab === index || activeIndex === index) && (
@@ -120,13 +153,10 @@ export default function DiagnosticsSection() {
                   >
                     <service.icon className="w-7 h-7" style={{ color: service.color }} />
                   </motion.div>
-                  <div className="flex-1">
-                    <h3 className={`font-bold text-lg transition-colors ${activeIndex === index ? 'text-[#00b982]' : 'text-[#1a365d] group-hover:text-[#00b982]'}`}>
+                  <div className="flex-1 min-w-0">
+                    <h3 className={`font-bold text-[1.42rem] leading-[1.05] line-clamp-2 transition-colors ${activeIndex === index ? 'text-[#00b982]' : 'text-[#1a365d] group-hover:text-[#00b982]'}`}>
                       {service.titleAz}
                     </h3>
-                    <p className="text-gray-500 text-sm line-clamp-2">
-                      {service.descriptionAz}
-                    </p>
                   </div>
                   <ArrowRight className={`w-5 h-5 transition-all duration-300 ${activeIndex === index ? 'text-[#00b982] translate-x-0' : 'text-gray-400 -translate-x-2 opacity-0 group-hover:translate-x-0 group-hover:opacity-100'}`} />
                 </div>
@@ -146,12 +176,12 @@ export default function DiagnosticsSection() {
                 style={{ perspective: '1000px' }}
               >
                 <motion.div
-                  className="bg-white rounded-3xl border border-[#00b982]/20 overflow-hidden shadow-2xl shadow-[#00b982]/10"
+                  className="overflow-hidden rounded-3xl border border-[#cddbd7] bg-white shadow-[0_24px_54px_-30px_rgba(15,31,53,0.24)]"
                   whileHover={{ rotateY: 2, rotateX: -2 }}
                   transition={{ duration: 0.4 }}
                   style={{ transformStyle: 'preserve-3d' }}
                 >
-                  <div className="relative h-64 overflow-hidden">
+                  <div className="relative h-72 overflow-hidden">
                     <motion.img
                       key={visibleService.imageUrl || visibleService.image}
                       initial={{ scale: 1.1, opacity: 0 }}
@@ -159,80 +189,61 @@ export default function DiagnosticsSection() {
                       transition={{ duration: 0.6 }}
                       src={visibleService.imageUrl || visibleService.image}
                       alt={visibleService.titleAz}
-                      className="w-full h-full object-cover"
+                      className="w-full h-full object-cover scale-[1.04] blur-[1.5px]"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-black/20 to-transparent" />
-                    <div className="absolute bottom-0 left-0 right-0 p-6">
-                      <div
-                        className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-semibold"
-                        style={{ backgroundColor: `${visibleService.color}20`, color: visibleService.color }}
-                      >
-                        <visibleService.icon className="w-4 h-4" />
-                        {eyebrow}
+                    <div className="absolute inset-0 bg-gradient-to-br from-[#0f1f35]/60 via-[#142b4a]/35 to-black/35" />
+                    <div className="absolute inset-0 flex items-center justify-center p-8 text-center">
+                      <div className="max-w-3xl">
+                        <h3 className="text-4xl font-bold leading-tight text-white md:text-5xl">
+                          {visibleService.titleAz}
+                        </h3>
+                        <p className="mt-4 text-base font-medium leading-relaxed text-white/90 md:text-lg">
+                          {visibleService.descriptionAz}
+                        </p>
                       </div>
-                      <h3 className="text-3xl font-bold text-white mt-3">{visibleService.titleAz}</h3>
                     </div>
                   </div>
 
                   <div className="p-6 lg:p-8">
-                    <p className="text-gray-700 text-lg leading-relaxed font-medium">
-                      {visibleService.descriptionAz}
-                    </p>
-
-                    <div className="mt-8 grid md:grid-cols-2 gap-4">
-                      {(activeServiceData?.subServices ?? []).map((subService) => (
-                        <div key={subService.id} className="flex items-start gap-3 bg-[#f7fffb] rounded-2xl border border-[#00b982]/10 p-4">
+                    <div className="grid md:grid-cols-2 gap-5">
+                      {(isUsingFallbackCatalog
+                        ? ((visibleService?.subServices ?? []) as string[]).map((titleAz, index) => ({
+                            id: index,
+                            titleAz,
+                            descriptionAz: null,
+                          }))
+                        : (activeServiceData?.subServices ?? [])
+                      ).map((subService: { id: number; titleAz: string; descriptionAz: string | null }) => (
+                        <div key={subService.id} className="flex min-h-[84px] items-center gap-3 rounded-2xl border border-[#d4e2de] bg-[#f8fcfb] px-5 py-5 shadow-[0_14px_30px_-26px_rgba(15,31,53,0.2)]">
                           <CheckCircle2 className="w-5 h-5 text-[#00b982] mt-0.5 flex-shrink-0" />
                           <div>
-                            <h4 className="font-semibold text-[#1a365d]">{subService.titleAz}</h4>
+                            <h4 className="text-lg font-semibold leading-snug text-[#1a365d]">{subService.titleAz}</h4>
                             {subService.descriptionAz && (
-                              <p className="text-sm text-gray-600 mt-1">{subService.descriptionAz}</p>
+                              <p className="mt-1 text-sm text-gray-600">{subService.descriptionAz}</p>
                             )}
                           </div>
                         </div>
                       ))}
                     </div>
 
-                    {(activeServiceData?.subServices ?? []).length === 0 && (
+                    {(isUsingFallbackCatalog
+                      ? (visibleService?.subServices ?? []).length
+                      : (activeServiceData?.subServices ?? []).length
+                    ) === 0 && (
                       <div className="mt-8 rounded-2xl border border-dashed border-[#00b982]/20 p-6 text-center text-gray-500">
                         Bu xidmət üçün alt diaqnostika punktları admin paneldən əlavə oluna bilər.
                       </div>
                     )}
-
-                    {visibleService.doctor && (
-                      <div className="mt-8 rounded-[28px] border border-[#00b982]/15 bg-gradient-to-br from-white via-[#f8fffc] to-[#eefcf6] p-5 lg:p-6 shadow-xl shadow-[#00b982]/8">
-                        <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
-                          <div className="flex items-start gap-4 min-w-0">
-                            <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-[#00b982]/15 to-[#14b8a6]/10 border border-[#00b982]/15 flex items-center justify-center flex-shrink-0 shadow-inner">
-                              <div className="w-14 h-14 rounded-xl bg-white/90 flex items-center justify-center text-[#00b982] shadow-sm">
-                                <UserRound className="w-7 h-7" />
-                              </div>
-                            </div>
-                            <div className="min-w-0">
-                              <div className="inline-flex items-center gap-2 rounded-full bg-[#f0fdf4] px-3 py-1.5 text-[#00b982] text-sm font-semibold">
-                                <Stethoscope className="w-4 h-4" />
-                                Mütəxəssis həkim
-                              </div>
-                              <h4 className="mt-3 text-2xl font-bold text-[#1a365d]">{visibleService.doctor.name}</h4>
-                              <p className="text-[#00b982] font-semibold mt-1">{visibleService.doctor.specialty}</p>
-                              <p className="text-gray-500 mt-2">
-                                Bu xidmət üzrə qəbul və yönləndirmə üçün birbaşa randevu ala bilərsiniz.
-                              </p>
-                            </div>
-                          </div>
-                          <div className="flex flex-wrap gap-3">
-                            <button
-                              type="button"
-                              onClick={openAppointment}
-                              className="inline-flex items-center gap-2 rounded-full bg-[#00b982] px-5 py-3 text-white font-semibold shadow-lg shadow-[#00b982]/20 hover:bg-[#00a572] transition-colors"
-                            >
-                              Randevu Al
-                              <ArrowRight className="w-4 h-4" />
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-                    )}
+                    <div className="mt-8 flex justify-end">
+                      <button
+                        type="button"
+                        onClick={openAppointment}
+                        className="inline-flex items-center gap-2 rounded-full bg-[#00b982] px-5 py-3 text-white font-semibold shadow-lg shadow-[#00b982]/20 hover:bg-[#00a572] transition-colors"
+                      >
+                        Randevu Al
+                        <ArrowRight className="w-4 h-4" />
+                      </button>
+                    </div>
                   </div>
                 </motion.div>
               </motion.div>

@@ -22,12 +22,6 @@ type CmsService = {
   isActive?: boolean;
 };
 
-type DiagnosticDoctorMeta = {
-  name: string;
-  specialty: string;
-  experience: string;
-};
-
 const diagnosticIconMap: Record<string, LucideIcon> = {
   activity: Activity,
   cardio: Heart,
@@ -41,6 +35,7 @@ const diagnosticIconMap: Record<string, LucideIcon> = {
   stethoscope: Stethoscope,
   doctor: UserRound,
   user: UserRound,
+  zap: Zap,
 };
 
 const laboratoryIconMap: Record<string, LucideIcon> = {
@@ -63,77 +58,55 @@ const laboratoryIconMap: Record<string, LucideIcon> = {
 const diagnosticColors = ['#00b982', '#ef4444', '#8b5cf6', '#ec4899', '#f59e0b', '#14b8a6'];
 const laboratoryColors = ['#00b982', '#ef4444', '#8b5cf6', '#f59e0b', '#14b8a6', '#ec4899'];
 
-const diagnosticImages = [
-  '/images/diagnostics-ultrasound.jpg',
-  '/images/doctor-consultation.jpg',
-  '/images/lab-analysis.jpg',
-  '/images/diagnostics-ultrasound.jpg',
-  '/images/doctor-consultation.jpg',
-  '/images/hero-medical-lab.jpg',
-];
+const diagnosticImagesByKey: Record<string, string> = {
+  activity: '/images/diagnostics-ultrasound.jpg',
+  stethoscope: '/images/doctor-consultation.jpg',
+  gyneco: '/images/diagnostics-ultrasound.jpg',
+  doctor: '/images/doctor-consultation.jpg',
+  user: '/images/doctor-consultation.jpg',
+  heart: '/images/doctor-consultation.jpg',
+  neuro: '/images/medical-team-abstract.jpg',
+  brain: '/images/medical-team-abstract.jpg',
+  zap: '/images/hero-medical-lab.jpg',
+};
 
-const laboratoryImages = [
-  '/images/lab-analysis.jpg',
-  '/images/medical-team-abstract.jpg',
-  '/images/hero-medical-lab.jpg',
-  '/images/diagnostics-ultrasound.jpg',
-  '/images/doctor-consultation.jpg',
-  '/images/lab-analysis.jpg',
-];
-
-const diagnosticDoctorMap: Record<string, DiagnosticDoctorMeta> = {
-  'Ultrasəs Müayinəsi (USM)': {
-    name: 'Dr. Aynur Məmmədova',
-    specialty: 'USM Mütəxəssisi',
-    experience: '12 il təcrübə',
-  },
-  'Kardioloji Diaqnostika': {
-    name: 'Dr. Rəşad Hüseynov',
-    specialty: 'Kardioloq',
-    experience: '18 il təcrübə',
-  },
-  'Nevroloji Müayinə': {
-    name: 'Dr. Leyla Əliyeva',
-    specialty: 'Nevropatoloq',
-    experience: '15 il təcrübə',
-  },
-  'Ginekoloji Müayinə': {
-    name: 'Dr. Səbinə Quliyeva',
-    specialty: 'Ginekoloq',
-    experience: '20 il təcrübə',
-  },
-  'LOR Müayinəsi': {
-    name: 'Dr. Kamran Əhmədov',
-    specialty: 'Otolorinqoloq-Foniatr',
-    experience: '14 il təcrübə',
-  },
-  'Ümumi Həkim Məsləhəti': {
-    name: 'Dr. Nigar Həsənova',
-    specialty: 'Terapevt',
-    experience: '16 il təcrübə',
-  },
+const laboratoryImagesByKey: Record<string, string> = {
+  blood: '/images/lab-analysis.jpg',
+  biochemical: '/images/hero-medical-lab.jpg',
+  vitamin: '/images/medical-team-abstract.jpg',
+  immune: '/images/hero-medical-lab.jpg',
+  microscope: '/images/lab-analysis.jpg',
+  dna: '/images/medical-team-abstract.jpg',
+  genetics: '/images/medical-team-abstract.jpg',
+  pill: '/images/hero-medical-lab.jpg',
 };
 
 export function getDiagnosticPresentation(
   icon: string | null | undefined,
-  index: number,
-  titleAz?: string | null
+  index: number
 ) {
   const key = icon?.trim().toLowerCase() ?? '';
+  const normalizedKey = key.split('-')[0];
   return {
-    icon: diagnosticIconMap[key] ?? diagnosticIconMap[key.split('-')[0]] ?? Activity,
+    icon: diagnosticIconMap[key] ?? diagnosticIconMap[normalizedKey] ?? Activity,
     color: diagnosticColors[index % diagnosticColors.length],
-    image: diagnosticImages[index % diagnosticImages.length],
-    doctor: titleAz ? diagnosticDoctorMap[titleAz] ?? null : null,
+    image:
+      diagnosticImagesByKey[key] ??
+      diagnosticImagesByKey[normalizedKey] ??
+      '/images/diagnostics-ultrasound.jpg',
   };
 }
 
 export function getLaboratoryPresentation(icon: string | null | undefined, index: number) {
   const key = icon?.trim().toLowerCase() ?? '';
+  const normalizedKey = key.split('-')[0];
   return {
-    icon: laboratoryIconMap[key] ?? laboratoryIconMap[key.split('-')[0]] ?? FlaskConical,
+    icon: laboratoryIconMap[key] ?? laboratoryIconMap[normalizedKey] ?? FlaskConical,
     color: laboratoryColors[index % laboratoryColors.length],
-    image: laboratoryImages[index % laboratoryImages.length],
+    image:
+      laboratoryImagesByKey[key] ??
+      laboratoryImagesByKey[normalizedKey] ??
+      '/images/lab-analysis.jpg',
   };
 }
 
