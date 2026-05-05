@@ -2,6 +2,7 @@ import { COOKIE_NAME } from "@shared/const";
 import { TRPCError } from "@trpc/server";
 import { getSessionCookieOptions } from "./_core/cookies";
 import { ENV } from "./_core/env";
+import { buildDrDiaKnowledgeContext, findDrDiaPriceMatches } from "./_core/drDiaKnowledgeContext";
 import { buildDrDiaSystemPrompt, callHermesChat, type HermesChatMessage } from "./_core/hermesAssistant";
 import { systemRouter } from "./_core/systemRouter";
 import { uploadRouter } from "./_core/uploadRouter";
@@ -169,6 +170,91 @@ function buildBranchAnswer(language: string) {
   return "Bəli, filial mövcuddur. Aktual ünvan, iş qrafiki və sizin üçün rahat müraciət variantını dəqiqləşdirmək üçün çatın altındakı WhatsApp və ya Telegram düyməsi ilə operatora yazın.";
 }
 
+function isPreparationQuestion(text: string) {
+  return /(подготов|готовит|натощак|голодн|сдач[аеу]|analysis preparation|prepare|fasting|before test|hazırlıq|hazirliq|acqarına|acqarina|analizə.*hazır|analiz.*hazır|müayinəyə.*hazır|müayinə.*hazır)/i.test(text);
+}
+
+function buildPreparationFallback(language: string) {
+  if (language === "Russian") {
+    return "Правила подготовки зависят от конкретного анализа или обследования. В текущей базе Dr. Dia нет отдельного подтвержденного документа по подготовке, поэтому для точной инструкции напишите оператору через кнопки WhatsApp или Telegram под чатом.";
+  }
+
+  if (language === "English") {
+    return "Preparation rules depend on the exact test or examination. Dr. Dia does not currently have a separate confirmed preparation document, so please clarify the exact instruction with the operator using the WhatsApp or Telegram buttons below the chat.";
+  }
+
+  return "Hazırlıq qaydası konkret analiz və ya müayinədən asılıdır. Dr. Dia-nın cari bazasında ayrıca təsdiqlənmiş hazırlıq sənədi yoxdur, buna görə dəqiq təlimat üçün çatın altındakı WhatsApp və ya Telegram düyməsi ilə operatora yazın.";
+}
+
+function isMedicationAdviceQuestion(text: string) {
+  return /(какое лекар|что пить|какие таблетки|препарат|дозиров|which medicine|what medicine|what pills|dosage|dərman|hansı dərman|nə içim|ne icim|preparat|doza)/i.test(text);
+}
+
+function buildMedicationSafetyFallback(language: string) {
+  if (language === "Russian") {
+    return "Я не могу подбирать лекарства, дозировку или лечение. Для такой рекомендации нужно обратиться к врачу. Для записи используйте кнопку Qəbul под чатом.";
+  }
+
+  if (language === "English") {
+    return "I cannot choose medicines, dosage, or treatment. A doctor should make that recommendation. For an appointment, use the Qəbul button below the chat.";
+  }
+
+  return "Dərman, doza və ya müalicə seçimi barədə məsləhət verə bilmirəm. Bu qərarı həkim verməlidir. Qəbul üçün çatın altındakı Qəbul düyməsindən istifadə edin.";
+}
+
+function isUnavailableServiceQuestion(text: string) {
+  return /\b(mrt|mri|кт|kt|tomoqraf\w*|rentgen\w*|рентген\w*|stomatolog\w*|стоматолог\w*|diş həkimi)\b/i.test(text);
+}
+
+function buildUnavailableServiceFallback(language: string) {
+  if (language === "Russian") {
+    return "Эта услуга не подтверждена в текущей базе Dr. Dia. Чтобы уточнить возможность, напишите оператору через кнопки WhatsApp или Telegram под чатом.";
+  }
+
+  if (language === "English") {
+    return "This service is not confirmed in the current Dr. Dia knowledge base. To clarify availability, contact the operator using the WhatsApp or Telegram buttons below the chat.";
+  }
+
+  return "Bu xidmət Dr. Dia-nın cari bazasında təsdiqlənmir. Mövcudluğu dəqiqləşdirmək üçün çatın altındakı WhatsApp və ya Telegram düyməsi ilə operatora yazın.";
+}
+
+function isPriceQuestion(text: string) {
+  return /(qiymət|qiymeti|neçəyə|neceye|nə qədər|ne qeder|стоим|цена|сколько стоит|price|cost|how much)/i.test(text);
+}
+
+function buildPriceAnswer(text: string, language: string) {
+  const matches = findDrDiaPriceMatches(text, 3);
+
+  if (!matches.length) {
+    return null;
+  }
+
+  if (language === "Russian") {
+    const lines = matches.map((item) => `- ${item.name_az}: ${item.price}`);
+    return [
+      matches.length === 1 ? `Подтвержденная цена: ${matches[0].name_az} - ${matches[0].price}.` : "Найденные подтвержденные цены:",
+      matches.length === 1 ? null : lines.join("\n"),
+      "Для записи используйте кнопку Qəbul под чатом.",
+    ].filter(Boolean).join("\n\n");
+  }
+
+  if (language === "English") {
+    const lines = matches.map((item) => `- ${item.name_az}: ${item.price}`);
+    return [
+      matches.length === 1 ? `Confirmed price: ${matches[0].name_az} - ${matches[0].price}.` : "Confirmed matching prices:",
+      matches.length === 1 ? null : lines.join("\n"),
+      "For booking, use the Qəbul button below the chat.",
+    ].filter(Boolean).join("\n\n");
+  }
+
+  const lines = matches.map((item) => `- ${item.name_az}: ${item.price}`);
+  return [
+    matches.length === 1 ? `Təsdiqlənmiş qiymət: ${matches[0].name_az} - ${matches[0].price}.` : "Uyğun təsdiqlənmiş qiymətlər:",
+    matches.length === 1 ? null : lines.join("\n"),
+    "Qəbul üçün çatın altındakı Qəbul düyməsindən istifadə edin.",
+  ].filter(Boolean).join("\n\n");
+}
+
 function softenMissingInfoPhrases(content: string, language: string) {
   if (!/(нет|не указан|не указана|не представлены|не найден|yoxdur|göstərilməyib|mövcud kontekst|not available|not provided|not found)/i.test(content)) {
     return content;
@@ -196,60 +282,20 @@ async function buildDrDiaClinicContext() {
     contactSettings,
     hoursSettings,
     assistantSettings,
-    laboratory,
-    diagnostics,
     doctors,
   ] = await Promise.all([
     getSiteSettings("contact"),
     getSiteSettings("hours"),
     getSiteSettings("assistant"),
-    getLaboratoryAnalysisTypes(),
-    getDiagnosticServices(),
     getDoctors(true),
   ]);
 
-  const contactMap = buildSettingsMap(contactSettings);
-  const hoursMap = buildSettingsMap(hoursSettings);
-  const assistantMap = buildSettingsMap(assistantSettings);
-
-  const contactLines = [
-    formatSetting(contactMap, "contact.phone1", "Telefon"),
-    formatSetting(contactMap, "contact.phone2", "Əlavə telefon"),
-    formatSetting(contactMap, "contact.whatsapp", "WhatsApp"),
-    formatSetting(contactMap, "contact.address", "Ünvan"),
-    formatSetting(hoursMap, "hours.weekdays", "Həftəiçi iş saatı"),
-    formatSetting(hoursMap, "hours.saturday", "Şənbə iş saatı"),
-    formatSetting(hoursMap, "hours.sunday", "Bazar iş saatı"),
-    formatSetting(assistantMap, "assistant.whatsappUrl", "WhatsApp linki"),
-    formatSetting(assistantMap, "assistant.telegramUrl", "Telegram linki"),
-    formatSetting(assistantMap, "assistant.instagramUrl", "Instagram linki"),
-  ].filter(Boolean);
-
-  const laboratoryLines = laboratory
-    .slice(0, 40)
-    .map((item) => `- ${item.titleAz}${item.descriptionAz ? `: ${item.descriptionAz}` : ""}`);
-
-  const diagnosticsLines = diagnostics
-    .slice(0, 40)
-    .map((item) => `- ${item.titleAz}${item.descriptionAz ? `: ${item.descriptionAz}` : ""}`);
-
-  const doctorLines = doctors
-    .slice(0, 40)
-    .map((doctor) => `- ${doctor.nameAz}, ${doctor.specialtyAz}${doctor.experienceYears ? `, ${doctor.experienceYears} il təcrübə` : ""}`);
-
-  return [
-    "Əlaqə və iş saatları:",
-    contactLines.length ? contactLines.join("\n") : "Təsdiqlənmiş əlaqə məlumatı tapılmadı.",
-    "",
-    "Laboratoriya xidmətləri:",
-    laboratoryLines.length ? laboratoryLines.join("\n") : "Laboratoriya siyahısı hazırda boşdur.",
-    "",
-    "Diaqnostika xidmətləri:",
-    diagnosticsLines.length ? diagnosticsLines.join("\n") : "Diaqnostika siyahısı hazırda boşdur.",
-    "",
-    "Həkimlər:",
-    doctorLines.length ? doctorLines.join("\n") : "Aktiv həkim siyahısı hazırda boşdur.",
-  ].join("\n");
+  return buildDrDiaKnowledgeContext({
+    contactSettings,
+    hoursSettings,
+    assistantSettings,
+    cmsDoctors: doctors,
+  });
 }
 
 export const appRouter = router({
@@ -309,7 +355,7 @@ export const appRouter = router({
       messages: z.array(z.object({
         role: z.enum(["user", "assistant"]),
         content: z.string().min(1).max(1200),
-      })).min(1).max(20),
+      })).min(1).max(80),
       context: z.object({
         entryPoint: z.enum(["welcome", "quick_action"]),
         quickActionId: z.string().nullable().optional(),
@@ -348,6 +394,35 @@ export const appRouter = router({
         };
       }
 
+      if (lastUserMessage && isPreparationQuestion(lastUserMessage.content)) {
+        return {
+          content: buildPreparationFallback(userLanguage),
+        };
+      }
+
+      if (lastUserMessage && isMedicationAdviceQuestion(lastUserMessage.content)) {
+        return {
+          content: buildMedicationSafetyFallback(userLanguage),
+        };
+      }
+
+      if (lastUserMessage && isUnavailableServiceQuestion(lastUserMessage.content)) {
+        return {
+          content: buildUnavailableServiceFallback(userLanguage),
+        };
+      }
+
+      if (lastUserMessage && isPriceQuestion(lastUserMessage.content)) {
+        const priceAnswer = buildPriceAnswer(lastUserMessage.content, userLanguage);
+
+        if (priceAnswer) {
+          return {
+            content: priceAnswer,
+          };
+        }
+      }
+
+      const recentMessages = input.messages.slice(-18);
       const messages: HermesChatMessage[] = [
         {
           role: "system",
@@ -358,7 +433,7 @@ export const appRouter = router({
             `Son istifadəçi mesajının dili: ${userLanguage}. Bu cavabı yalnız ${userLanguage} dilində yaz.`,
           ].join("\n"),
         },
-        ...input.messages,
+        ...recentMessages,
       ];
 
       const response = await callHermesChat({

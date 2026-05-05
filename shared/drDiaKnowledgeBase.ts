@@ -1,0 +1,3545 @@
+// Generated from docs/dr-dia-knowledge/structured-knowledge-draft.json.
+// Keep this file free of secrets and direct doctor phone numbers.
+
+export type DrDiaPriceItem = {
+  type: "laboratory" | "diagnostic";
+  category: string;
+  name_az: string;
+  price: string;
+  source: string;
+  status: string;
+};
+
+export type DrDiaDoctorItem = {
+  name_az: string;
+  specialty_az: string;
+  public_focus_areas_az: string[];
+  source: string;
+  status: string;
+  public_contact_policy: string;
+};
+
+export const drDiaKnowledgeBase = {
+  "metadata": {
+    "name": "Dr. Dia knowledge base draft",
+    "created_from": "User-provided Filehub documents",
+    "language": "az",
+    "status": "draft_needs_review",
+    "runtime_policy": {
+      "booking": "Use Qəbul button for appointment requests.",
+      "operator": "Use WhatsApp or Telegram for clarification and missing/uncertain data.",
+      "medical_safety": "Do not diagnose, prescribe treatment, interpret lab results, or promise live slots.",
+      "doctor_phone_numbers": "Do not expose direct doctor phone numbers in assistant answers."
+    }
+  },
+  "navigationSections": [
+    "Laboratoriya Testləri",
+    "Kliniki Analizlər",
+    "Bakterioloji Analizlər",
+    "Seroloji və İmmunoloji Testlər",
+    "Hormonların Tədqiqi",
+    "Biokimyəvi Analizlər",
+    "Vitaminlər",
+    "Onkoloji və Genetik Testlər",
+    "Tibbi Diaqnostika və Müalicə Xidmətləri",
+    "Ultrasəs Müayinəsi (USM)",
+    "Funksional Diaqnostika",
+    "Həkim Məsləhətləri və Müalicə Prosedurları"
+  ],
+  "laboratoryPriceItems": [
+    {
+      "type": "laboratory",
+      "category": "KLİNİKİ ANALİZLƏR",
+      "name_az": "Qanın ümumi analizi (leykoformula və 26 göstərici ilə)",
+      "price": "16.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "KLİNİKİ ANALİZLƏR",
+      "name_az": "Hemoqlobin",
+      "price": "8.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "KLİNİKİ ANALİZLƏR",
+      "name_az": "Leykoformula və leykositlərin intoksikasiya indeksi",
+      "price": "10.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "KLİNİKİ ANALİZLƏR",
+      "name_az": "Trombositlər",
+      "price": "8.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "KLİNİKİ ANALİZLƏR",
+      "name_az": "Leykositlər",
+      "price": "8.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "KLİNİKİ ANALİZLƏR",
+      "name_az": "Sidiyin ümumi analizi (11 göstərici və çöküntünün mikroskopiyası)",
+      "price": "15.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "KLİNİKİ ANALİZLƏR",
+      "name_az": "Sidikdə şəkərin təyini",
+      "price": "8.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "KLİNİKİ ANALİZLƏR",
+      "name_az": "Sidikdə ketonun təyini",
+      "price": "8.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "KLİNİKİ ANALİZLƏR",
+      "name_az": "Sidikdə bilrubinin təyini(öd piqmentləri)",
+      "price": "8.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "KLİNİKİ ANALİZLƏR",
+      "name_az": "Sidikdə zülalın təyini",
+      "price": "8.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "KLİNİKİ ANALİZLƏR",
+      "name_az": "Zimnitski sınağı",
+      "price": "12.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "KLİNİKİ ANALİZLƏR",
+      "name_az": "Neçiporenko sınağı",
+      "price": "10.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "KLİNİKİ ANALİZLƏR",
+      "name_az": "Nəcisin ümumi analizi",
+      "price": "15.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "KLİNİKİ ANALİZLƏR",
+      "name_az": "Nəcisdə gizli qanın təyini(kart-test)",
+      "price": "15.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "KLİNİKİ ANALİZLƏR",
+      "name_az": "Duodenal möhtəviyyatın tədqiqi",
+      "price": "10.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "KLİNİKİ ANALİZLƏR",
+      "name_az": "Qarın boşluğu mayesinin tədqiqi",
+      "price": "10.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "KLİNİKİ ANALİZLƏR",
+      "name_az": "Prevral mayenin tədqiqi",
+      "price": "10.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "KLİNİKİ ANALİZLƏR",
+      "name_az": "Bəlğəmin ümumi müayinəsi və BK təyini",
+      "price": "20.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "KLİNİKİ ANALİZLƏR",
+      "name_az": "Sidikdə, bəlğəmdə və uşaqlıq yolu möhtəviyyatında BK-nın təyini",
+      "price": "20.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "KLİNİKİ ANALİZLƏR",
+      "name_az": "Onurğa beyin mayesində BK-nın təyini",
+      "price": "20.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "KLİNİKİ ANALİZLƏR",
+      "name_az": "Spermoqramma",
+      "price": "25.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "KLİNİKİ ANALİZLƏR",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "extracted_multiline_needs_visual_review",
+      "name_az": "Şuvarski sınağı",
+      "price": "20.00 AZN"
+    },
+    {
+      "type": "laboratory",
+      "category": "KLİNİKİ ANALİZLƏR",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "extracted_multiline_needs_visual_review",
+      "name_az": "Kursrok-Müller sınağı",
+      "price": "20.00 AZN"
+    },
+    {
+      "type": "laboratory",
+      "category": "KLİNİKİ ANALİZLƏR",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "extracted_multiline_needs_visual_review",
+      "name_az": "Paporotnik simptomu",
+      "price": "20.00 AZN"
+    },
+    {
+      "type": "laboratory",
+      "category": "KLİNİKİ ANALİZLƏR",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "extracted_multiline_needs_visual_review",
+      "name_az": "Prostat şirəsinin götürülməsi",
+      "price": "10.00 AZN"
+    },
+    {
+      "type": "laboratory",
+      "category": "KLİNİKİ ANALİZLƏR",
+      "name_az": "Prostat şirəsinin müayinəsi",
+      "price": "20.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "KLİNİKİ ANALİZLƏR",
+      "name_az": "Uretra yaxmasının götürülməsi",
+      "price": "5.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "KLİNİKİ ANALİZLƏR",
+      "name_az": "Uretra yuyuntusunun tədqiqi",
+      "price": "20.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "KLİNİKİ ANALİZLƏR",
+      "name_az": "Yaxmanın mikroskopiyası",
+      "price": "20.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "KLİNİKİ ANALİZLƏR",
+      "name_az": "Dərinin və dırnagın patogen göbələklərə qarşı müayinəsi",
+      "price": "20.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "KLİNİKİ ANALİZLƏR",
+      "name_az": "Demodeksə görə yaxmanın müayinəsi",
+      "price": "25.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "KLİNİKİ ANALİZLƏR",
+      "name_az": "Maliyariyaya görə qalın damla",
+      "price": "18.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "KLİNİKİ ANALİZLƏR",
+      "name_az": "Leyşmaniyanın müayinəsi",
+      "price": "15.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "KLİNİKİ ANALİZLƏR",
+      "name_az": "Troixofitiya",
+      "price": "20.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "KLİNİKİ ANALİZLƏR",
+      "name_az": "Mikrosporiya",
+      "price": "20.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "KLİNİKİ ANALİZLƏR",
+      "name_az": "Mikrosporum fur-fur",
+      "price": "20.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "KLİNİKİ ANALİZLƏR",
+      "name_az": "Qan qrupu və rezus-faktor",
+      "price": "12.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "KLİNİKİ ANALİZLƏR",
+      "name_az": "Qrup uyğunluğu",
+      "price": "20.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "KLİNİKİ ANALİZLƏR",
+      "name_az": "Kumbs reaksiyası(resuz antitellərin təyini)",
+      "price": "20.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "KLİNİKİ ANALİZLƏR",
+      "name_az": "Ana südündə rezus antitellərin təyini",
+      "price": "20.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "BAKTERİOLOJİ ANALİZ",
+      "name_az": "Qanın sterilliyi",
+      "price": "30.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "BAKTERİOLOJİ ANALİZ",
+      "name_az": "Sidiyin əkilməsi",
+      "price": "30.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "BAKTERİOLOJİ ANALİZ",
+      "name_az": "Spermanın əkilməsi",
+      "price": "30.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "BAKTERİOLOJİ ANALİZ",
+      "name_az": "Prostat şirəsinin əkilməsi",
+      "price": "30.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "BAKTERİOLOJİ ANALİZ",
+      "name_az": "Uşaqlıq yolu möhtəviyyatının əkilməsi",
+      "price": "30.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "BAKTERİOLOJİ ANALİZ",
+      "name_az": "Uretra möhtəviyyatının əkilməsi",
+      "price": "30.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "BAKTERİOLOJİ ANALİZ",
+      "name_az": "Nəcisin əkilməsi",
+      "price": "30.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "BAKTERİOLOJİ ANALİZ",
+      "name_az": "Dizbakterioz",
+      "price": "30.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "BAKTERİOLOJİ ANALİZ",
+      "name_az": "Ana südünün əkilməsi",
+      "price": "30.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "BAKTERİOLOJİ ANALİZ",
+      "name_az": "Əsnəkdən yaxma",
+      "price": "30.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "BAKTERİOLOJİ ANALİZ",
+      "name_az": "Burundan yaxma",
+      "price": "30.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "BAKTERİOLOJİ ANALİZ",
+      "name_az": "Qulaqdan yaxma",
+      "price": "30.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "BAKTERİOLOJİ ANALİZ",
+      "name_az": "Gözdən yaxma",
+      "price": "30.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "BAKTERİOLOJİ ANALİZ",
+      "name_az": "Yara möhtəviyyatının əkilməsi",
+      "price": "30.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "BAKTERİOLOJİ ANALİZ",
+      "name_az": "Bəlğəmin əkilməsi",
+      "price": "30.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "BAKTERİOLOJİ ANALİZ",
+      "name_az": "Onurğa beyni mayesinin əkilməsi",
+      "price": "30.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "BAKTERİOLOJİ ANALİZ",
+      "name_az": "Plevra mayesinin əkilməsi",
+      "price": "30.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "BAKTERİOLOJİ ANALİZ",
+      "name_az": "Assit mayesinin əkilməsi",
+      "price": "30.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "SEROLOJİ TESTLƏR",
+      "name_az": "RPR (sifilis testi)",
+      "price": "20.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "SEROLOJİ TESTLƏR",
+      "name_az": "Antistreptolizin - O",
+      "price": "8.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "SEROLOJİ TESTLƏR",
+      "name_az": "CRP(C-reaktiv protein)",
+      "price": "8.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "SEROLOJİ TESTLƏR",
+      "name_az": "Revmatoid faktor",
+      "price": "8.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "SEROLOJİ TESTLƏR",
+      "name_az": "Sial turşusu",
+      "price": "8.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "HORMONLARIN TƏDQİQİ",
+      "name_az": "Prolaktin",
+      "price": "25.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "HORMONLARIN TƏDQİQİ",
+      "name_az": "FSH (Follikulstimullaşdırıcı hormon)",
+      "price": "25.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "HORMONLARIN TƏDQİQİ",
+      "name_az": "LH (Lüteinləşdirici hormon)",
+      "price": "25.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "HORMONLARIN TƏDQİQİ",
+      "name_az": "HGH (Somatotropin)",
+      "price": "25.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "HORMONLARIN TƏDQİQİ",
+      "name_az": "Progesteron",
+      "price": "28.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "HORMONLARIN TƏDQİQİ",
+      "name_az": "a-OH-progesteron",
+      "price": "25.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "HORMONLARIN TƏDQİQİ",
+      "name_az": "HCG (Xorionik qonadotropin)",
+      "price": "25.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "HORMONLARIN TƏDQİQİ",
+      "name_az": "E2 (Estradiol)",
+      "price": "28.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "HORMONLARIN TƏDQİQİ",
+      "name_az": "E3 (Estriol)",
+      "price": "25.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "HORMONLARIN TƏDQİQİ",
+      "name_az": "Testosteron",
+      "price": "28.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "HORMONLARIN TƏDQİQİ",
+      "name_az": "Sərbəst testosteron",
+      "price": "28.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "HORMONLARIN TƏDQİQİ",
+      "name_az": "DEA-S (Dehidroepiandrosteron)",
+      "price": "25.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "HORMONLARIN TƏDQİQİ",
+      "name_az": "Kortizol",
+      "price": "25.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "HORMONLARIN TƏDQİQİ",
+      "name_az": "ACTH(Adrenokotrikotrop hormon)",
+      "price": "25.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "HORMONLARIN TƏDQİQİ",
+      "name_az": "KS",
+      "price": "18.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "HORMONLARIN TƏDQİQİ",
+      "name_az": "T3(Triyodtironin)",
+      "price": "20.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "HORMONLARIN TƏDQİQİ",
+      "name_az": "T4(Tiroksin)",
+      "price": "20.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "HORMONLARIN TƏDQİQİ",
+      "name_az": "Free T3-Sərbəst T3",
+      "price": "20.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "HORMONLARIN TƏDQİQİ",
+      "name_az": "FreeT4-Sərbəst T4",
+      "price": "20.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "HORMONLARIN TƏDQİQİ",
+      "name_az": "TSH (Tiroidstimullaşdırıcı hormon)",
+      "price": "25.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "HORMONLARIN TƏDQİQİ",
+      "name_az": "Anti CCP (Anti serolo plazmin)",
+      "price": "50.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "HORMONLARIN TƏDQİQİ",
+      "name_az": "ANA (Antinuklear autoanti cisimlər)",
+      "price": "25.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "HORMONLARIN TƏDQİQİ",
+      "name_az": "İnsulin",
+      "price": "28.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "HORMONLARIN TƏDQİQİ",
+      "name_az": "C-Peptid",
+      "price": "28.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "HORMONLARIN TƏDQİQİ",
+      "name_az": "ASA(Antisperm Antibody Antispermal antitel)",
+      "price": "30.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "HORMONLARIN TƏDQİQİ",
+      "name_az": "AFA(Anti fosfalipid antitel)İgG",
+      "price": "25.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "HORMONLARIN TƏDQİQİ",
+      "name_az": "AFA(Anti fosfalipid antitel)İgM",
+      "price": "25.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "HORMONLARIN TƏDQİQİ",
+      "name_az": "Anti Cardiolipin İg G",
+      "price": "20.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "HORMONLARIN TƏDQİQİ",
+      "name_az": "Anti Cardiolipin İg M",
+      "price": "20.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "HORMONLARIN TƏDQİQİ",
+      "name_az": "SHBG(steroid birləşdirici cinsiyyət hormonu)",
+      "price": "25.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "HORMONLARIN TƏDQİQİ",
+      "name_az": "Plasentar laktogen",
+      "price": "25.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "HORMONLARIN TƏDQİQİ",
+      "name_az": "Vitamin D (D3)",
+      "price": "55.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "HORMONLARIN TƏDQİQİ",
+      "name_az": "Ferritin",
+      "price": "25.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "HORMONLARIN TƏDQİQİ",
+      "name_az": "Transferrin",
+      "price": "15.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "HORMONLARIN TƏDQİQİ",
+      "name_az": "Vitamin B-12",
+      "price": "25.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "HORMONLARIN TƏDQİQİ",
+      "name_az": "VİTAMİN B9 FOLAT",
+      "price": "25.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "HORMONLARIN TƏDQİQİ",
+      "name_az": "AMH (Anti müller hormonu)",
+      "price": "110.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "İNFEKSİYALAR",
+      "name_az": "SARS-COV-2İgG",
+      "price": "35.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "İNFEKSİYALAR",
+      "name_az": "SARS-COV-2İgM",
+      "price": "35.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "İNFEKSİYALAR",
+      "name_az": "Toxoplazma gondii İgG",
+      "price": "17.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "İNFEKSİYALAR",
+      "name_az": "Toxoplazma gondii İgM",
+      "price": "18.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "PZR VƏ MOLEKULYAR TESTLƏR",
+      "name_az": "Cytomegalovirus İgG",
+      "price": "17.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "PZR VƏ MOLEKULYAR TESTLƏR",
+      "name_az": "Cytomegalovirus İgM",
+      "price": "18.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "İNFEKSİYALAR",
+      "name_az": "Chlamidiya traxomatis İgG",
+      "price": "20.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "İNFEKSİYALAR",
+      "name_az": "Chlamidiya traxomatis İgM",
+      "price": "20.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "PZR VƏ MOLEKULYAR TESTLƏR",
+      "name_az": "Herpes simplex I İgG",
+      "price": "17.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "PZR VƏ MOLEKULYAR TESTLƏR",
+      "name_az": "Herpes simplex I İgM",
+      "price": "18.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "İNFEKSİYALAR",
+      "name_az": "Herpes genitali II İgG",
+      "price": "17.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "İNFEKSİYALAR",
+      "name_az": "Herpes genitali II İgM",
+      "price": "18.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "PZR VƏ MOLEKULYAR TESTLƏR",
+      "name_az": "Brucella İgG",
+      "price": "20.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "PZR VƏ MOLEKULYAR TESTLƏR",
+      "name_az": "Brucella İgM",
+      "price": "20.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "PZR VƏ MOLEKULYAR TESTLƏR",
+      "name_az": "Listerioz monocytogenes İgG",
+      "price": "17.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "PZR VƏ MOLEKULYAR TESTLƏR",
+      "name_az": "Listerioz monocytogenes İgM",
+      "price": "18.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "İNFEKSİYALAR",
+      "name_az": "Rubella İgG",
+      "price": "17.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "İNFEKSİYALAR",
+      "name_az": "Rubella İgM",
+      "price": "18.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "İNFEKSİYALAR",
+      "name_az": "Mikoplazma hominis İgG",
+      "price": "17.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "İNFEKSİYALAR",
+      "name_az": "Mikoplazma hominis İgM",
+      "price": "18.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "İNFEKSİYALAR",
+      "name_az": "Ureoplazma urealiticum İgG",
+      "price": "17.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "İNFEKSİYALAR",
+      "name_az": "Ureoplazma urealiticum İgM",
+      "price": "18.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "İNFEKSİYALAR",
+      "name_az": "Qardnerella vaginalis İgG",
+      "price": "17.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "İNFEKSİYALAR",
+      "name_az": "Qardnerella vaginalis İgM",
+      "price": "18.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "İNFEKSİYALAR",
+      "name_az": "Trixomonada vaginalis İgG",
+      "price": "18.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "İNFEKSİYALAR",
+      "name_az": "Trixomonada vaginalis İgM",
+      "price": "18.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "İNFEKSİYALAR",
+      "name_az": "Candida Albicanis İgG",
+      "price": "18.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "İNFEKSİYALAR",
+      "name_az": "Candida Albicanis İgM",
+      "price": "18.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "İNFEKSİYALAR",
+      "name_az": "Neierria conococcus İgG",
+      "price": "17.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "İNFEKSİYALAR",
+      "name_az": "Neierria conococcus İgM",
+      "price": "18.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "İNFEKSİYALAR",
+      "name_az": "Ornitoz İgG",
+      "price": "17.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "İNFEKSİYALAR",
+      "name_az": "Ornitoz İgM",
+      "price": "18.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "İNFEKSİYALAR",
+      "name_az": "Ornitoz (kart test)",
+      "price": "15.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "İNFEKSİYALAR",
+      "name_az": "Lyambliya intestinalis IgA",
+      "price": "18.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "İNFEKSİYALAR",
+      "name_az": "Lyambliya intestinalis IgG",
+      "price": "18.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "İNFEKSİYALAR",
+      "name_az": "Lyambliya intestinalis IgM",
+      "price": "18.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "İNFEKSİYALAR",
+      "name_az": "Ascarius lumbricoides İgG",
+      "price": "18.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "İNFEKSİYALAR",
+      "name_az": "Enterobius vermicularis",
+      "price": "18.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "İNFEKSİYALAR",
+      "name_az": "Hepatit A",
+      "price": "20.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "PZR VƏ MOLEKULYAR TESTLƏR",
+      "name_az": "Hepatit B(Anti-HBsAg)",
+      "price": "20.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "PZR VƏ MOLEKULYAR TESTLƏR",
+      "name_az": "Hepatit C(Anti-HCV)",
+      "price": "20.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "PZR VƏ MOLEKULYAR TESTLƏR",
+      "name_az": "Hepatit B(kart test)",
+      "price": "15.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "PZR VƏ MOLEKULYAR TESTLƏR",
+      "name_az": "Hepatit C(kart test)",
+      "price": "15.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "İNFEKSİYALAR",
+      "name_az": "HİV(kart test)",
+      "price": "20.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "İNFEKSİYALAR",
+      "name_az": "RPR (kart test)",
+      "price": "20.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "İNFEKSİYALAR",
+      "name_az": "Helikobacter pilory",
+      "price": "20.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "İNFEKSİYALAR",
+      "name_az": "LE-hüceyrələr-qırmızı qurd eşənəyi",
+      "price": "20.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "İNFEKSİYALAR",
+      "name_az": "Chlamidiya trachomatis",
+      "price": "20.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "İNFEKSİYALAR",
+      "name_az": "Mikoplazma genitali",
+      "price": "20.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "İNFEKSİYALAR",
+      "name_az": "Mikoplazma hominis",
+      "price": "20.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "İNFEKSİYALAR",
+      "name_az": "Ureplazma urealiticum",
+      "price": "20.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "İNFEKSİYALAR",
+      "name_az": "Ureplazma parvum",
+      "price": "20.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "İNFEKSİYALAR",
+      "name_az": "Qardnerella vaginalis",
+      "price": "20.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "PZR VƏ MOLEKULYAR TESTLƏR",
+      "name_az": "Cytomegalovirus",
+      "price": "20.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "PZR VƏ MOLEKULYAR TESTLƏR",
+      "name_az": "Herpes simplex I",
+      "price": "20.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "PZR VƏ MOLEKULYAR TESTLƏR",
+      "name_az": "Herpes simplex II",
+      "price": "20.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "İNFEKSİYALAR",
+      "name_az": "Neierria conococcus",
+      "price": "20.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "İNFEKSİYALAR",
+      "name_az": "Trixomonada vaginalis",
+      "price": "20.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "BİOKİMYƏVİ ANALİZLƏR",
+      "name_az": "Ümumi zülal",
+      "price": "10.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "BİOKİMYƏVİ ANALİZLƏR",
+      "name_az": "Albumin",
+      "price": "10.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "BİOKİMYƏVİ ANALİZLƏR",
+      "name_az": "Zülal fraksiyaları",
+      "price": "10.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "BİOKİMYƏVİ ANALİZLƏR",
+      "name_az": "Ümumi bilrubin",
+      "price": "10.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "BİOKİMYƏVİ ANALİZLƏR",
+      "name_az": "Bilrubin fraksiyaları",
+      "price": "10.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "BİOKİMYƏVİ ANALİZLƏR",
+      "name_az": "ALT (Alaninaminotransferaza)",
+      "price": "12.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "BİOKİMYƏVİ ANALİZLƏR",
+      "name_az": "AST (Aspartataminotransferaza)",
+      "price": "12.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "BİOKİMYƏVİ ANALİZLƏR",
+      "name_az": "QQT (Qammaqlutamiltransferaza )",
+      "price": "12.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "BİOKİMYƏVİ ANALİZLƏR",
+      "name_az": "ALP (Qələvi fosfotaza)",
+      "price": "12.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "BİOKİMYƏVİ ANALİZLƏR",
+      "name_az": "Turş fosfataza",
+      "price": "10.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "BİOKİMYƏVİ ANALİZLƏR",
+      "name_az": "Timol sınağı",
+      "price": "8.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "BİOKİMYƏVİ ANALİZLƏR",
+      "name_az": "Süleim sınağı",
+      "price": "8.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "BİOKİMYƏVİ ANALİZLƏR",
+      "name_az": "Veltman sınağı",
+      "price": "8.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "BİOKİMYƏVİ ANALİZLƏR",
+      "name_az": "Qlükoza",
+      "price": "10.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "BİOKİMYƏVİ ANALİZLƏR",
+      "name_az": "Qlükoza(express)",
+      "price": "6.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "BİOKİMYƏVİ ANALİZLƏR",
+      "name_az": "Şəkər yükləməsi",
+      "price": "20.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "BİOKİMYƏVİ ANALİZLƏR",
+      "name_az": "HbA1C (Qlikohemoqlobin)",
+      "price": "20.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "BİOKİMYƏVİ ANALİZLƏR",
+      "name_az": "Kreatinin",
+      "price": "12.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "BİOKİMYƏVİ ANALİZLƏR",
+      "name_az": "Sidik cövhəri",
+      "price": "12.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "BİOKİMYƏVİ ANALİZLƏR",
+      "name_az": "Qalıq azot",
+      "price": "12.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "BİOKİMYƏVİ ANALİZLƏR",
+      "name_az": "Sidik turşusu",
+      "price": "15.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "BİOKİMYƏVİ ANALİZLƏR",
+      "name_az": "Xolesterin",
+      "price": "12.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "BİOKİMYƏVİ ANALİZLƏR",
+      "name_az": "Xolinestraza",
+      "price": "20.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "BİOKİMYƏVİ ANALİZLƏR",
+      "name_az": "Triqliseridlər",
+      "price": "15.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "BİOKİMYƏVİ ANALİZLƏR",
+      "name_az": "Ümumi lipidlər",
+      "price": "10.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "BİOKİMYƏVİ ANALİZLƏR",
+      "name_az": "HDL(Yüksək sıxlıqlı lipoproteidlər)",
+      "price": "12.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "BİOKİMYƏVİ ANALİZLƏR",
+      "name_az": "LDL(Aşağı sıxlıqlı lipoproteidlər)",
+      "price": "14.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "BİOKİMYƏVİ ANALİZLƏR",
+      "name_az": "VLDL(Çox aşağı sıxlıqlı lipoproteidlər)",
+      "price": "10.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "BİOKİMYƏVİ ANALİZLƏR",
+      "name_az": "Kreatinkinaza(ümumi)",
+      "price": "15.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "BİOKİMYƏVİ ANALİZLƏR",
+      "name_az": "Kreatinkinaza(MB fraksiyası)",
+      "price": "15.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "BİOKİMYƏVİ ANALİZLƏR",
+      "name_az": "Kreatinfosfokinaza",
+      "price": "15.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "BİOKİMYƏVİ ANALİZLƏR",
+      "name_az": "Amilaza",
+      "price": "15.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "BİOKİMYƏVİ ANALİZLƏR",
+      "name_az": "Diastaza",
+      "price": "15.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "BİOKİMYƏVİ ANALİZLƏR",
+      "name_az": "Pankreatik amilaza",
+      "price": "15.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "BİOKİMYƏVİ ANALİZLƏR",
+      "name_az": "Lipaza",
+      "price": "15.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "BİOKİMYƏVİ ANALİZLƏR",
+      "name_az": "LDH (Laktatdehidrohenaza)",
+      "price": "25.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "BİOKİMYƏVİ ANALİZLƏR",
+      "name_az": "K -Kalium",
+      "price": "15.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "BİOKİMYƏVİ ANALİZLƏR",
+      "name_az": "Ca- Kalsium",
+      "price": "15.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "BİOKİMYƏVİ ANALİZLƏR",
+      "name_az": "Na-Natrium",
+      "price": "15.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "BİOKİMYƏVİ ANALİZLƏR",
+      "name_az": "Cl- Xlor",
+      "price": "15.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "BİOKİMYƏVİ ANALİZLƏR",
+      "name_az": "Mg-Maqnezium",
+      "price": "15.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "BİOKİMYƏVİ ANALİZLƏR",
+      "name_az": "P-Fosfor",
+      "price": "15.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "BİOKİMYƏVİ ANALİZLƏR",
+      "name_az": "Zn Sink",
+      "price": "30.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "BİOKİMYƏVİ ANALİZLƏR",
+      "name_az": "Fe-Dəmir",
+      "price": "20.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "BİOKİMYƏVİ ANALİZLƏR",
+      "name_az": "Dəmir birləşdirmə qabiliyyəti",
+      "price": "20.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "BİOKİMYƏVİ ANALİZLƏR",
+      "name_az": "Cu-Mis",
+      "price": "30.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "BİOKİMYƏVİ ANALİZLƏR",
+      "name_az": "Homocystein",
+      "price": "60.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "ONKOLOJİ TESTLƏR",
+      "name_az": "CA (Karsinoembrional antigen)",
+      "price": "25.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "ONKOLOJİ TESTLƏR",
+      "name_az": "C-125(yumurtalıqların göstəricisi)",
+      "price": "25.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "ONKOLOJİ TESTLƏR",
+      "name_az": "C-15-3 (süd vəzilərinin göstəricisi)",
+      "price": "25.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "ONKOLOJİ TESTLƏR",
+      "name_az": "C-19-9(öd kisə və mədəaltı vəzisinin göstəricisi)",
+      "price": "25.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "ONKOLOJİ TESTLƏR",
+      "name_az": "AFP(a-Fetoprotein)",
+      "price": "25.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "ONKOLOJİ TESTLƏR",
+      "name_az": "Anti-TQ (Ab -antitireoqlobulin antitelləri)",
+      "price": "25.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "ONKOLOJİ TESTLƏR",
+      "name_az": "Anti-TPO( Ab-tiroid peroksidazaya qarşı antitellər)",
+      "price": "25.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "ONKOLOJİ TESTLƏR",
+      "name_az": "PSA(Prostat spesifik antigen )",
+      "price": "25.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "ONKOLOJİ TESTLƏR",
+      "name_az": "Free PSA (Sərbəst prostat spesifik antigen)",
+      "price": "25.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "ONKOLOJİ TESTLƏR",
+      "name_az": "B-2mikroqlobulin-böyrək çatışmamazlığı, limfoma",
+      "price": "25.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "İMMUNOLOJİ TESTLƏR",
+      "name_az": "T-limfositlər (T-helper, T-supressor, Th/Tc) B-limfositlər",
+      "price": "20.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "İMMUNOLOJİ TESTLƏR",
+      "name_az": "İmmunoqlobulin A",
+      "price": "15.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "İMMUNOLOJİ TESTLƏR",
+      "name_az": "İmmunoqlobulin M",
+      "price": "15.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "İMMUNOLOJİ TESTLƏR",
+      "name_az": "İmmunoqlobulin G",
+      "price": "15.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "İMMUNOLOJİ TESTLƏR",
+      "name_az": "İmmunoqlobulin E (ümumi)",
+      "price": "30.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "İMMUNOLOJİ TESTLƏR",
+      "name_az": "Allergo test(qida və tənəffüs paneli)",
+      "price": "110.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "İMMUNOLOJİ TESTLƏR",
+      "name_az": "Faqositar indeks",
+      "price": "10.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "İMMUNOLOJİ TESTLƏR",
+      "name_az": "NFA(Neytrofillərin faqositar aktivliyi)",
+      "price": "10.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "İMMUNOLOJİ TESTLƏR",
+      "name_az": "DİK(Dövr immunokompleks)",
+      "price": "15.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "İMMUNOLOJİ TESTLƏR",
+      "name_az": "LBTR(Limfositlərin blasttransformasiya reaksiyası)",
+      "price": "10.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "İMMUNOLOJİ TESTLƏR",
+      "name_az": "Komplement",
+      "price": "10.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "İMMUNOLOJİ TESTLƏR",
+      "name_az": "Lizosim",
+      "price": "10.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "KOAQULOQRAMMA",
+      "name_az": "Laxtalanma müddəti",
+      "price": "5.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "KOAQULOQRAMMA",
+      "name_az": "Qanaxma müddəti",
+      "price": "5.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "KOAQULOQRAMMA",
+      "name_az": "Protrombin indeksi",
+      "price": "10.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "KOAQULOQRAMMA",
+      "name_az": "İNR",
+      "price": "10.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "KOAQULOQRAMMA",
+      "name_az": "Fibrinogen",
+      "price": "15.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "KOAQULOQRAMMA",
+      "name_az": "Fibrin yığılma testi(FDP)",
+      "price": "12.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "KOAQULOQRAMMA",
+      "name_az": "Aktiv parsial tromboplastin vaxtı(APPT)",
+      "price": "10.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "KOAQULOQRAMMA",
+      "name_az": "D-dimer",
+      "price": "34.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "KOAQULOQRAMMA",
+      "name_az": "Neierria conococcus Sidik, uretra və servikal kanalın epitel hüceyrələri",
+      "price": "25.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "PZR VƏ MOLEKULYAR TESTLƏR",
+      "name_az": "Chlamidia trachomatis Sidik, uretra və servikal kanalın epitel hüceyrələri zərdab",
+      "price": "25.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "PZR VƏ MOLEKULYAR TESTLƏR",
+      "name_az": "Mycoplazma hominis Sidik, uretra və servikal kanalın epitel hüceyrələri",
+      "price": "25.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "PZR VƏ MOLEKULYAR TESTLƏR",
+      "name_az": "Ureaplasma urealyticum Sidik, uretra və servikal kanalın epitel hüceyrələri",
+      "price": "25.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "PZR VƏ MOLEKULYAR TESTLƏR",
+      "name_az": "Trichomonas vaginalis Sidik, uretra və servikal kanalın epitel hüceyrələri",
+      "price": "25.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "PZR VƏ MOLEKULYAR TESTLƏR",
+      "name_az": "Herpes simplex virus II Sidik və epitel hüceyrələrində və yayuyulmuş leykosit kütlə, zərdab",
+      "price": "25.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "PZR VƏ MOLEKULYAR TESTLƏR",
+      "name_az": "Cytomegalovirus Sidik və epitel hüceyrələrində və yayuyulmuş leykosit kütlə, zərdab , sidik çöküntüsü",
+      "price": "25.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "KOAQULOQRAMMA",
+      "name_az": "Тохоplazma gondii Durulaşdırılmış qan, sidik",
+      "price": "25.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "PZR VƏ MOLEKULYAR TESTLƏR",
+      "name_az": "Listerioz monocytogenes Epiteli hüceyrələri",
+      "price": "25.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "PZR VƏ MOLEKULYAR TESTLƏR",
+      "name_az": "Brucella Zərdab",
+      "price": "25.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "PZR VƏ MOLEKULYAR TESTLƏR",
+      "name_az": "Popillomavirus genotip sıyrıntı",
+      "price": "130.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "PZR VƏ MOLEKULYAR TESTLƏR",
+      "name_az": "HPV 16.18 sıyrıntı",
+      "price": "50.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "PZR VƏ MOLEKULYAR TESTLƏR",
+      "name_az": "Hepatit B (keyfiyyət) Tam qan (EDTA)",
+      "price": "80.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "PZR VƏ MOLEKULYAR TESTLƏR",
+      "name_az": "Hepatit B (kəmiyyət) Tam qan (EDTA)",
+      "price": "110.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "FARMAKOLOJİ PREPARATLARIN METABOLİTLƏRİ",
+      "name_az": "Cocoin metabolitləri",
+      "price": "15.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "FARMAKOLOJİ PREPARATLARIN METABOLİTLƏRİ",
+      "name_az": "Morphin",
+      "price": "15.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "FARMAKOLOJİ PREPARATLARIN METABOLİTLƏRİ",
+      "name_az": "THC(Opiatlar)",
+      "price": "15.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "FARMAKOLOJİ PREPARATLARIN METABOLİTLƏRİ",
+      "name_az": "Marixuana",
+      "price": "15.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "FARMAKOLOJİ PREPARATLARIN METABOLİTLƏRİ",
+      "name_az": "Metamfetamin",
+      "price": "15.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "FARMAKOLOJİ PREPARATLARIN METABOLİTLƏRİ",
+      "name_az": "Narkotest (12 parametr)",
+      "price": "75.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "PZR VƏ MOLEKULYAR TESTLƏR",
+      "name_az": "Hepatit B (genotip) Tam qan (EDTA)",
+      "price": "130.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "PZR VƏ MOLEKULYAR TESTLƏR",
+      "name_az": "Hepatit C (keyfiyyət) Tam qan (EDTA)",
+      "price": "80.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "PZR VƏ MOLEKULYAR TESTLƏR",
+      "name_az": "Hepatit C (kəmiyyət) Tam qan (EDTA)",
+      "price": "120.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "PZR VƏ MOLEKULYAR TESTLƏR",
+      "name_az": "Hepatit C(genotip) Tam qan (EDTA)",
+      "price": "110.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "HİSTOLOJİ VƏ SİTOLOJİ MÜAYİNƏLƏR",
+      "name_az": "Bəlğəmin ümumi sitoloji müayinəsi",
+      "price": "80.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "HİSTOLOJİ VƏ SİTOLOJİ MÜAYİNƏLƏR",
+      "name_az": "Plevra mayesinin ümumi sitoloji müayinəsi",
+      "price": "80.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "HİSTOLOJİ VƏ SİTOLOJİ MÜAYİNƏLƏR",
+      "name_az": "Assit mayesinin sitoloji müayinəsi",
+      "price": "80.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "HİSTOLOJİ VƏ SİTOLOJİ MÜAYİNƏLƏR",
+      "name_az": "Mayelərdə vərəm mikobakteriyalarının sitoloji təyini",
+      "price": "80.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "HİSTOLOJİ VƏ SİTOLOJİ MÜAYİNƏLƏR",
+      "name_az": "Mayelərdə göbələkləin sitoloji təyini(ümumi)",
+      "price": "80.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "HİSTOLOJİ VƏ SİTOLOJİ MÜAYİNƏLƏR",
+      "name_az": "Oynaq mayelərinin(sinovial) sitoloji müayinəsi",
+      "price": "80.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "HİSTOLOJİ VƏ SİTOLOJİ MÜAYİNƏLƏR",
+      "name_az": "Vagina və uşaqlıq boynu yaxmalarında hormonal fonun(doyumluluğun)sitokimyəvi təyini 80-00 8 Yaxmalarda, mayelərdə atipik şiş hüceyrələrinin sitoloji müayinəsi",
+      "price": "80.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "HİSTOLOJİ VƏ SİTOLOJİ MÜAYİNƏLƏR",
+      "name_az": "Süd vəzi punktatlarının ümumi sitoloji müayinəsi",
+      "price": "80.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "KOAQULOQRAMMA",
+      "name_az": "Limfa düyünlər, yumşaq toxuma punktatları",
+      "price": "80.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "KOAQULOQRAMMA",
+      "name_az": "Uşaqlıq boşluğu qaşıntıları və aspiratları",
+      "price": "80.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "KOAQULOQRAMMA",
+      "name_az": "İri həcmli <<yumşaq >> rezektatlar, amputasiya materialları, orqan toxuma kompleksləri 80-00 13 Sümük bioptatları, sümük iliyi qaşıntıları",
+      "price": "80.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "KOAQULOQRAMMA",
+      "name_az": "Helikobakter pylori - nin histokimyəvi təyini",
+      "price": "80.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "KOAQULOQRAMMA",
+      "name_az": "Qlikogenin histokimyəvi təyini",
+      "price": "80.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "KOAQULOQRAMMA",
+      "name_az": "Seretonin, histamin, somatostatin, qastrin hormonlarının histokimyəvi təyini(hər biri) 80-00 17 Melanin piqmentinin histokimyəvi təyini",
+      "price": "80.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "HİSTOLOJİ VƏ SİTOLOJİ MÜAYİNƏLƏR",
+      "name_az": "Servikal kanaldan yaxma (Pap yaxma)",
+      "price": "50.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "TİBBİ GENETİK MÜAYİNƏLƏR",
+      "name_az": "β talassemiyaların bütün formaları",
+      "price": "90.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "TİBBİ GENETİK MÜAYİNƏLƏR",
+      "name_az": "α talassemiyaların bütün formaları",
+      "price": "90.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "KOAQULOQRAMMA",
+      "name_az": "Struktur-anomal hemoqlobinlər: Hb S;HbC;HbD;HbE(hər biri)",
+      "price": "90.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "KOAQULOQRAMMA",
+      "name_az": "Stabil olmayan hemoqlobinlər",
+      "price": "90.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "TİBBİ GENETİK MÜAYİNƏLƏR",
+      "name_az": "Qlükoza-6-fosfat dehidrogenaza fermenntinin aktivliyi",
+      "price": "80.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "KOAQULOQRAMMA",
+      "name_az": "Met-Hb-reduktaza fermentinin aktivliyi",
+      "price": "90.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "KOAQULOQRAMMA",
+      "name_az": "Met-Hb",
+      "price": "90.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "KOAQULOQRAMMA",
+      "name_az": "Struktur-anomal HbM (izoelektrofokuslaşma)",
+      "price": "90.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "KOAQULOQRAMMA",
+      "name_az": "GÖBƏK QANIN MÜAYİNƏSİ (postnatal diaqnostika)",
+      "price": "200.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "TİBBİ GENETİK MÜAYİNƏLƏR",
+      "name_az": "Cinsi xromosomun təyini",
+      "price": "80.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "KOAQULOQRAMMA",
+      "name_az": "MADDƏLƏR MÜBADİLƏSİ XƏSDƏLİKLƏRİ",
+      "price": "120.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "KOAQULOQRAMMA",
+      "name_az": "Sidikdə mukopolisaxaridlərin təyini",
+      "price": "150.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "KOAQULOQRAMMA",
+      "name_az": "Qanda mukopolisaxaridlərin təyini",
+      "price": "100.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "KOAQULOQRAMMA",
+      "name_az": "PRENATAL MÜAYİNƏLƏR",
+      "price": "300.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "laboratory",
+      "category": "KOAQULOQRAMMA",
+      "name_az": "Əzələ və sümük toxumasının patologiyalarında qanda oksiprolinin təyini",
+      "price": "50.00 AZN",
+      "source": "Dialab-price-labarator-müayinələr.pdf",
+      "status": "confirmed_from_price_pdf"
+    }
+  ],
+  "diagnosticPriceItems": [
+    {
+      "type": "diagnostic",
+      "category": "USM",
+      "name_az": "Abdominal (sidik kisəsi dolu olmalıdır)",
+      "price": "35.00 AZN",
+      "source": "Dialab-price-diaqnostik-xidmətlər.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "diagnostic",
+      "category": "USM",
+      "name_az": "Vaginal(sidik kisəsi boş olmalıdır)",
+      "price": "40.00 AZN",
+      "source": "Dialab-price-diaqnostik-xidmətlər.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "diagnostic",
+      "category": "USM",
+      "name_az": "Histerosalpinqoqrafiya",
+      "price": "50.00 AZN",
+      "source": "Dialab-price-diaqnostik-xidmətlər.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "diagnostic",
+      "category": "USM",
+      "name_az": "Follikulametriya(dominant follikul)",
+      "price": "15.00 AZN",
+      "source": "Dialab-price-diaqnostik-xidmətlər.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "diagnostic",
+      "category": "USM",
+      "name_az": "Süd vəziləri(bir süd vəzi)",
+      "price": "25.00 AZN",
+      "source": "Dialab-price-diaqnostik-xidmətlər.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "diagnostic",
+      "category": "USM",
+      "name_az": "Dölün erkən çağlarında cinsiyyətinin 100% qarantiya ilə təyini",
+      "price": "20.00 AZN",
+      "source": "Dialab-price-diaqnostik-xidmətlər.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "diagnostic",
+      "category": "USM",
+      "name_az": "Doppleroqrafiya",
+      "price": "70.00 AZN",
+      "source": "Dialab-price-diaqnostik-xidmətlər.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "diagnostic",
+      "category": "USM",
+      "name_az": "Tam müayinə(qara ciyər, öd kisəsi, dalaq, mədəaltı vəz, böyrəklər",
+      "price": "50.00 AZN",
+      "source": "Dialab-price-diaqnostik-xidmətlər.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "diagnostic",
+      "category": "USM",
+      "name_az": "Qara ciyər, öd kisəsi, dalaq, mədəaltı vəz",
+      "price": "40.00 AZN",
+      "source": "Dialab-price-diaqnostik-xidmətlər.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "diagnostic",
+      "category": "USM",
+      "name_az": "Böyrəklər-sidik kisəsi, prostat",
+      "price": "40.00 AZN",
+      "source": "Dialab-price-diaqnostik-xidmətlər.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "diagnostic",
+      "category": "USM",
+      "name_az": "Böyrəklər-sidik kisəsi",
+      "price": "25.00 AZN",
+      "source": "Dialab-price-diaqnostik-xidmətlər.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "diagnostic",
+      "category": "USM",
+      "name_az": "Prostatvəzi-sidik kisəsi",
+      "price": "25.00 AZN",
+      "source": "Dialab-price-diaqnostik-xidmətlər.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "diagnostic",
+      "category": "USM",
+      "name_az": "Xayaların müayinəsi(Scrotal-testis)",
+      "price": "35.00 AZN",
+      "source": "Dialab-price-diaqnostik-xidmətlər.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "diagnostic",
+      "category": "USM",
+      "name_az": "Xayaların müayinəsi(Dopplerlə)",
+      "price": "60.00 AZN",
+      "source": "Dialab-price-diaqnostik-xidmətlər.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "diagnostic",
+      "category": "USM",
+      "name_az": "Prostat vəzi -rektal",
+      "price": "35.00 AZN",
+      "source": "Dialab-price-diaqnostik-xidmətlər.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "diagnostic",
+      "category": "USM",
+      "name_az": "Gözün ultrasonoqrafiyası",
+      "price": "25.00 AZN",
+      "source": "Dialab-price-diaqnostik-xidmətlər.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "diagnostic",
+      "category": "USM",
+      "name_az": "Aşağı ətraf arteriyaların doppleroqrafiyası",
+      "price": "50.00 AZN",
+      "source": "Dialab-price-diaqnostik-xidmətlər.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "diagnostic",
+      "category": "USM",
+      "name_az": "Aşağı ətraf venaların doppleroqrafiyası",
+      "price": "50.00 AZN",
+      "source": "Dialab-price-diaqnostik-xidmətlər.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "diagnostic",
+      "category": "USM",
+      "name_az": "Yuxarı ətraf venaların doppleroqrafiyası",
+      "price": "50.00 AZN",
+      "source": "Dialab-price-diaqnostik-xidmətlər.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "diagnostic",
+      "category": "USM",
+      "name_az": "Yuxarı ətraf arteriyaların doppleroqrafiyası",
+      "price": "50.00 AZN",
+      "source": "Dialab-price-diaqnostik-xidmətlər.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "diagnostic",
+      "category": "USM",
+      "name_az": "Qarın boşluğu damarlarının doppleroqrafiyası",
+      "price": "50.00 AZN",
+      "source": "Dialab-price-diaqnostik-xidmətlər.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "diagnostic",
+      "category": "USM",
+      "name_az": "Yuxu arteriyaların doppleroqrafiyası(carotid)",
+      "price": "50.00 AZN",
+      "source": "Dialab-price-diaqnostik-xidmətlər.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "diagnostic",
+      "category": "USM",
+      "name_az": "Yumşaq toxumanın USM müayinəsi",
+      "price": "20.00 AZN",
+      "source": "Dialab-price-diaqnostik-xidmətlər.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "diagnostic",
+      "category": "USM",
+      "name_az": "Bud-çanaq oynağının USM müayinəsi",
+      "price": "35.00 AZN",
+      "source": "Dialab-price-diaqnostik-xidmətlər.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "diagnostic",
+      "category": "USM",
+      "name_az": "Neyrosonoqrafiya",
+      "price": "30.00 AZN",
+      "source": "Dialab-price-diaqnostik-xidmətlər.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "diagnostic",
+      "category": "USM",
+      "name_az": "Timus",
+      "price": "30.00 AZN",
+      "source": "Dialab-price-diaqnostik-xidmətlər.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "diagnostic",
+      "category": "USM",
+      "name_az": "Qalxanabənzər vəzi",
+      "price": "30.00 AZN",
+      "source": "Dialab-price-diaqnostik-xidmətlər.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "diagnostic",
+      "category": "USM",
+      "name_az": "Boyun limfa vəziləri",
+      "price": "20.00 AZN",
+      "source": "Dialab-price-diaqnostik-xidmətlər.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "diagnostic",
+      "category": "USM",
+      "name_az": "Ətraf limfa düyünləri",
+      "price": "20.00 AZN",
+      "source": "Dialab-price-diaqnostik-xidmətlər.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "diagnostic",
+      "category": "USM",
+      "name_az": "Tüpürcək vəziləri",
+      "price": "20.00 AZN",
+      "source": "Dialab-price-diaqnostik-xidmətlər.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "diagnostic",
+      "category": "Kardiologiya",
+      "name_az": "Həkim qəbulu və təyinatı",
+      "price": "40.00 AZN",
+      "source": "Dialab-price-diaqnostik-xidmətlər.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "diagnostic",
+      "category": "Kardiologiya",
+      "name_az": "Ürəyin elektrokardioqramması",
+      "price": "20.00 AZN",
+      "source": "Dialab-price-diaqnostik-xidmətlər.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "diagnostic",
+      "category": "Kardiologiya",
+      "name_az": "Rəngli ЕХО dopplerokardioqrafiya",
+      "price": "50.00 AZN",
+      "source": "Dialab-price-diaqnostik-xidmətlər.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "diagnostic",
+      "category": "Ginekologiya",
+      "name_az": "Həkim qəbulu və baxış",
+      "price": "50.00 AZN",
+      "source": "Dialab-price-diaqnostik-xidmətlər.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "diagnostic",
+      "category": "Ginekologiya",
+      "name_az": "Uşaqlıq yolunun sanasiyası(vanna və tampon)",
+      "price": "20.00 AZN",
+      "source": "Dialab-price-diaqnostik-xidmətlər.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "diagnostic",
+      "category": "Ginekologiya",
+      "name_az": "Biopsiya",
+      "price": "30.00 AZN",
+      "source": "Dialab-price-diaqnostik-xidmətlər.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "diagnostic",
+      "category": "Ginekologiya",
+      "name_az": "Uşaqlıq boynu eroziyasnın yandırılması : medikamentoz ilə",
+      "price": "40.00 AZN",
+      "source": "Dialab-price-diaqnostik-xidmətlər.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "diagnostic",
+      "category": "Ginekologiya",
+      "name_az": "Uşaqlıq boynu eroziyasnın yandırılması : infraqırmızı-şüa ilə koaqulyasiya",
+      "price": "150.00 AZN",
+      "source": "Dialab-price-diaqnostik-xidmətlər.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "diagnostic",
+      "category": "Ginekologiya",
+      "name_az": "Uşaqlıq daxili spiralın qoyulması",
+      "price": "100.00 AZN",
+      "source": "Dialab-price-diaqnostik-xidmətlər.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "diagnostic",
+      "category": "Ginekologiya",
+      "name_az": "Uşaqlıq daxili spiralın çıxarılması",
+      "price": "40.00 AZN",
+      "source": "Dialab-price-diaqnostik-xidmətlər.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "diagnostic",
+      "category": "Ginekologiya",
+      "name_az": "Abseslərin yarılması",
+      "price": "50.00 AZN",
+      "source": "Dialab-price-diaqnostik-xidmətlər.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "diagnostic",
+      "category": "Manipulyasiyalar",
+      "name_az": "Sarğı",
+      "price": "5.00 AZN",
+      "source": "Dialab-price-diaqnostik-xidmətlər.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "diagnostic",
+      "category": "Manipulyasiyalar",
+      "name_az": "Hidrotubasiya 1seans",
+      "price": "10.00 AZN",
+      "source": "Dialab-price-diaqnostik-xidmətlər.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "diagnostic",
+      "category": "Manipulyasiyalar",
+      "name_az": "Limfotrop terapiya",
+      "price": "20.00 AZN",
+      "source": "Dialab-price-diaqnostik-xidmətlər.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "diagnostic",
+      "category": "Ginekologiya",
+      "name_az": "Uşaqlıq boynuna ineksiya",
+      "price": "10.00 AZN",
+      "source": "Dialab-price-diaqnostik-xidmətlər.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "diagnostic",
+      "category": "Ginekologiya",
+      "name_az": "Müalicəvi ionoferez",
+      "price": "20.00 AZN",
+      "source": "Dialab-price-diaqnostik-xidmətlər.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "diagnostic",
+      "category": "Ginekologiya",
+      "name_az": "Uşaqlığın masajı (10 seans)",
+      "price": "200.00 AZN",
+      "source": "Dialab-price-diaqnostik-xidmətlər.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "diagnostic",
+      "category": "Kardiologiya",
+      "name_az": "Exohisterosalpinqoqrafiya",
+      "price": "40.00 AZN",
+      "source": "Dialab-price-diaqnostik-xidmətlər.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "diagnostic",
+      "category": "Kardiologiya",
+      "name_az": "Diaqnostik qaşınma",
+      "price": "150.00 AZN",
+      "source": "Dialab-price-diaqnostik-xidmətlər.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "diagnostic",
+      "category": "Kardiologiya",
+      "name_az": "Papillomaların yandırılması və müalicə kursu (2ay)",
+      "price": "300.00 AZN",
+      "source": "Dialab-price-diaqnostik-xidmətlər.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "diagnostic",
+      "category": "Kardiologiya",
+      "name_az": "Sonsuzluğun müalicəsi",
+      "price": "300.00 AZN",
+      "source": "Dialab-price-diaqnostik-xidmətlər.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "diagnostic",
+      "category": "Ginekologiya",
+      "name_az": "Kolposkopiya",
+      "price": "60.00 AZN",
+      "source": "Dialab-price-diaqnostik-xidmətlər.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "diagnostic",
+      "category": "Ginekologiya",
+      "name_az": "Foto-koaqulyasiya",
+      "price": "150.00 AZN",
+      "source": "Dialab-price-diaqnostik-xidmətlər.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "diagnostic",
+      "category": "Dermatovenerologiya",
+      "name_az": "Dəri həkiminin qəbulu və təyinatı",
+      "price": "50.00 AZN",
+      "source": "Dialab-price-diaqnostik-xidmətlər.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "diagnostic",
+      "category": "Dermatovenerologiya",
+      "name_az": "Kəskin uretrit",
+      "price": "30.00 AZN",
+      "source": "Dialab-price-diaqnostik-xidmətlər.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "diagnostic",
+      "category": "Dermatovenerologiya",
+      "name_az": "a) diplokokk,",
+      "price": "150.00 AZN",
+      "source": "Dialab-price-diaqnostik-xidmətlər.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "diagnostic",
+      "category": "Dermatovenerologiya",
+      "name_az": "b) trixomonada və s",
+      "price": "150.00 AZN",
+      "source": "Dialab-price-diaqnostik-xidmətlər.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "diagnostic",
+      "category": "Dermatovenerologiya",
+      "name_az": "b) xlamidiya",
+      "price": "100.00 AZN",
+      "source": "Dialab-price-diaqnostik-xidmətlər.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "diagnostic",
+      "category": "Dermatovenerologiya",
+      "name_az": "ureplazma",
+      "price": "100.00 AZN",
+      "source": "Dialab-price-diaqnostik-xidmətlər.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "diagnostic",
+      "category": "Dermatovenerologiya",
+      "name_az": "mikoplazma",
+      "price": "100.00 AZN",
+      "source": "Dialab-price-diaqnostik-xidmətlər.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "diagnostic",
+      "category": "Dermatovenerologiya",
+      "name_az": "Xroniki prostatit",
+      "price": "80.00 AZN",
+      "source": "Dialab-price-diaqnostik-xidmətlər.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "diagnostic",
+      "category": "Dermatovenerologiya",
+      "name_az": "Cinsi əlaqə pozuntularının müalicəsi",
+      "price": "80.00 AZN",
+      "source": "Dialab-price-diaqnostik-xidmətlər.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "diagnostic",
+      "category": "Dermatovenerologiya",
+      "name_az": "Kişi sonsuzluğunun müalicəsi",
+      "price": "80.00 AZN",
+      "source": "Dialab-price-diaqnostik-xidmətlər.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "diagnostic",
+      "category": "Dermatovenerologiya",
+      "name_az": "Herpes infeksiyasının müalicəsi",
+      "price": "200.00 AZN",
+      "source": "Dialab-price-diaqnostik-xidmətlər.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "diagnostic",
+      "category": "Dermatovenerologiya",
+      "name_az": "kəskin forma",
+      "price": "120.00 AZN",
+      "source": "Dialab-price-diaqnostik-xidmətlər.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "diagnostic",
+      "category": "Dermatovenerologiya",
+      "name_az": "xroniki forma",
+      "price": "300.00 AZN",
+      "source": "Dialab-price-diaqnostik-xidmətlər.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "diagnostic",
+      "category": "Dermatovenerologiya",
+      "name_az": "cinsi orqanların herpesi",
+      "price": "40.00 AZN",
+      "source": "Dialab-price-diaqnostik-xidmətlər.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "diagnostic",
+      "category": "Dermatovenerologiya",
+      "name_az": "tamponları (1seans)",
+      "price": "24.00 AZN",
+      "source": "Dialab-price-diaqnostik-xidmətlər.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "diagnostic",
+      "category": "Dermatovenerologiya",
+      "name_az": "Lazeroterapiya (1seans)",
+      "price": "10.00 AZN",
+      "source": "Dialab-price-diaqnostik-xidmətlər.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "diagnostic",
+      "category": "Dermatovenerologiya",
+      "name_az": "Prostat vəzinin massaji (1seans)",
+      "price": "20.00 AZN",
+      "source": "Dialab-price-diaqnostik-xidmətlər.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "diagnostic",
+      "category": "Dermatovenerologiya",
+      "name_az": "Endouretral (1seans)",
+      "price": "6.00 AZN",
+      "source": "Dialab-price-diaqnostik-xidmətlər.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "diagnostic",
+      "category": "Dermatovenerologiya",
+      "name_az": "İmmunostimulyasiya(1seans)",
+      "price": "10.00 AZN",
+      "source": "Dialab-price-diaqnostik-xidmətlər.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "diagnostic",
+      "category": "Dermatovenerologiya",
+      "name_az": "Maqnito terapiya",
+      "price": "10.00 AZN",
+      "source": "Dialab-price-diaqnostik-xidmətlər.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "diagnostic",
+      "category": "Dermatovenerologiya",
+      "name_az": "Kvanto terapiya",
+      "price": "6.00 AZN",
+      "source": "Dialab-price-diaqnostik-xidmətlər.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "diagnostic",
+      "category": "Dermatovenerologiya",
+      "name_az": "Fallodekompresiya",
+      "price": "20.00 AZN",
+      "source": "Dialab-price-diaqnostik-xidmətlər.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "diagnostic",
+      "category": "Dermatovenerologiya",
+      "name_az": "Dəridə olan piqment ləkələrinin, xalların və popillomaların götürülməsi",
+      "price": "50.00 AZN",
+      "source": "Dialab-price-diaqnostik-xidmətlər.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "diagnostic",
+      "category": "Dermatovenerologiya",
+      "name_az": "b)bir yerdə miqdarı 5 ədəddən çox olanda əlavə hr birinə",
+      "price": "10.00 AZN",
+      "source": "Dialab-price-diaqnostik-xidmətlər.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "diagnostic",
+      "category": "Nevrologiya",
+      "name_az": "Həkim qəbulu və təyinatı",
+      "price": "50.00 AZN",
+      "source": "Dialab-price-diaqnostik-xidmətlər.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "diagnostic",
+      "category": "Nevrologiya",
+      "name_az": "Ürək-qan damar sistemi xəstəlikləri",
+      "price": "80.00 AZN",
+      "source": "Dialab-price-diaqnostik-xidmətlər.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "diagnostic",
+      "category": "Nevrologiya",
+      "name_az": "Həzm sistemi xəstəlikləri",
+      "price": "116.00 AZN",
+      "source": "Dialab-price-diaqnostik-xidmətlər.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "diagnostic",
+      "category": "Nevrologiya",
+      "name_az": "Tənəffüz sistemi xəstəlikləri",
+      "price": "138.00 AZN",
+      "source": "Dialab-price-diaqnostik-xidmətlər.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "diagnostic",
+      "category": "Nevrologiya",
+      "name_az": "Oynaq xəstəlikləri",
+      "price": "90.00 AZN",
+      "source": "Dialab-price-diaqnostik-xidmətlər.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "diagnostic",
+      "category": "Nevrologiya",
+      "name_az": "Allergik xəstəlikləri",
+      "price": "132.00 AZN",
+      "source": "Dialab-price-diaqnostik-xidmətlər.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "diagnostic",
+      "category": "Nevrologiya",
+      "name_az": "Vegetativ damar pozğunluqları",
+      "price": "100.00 AZN",
+      "source": "Dialab-price-diaqnostik-xidmətlər.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "diagnostic",
+      "category": "Nevrologiya",
+      "name_az": "Virus mənşəli xəstəliklər (herpes, sitomeqalovirus, xlamidioz və s",
+      "price": "116.00 AZN",
+      "source": "Dialab-price-diaqnostik-xidmətlər.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "diagnostic",
+      "category": "Nevrologiya",
+      "name_az": "Pionefritin müalicəsi",
+      "price": "128.00 AZN",
+      "source": "Dialab-price-diaqnostik-xidmətlər.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "diagnostic",
+      "category": "Nevrologiya",
+      "name_az": "Hidrokolonoterapiya",
+      "price": "40.00 AZN",
+      "source": "Dialab-price-diaqnostik-xidmətlər.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "diagnostic",
+      "category": "Nevrologiya",
+      "name_az": "Plazmaferez",
+      "price": "50.00 AZN",
+      "source": "Dialab-price-diaqnostik-xidmətlər.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "diagnostic",
+      "category": "Nevrologiya",
+      "name_az": "Elektroensefoloqramma (EEQ)",
+      "price": "50.00 AZN",
+      "source": "Dialab-price-diaqnostik-xidmətlər.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "diagnostic",
+      "category": "Nevrologiya",
+      "name_az": "EEQ- gecə manitorinqi",
+      "price": "50.00 AZN",
+      "source": "Dialab-price-diaqnostik-xidmətlər.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "diagnostic",
+      "category": "Nevrologiya",
+      "name_az": "Həyəcan nevrozu",
+      "price": "140.00 AZN",
+      "source": "Dialab-price-diaqnostik-xidmətlər.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "diagnostic",
+      "category": "Nevrologiya",
+      "name_az": "Obsessiv kompulsiv nevroz",
+      "price": "150.00 AZN",
+      "source": "Dialab-price-diaqnostik-xidmətlər.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "diagnostic",
+      "category": "Nevrologiya",
+      "name_az": "Fəsli xarakterli dövri distimiya (əhval-ruhiyyənin enməsi)",
+      "price": "100.00 AZN",
+      "source": "Dialab-price-diaqnostik-xidmətlər.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "diagnostic",
+      "category": "Nevrologiya",
+      "name_az": "Fakta kəskin reaksiya",
+      "price": "100.00 AZN",
+      "source": "Dialab-price-diaqnostik-xidmətlər.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "diagnostic",
+      "category": "Nevrologiya",
+      "name_az": "Nevrasteniya",
+      "price": "120.00 AZN",
+      "source": "Dialab-price-diaqnostik-xidmətlər.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "diagnostic",
+      "category": "Nevrologiya",
+      "name_az": "İpoxondrik somatikləşmiş ağrı sindromu",
+      "price": "130.00 AZN",
+      "source": "Dialab-price-diaqnostik-xidmətlər.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "diagnostic",
+      "category": "Nevrologiya",
+      "name_az": "Somatoform vegetativ sinir sistemi pozğunluqları",
+      "price": "100.00 AZN",
+      "source": "Dialab-price-diaqnostik-xidmətlər.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "diagnostic",
+      "category": "Nevrologiya",
+      "name_az": "Konversion pozulmalar (isteriya)",
+      "price": "150.00 AZN",
+      "source": "Dialab-price-diaqnostik-xidmətlər.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "diagnostic",
+      "category": "Nevrologiya",
+      "name_az": "Psixogen enurez, tremor, kəkələmə, tiklər, blefarospazm və.s",
+      "price": "140.00 AZN",
+      "source": "Dialab-price-diaqnostik-xidmətlər.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "diagnostic",
+      "category": "Manipulyasiyalar",
+      "name_az": "Təzyiq ölçmə",
+      "price": "5.00 AZN",
+      "source": "Dialab-price-diaqnostik-xidmətlər.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "diagnostic",
+      "category": "Manipulyasiyalar",
+      "name_az": "Venadaxili ineksiya",
+      "price": "5.00 AZN",
+      "source": "Dialab-price-diaqnostik-xidmətlər.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "diagnostic",
+      "category": "Manipulyasiyalar",
+      "name_az": "Vena daxili infuziya",
+      "price": "10.00 AZN",
+      "source": "Dialab-price-diaqnostik-xidmətlər.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "diagnostic",
+      "category": "Manipulyasiyalar",
+      "name_az": "Əzələdaxili ineksiya",
+      "price": "3.00 AZN",
+      "source": "Dialab-price-diaqnostik-xidmətlər.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "diagnostic",
+      "category": "Manipulyasiyalar",
+      "name_az": "Tibb bacısının evə çağırışı",
+      "price": "20.00 AZN",
+      "source": "Dialab-price-diaqnostik-xidmətlər.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "diagnostic",
+      "category": "Manipulyasiyalar",
+      "name_az": "Dissirkulyator ensefalopatiya və yaxud mielopatiya",
+      "price": "130.00 AZN",
+      "source": "Dialab-price-diaqnostik-xidmətlər.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "diagnostic",
+      "category": "Manipulyasiyalar",
+      "name_az": "Vertebrogen sinir sistemi xəstəlokləri",
+      "price": "130.00 AZN",
+      "source": "Dialab-price-diaqnostik-xidmətlər.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "diagnostic",
+      "category": "Manipulyasiyalar",
+      "name_az": "Parkinson xəstəliyi (başlanğıc fazalar)",
+      "price": "120.00 AZN",
+      "source": "Dialab-price-diaqnostik-xidmətlər.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "diagnostic",
+      "category": "Manipulyasiyalar",
+      "name_az": "Koqnitiv pozğunluqlar və demensiya",
+      "price": "120.00 AZN",
+      "source": "Dialab-price-diaqnostik-xidmətlər.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "diagnostic",
+      "category": "Manipulyasiyalar",
+      "name_az": "Xronik ağrı sindromu",
+      "price": "90.00 AZN",
+      "source": "Dialab-price-diaqnostik-xidmətlər.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "diagnostic",
+      "category": "Manipulyasiyalar",
+      "name_az": "Baş beyin travmasının reabilitasiya dövründə bərpa müalicəsi",
+      "price": "140.00 AZN",
+      "source": "Dialab-price-diaqnostik-xidmətlər.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "diagnostic",
+      "category": "Manipulyasiyalar",
+      "name_az": "Həkim qəbulu və təyinatı",
+      "price": "40.00 AZN",
+      "source": "Dialab-price-diaqnostik-xidmətlər.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "diagnostic",
+      "category": "Manipulyasiyalar",
+      "name_az": "Həkim qəbulu və təyinatı",
+      "price": "50.00 AZN",
+      "source": "Dialab-price-diaqnostik-xidmətlər.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "diagnostic",
+      "category": "Oftalmologiya",
+      "name_az": "Göz dibinin müayinəsi",
+      "price": "40.00 AZN",
+      "source": "Dialab-price-diaqnostik-xidmətlər.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "diagnostic",
+      "category": "Oftalmologiya",
+      "name_az": "Reablitoloqun qəbulu",
+      "price": "20.00 AZN",
+      "source": "Dialab-price-diaqnostik-xidmətlər.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "diagnostic",
+      "category": "Oftalmologiya",
+      "name_az": "Müalicəvi idmanın təyini",
+      "price": "30.00 AZN",
+      "source": "Dialab-price-diaqnostik-xidmətlər.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "diagnostic",
+      "category": "Oftalmologiya",
+      "name_az": "Bioenergetik masaj (1üsul)",
+      "price": "40.00 AZN",
+      "source": "Dialab-price-diaqnostik-xidmətlər.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "diagnostic",
+      "category": "Oftalmologiya",
+      "name_az": "Elektroterapiya",
+      "price": "80.00 AZN",
+      "source": "Dialab-price-diaqnostik-xidmətlər.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "diagnostic",
+      "category": "Oftalmologiya",
+      "name_az": "Ultrasəs terapiya",
+      "price": "80.00 AZN",
+      "source": "Dialab-price-diaqnostik-xidmətlər.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "diagnostic",
+      "category": "Oftalmologiya",
+      "name_az": "Maqnitoterapiya",
+      "price": "80.00 AZN",
+      "source": "Dialab-price-diaqnostik-xidmətlər.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "diagnostic",
+      "category": "Oftalmologiya",
+      "name_az": "Lazeroterapiya",
+      "price": "80.00 AZN",
+      "source": "Dialab-price-diaqnostik-xidmətlər.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "diagnostic",
+      "category": "Oftalmologiya",
+      "name_az": "Parafinoterapiya",
+      "price": "60.00 AZN",
+      "source": "Dialab-price-diaqnostik-xidmətlər.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "diagnostic",
+      "category": "Oftalmologiya",
+      "name_az": "Nevrolterapiya",
+      "price": "60.00 AZN",
+      "source": "Dialab-price-diaqnostik-xidmətlər.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "diagnostic",
+      "category": "Oftalmologiya",
+      "name_az": "Darsonvalizasiya",
+      "price": "60.00 AZN",
+      "source": "Dialab-price-diaqnostik-xidmətlər.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "diagnostic",
+      "category": "Oftalmologiya",
+      "name_az": "Lampa soluks",
+      "price": "60.00 AZN",
+      "source": "Dialab-price-diaqnostik-xidmətlər.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "diagnostic",
+      "category": "Oftalmologiya",
+      "name_az": "Tibbi masaj - 15 dəq",
+      "price": "100.00 AZN",
+      "source": "Dialab-price-diaqnostik-xidmətlər.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "diagnostic",
+      "category": "Oftalmologiya",
+      "name_az": "dəq",
+      "price": "200.00 AZN",
+      "source": "Dialab-price-diaqnostik-xidmətlər.pdf",
+      "status": "confirmed_from_price_pdf"
+    },
+    {
+      "type": "diagnostic",
+      "category": "Oftalmologiya",
+      "name_az": "saat",
+      "price": "300.00 AZN",
+      "source": "Dialab-price-diaqnostik-xidmətlər.pdf",
+      "status": "confirmed_from_price_pdf"
+    }
+  ],
+  "doctors": [
+    {
+      "name_az": "Məli̇kova Kəmalə Qadi̇l Qizi",
+      "specialty_az": "Həkim-ginekoloq",
+      "public_focus_areas_az": [
+        "həkim ginekoloq",
+        "Sonsuzluğun müalicəsi",
+        "Qadın xəstəliklərinin müalicəsi və profilaktikası",
+        "Urogenital infeksiyaların müalicəsi. 2"
+      ],
+      "source": "Doc1.pdf",
+      "status": "needs_clinic_confirmation",
+      "public_contact_policy": "Do not expose direct doctor phone numbers in Dr. Dia answers; route booking through Qəbul or operator."
+    },
+    {
+      "name_az": "Nəsi̇bova Afaq Nadi̇r Qizi",
+      "specialty_az": "Həkim-terapevt",
+      "public_focus_areas_az": [
+        "həkim terapevt",
+        "Terapevtik və hematoloji xəstəliklər (anemiyalar, koaqulyasiya pozuntuları, limfadenopatiyalar, naməlum etialogiyalı qızdırmalar və.s)",
+        "Leykositoz",
+        "Trombositopeniya 3"
+      ],
+      "source": "Doc1.pdf; doc_Nəsibova Afaq.docx confirms fragment",
+      "status": "confirmed_from_documents",
+      "public_contact_policy": "Do not expose direct doctor phone numbers in Dr. Dia answers; route booking through Qəbul or operator."
+    },
+    {
+      "name_az": "Həzrətova Xədi̇cə Məmməd Qizi",
+      "specialty_az": "Həkim-nevropatoloq",
+      "public_focus_areas_az": [
+        "həkim nevropatoloq",
+        "Epilepsiya",
+        "Miqren və başqa baş ağrıları",
+        "Panik həmlələr",
+        "Nevrolgiyalar",
+        "Nevrozlar"
+      ],
+      "source": "Doc1.pdf",
+      "status": "needs_clinic_confirmation",
+      "public_contact_policy": "Do not expose direct doctor phone numbers in Dr. Dia answers; route booking through Qəbul or operator."
+    },
+    {
+      "name_az": "Ramazanzadə Reyhan Ramazan Qizi",
+      "specialty_az": "Şüa diaqnostikası üzrə həkim",
+      "public_focus_areas_az": [
+        "Abdominal ultrasəs müayinəsi (qaraciyər, öd kisəsi, dalaq, mədəaltı vəzi, böyrəklər)",
+        "Neyrosonoqrafiya (bir yaşa qədər uşaqlarda beynin ultrasəs müayinəsi)",
+        "Bud-çanaq oynağının müayinəsi",
+        "Hamiləliyin geniş ultrasəs müayinəsi",
+        "Süd vəzilərinin müayinəsi",
+        "Fetal ultrasonoqrafiya (dölün 3D, 4D texnologiyası ilə müayinəsi)"
+      ],
+      "source": "Doc1.pdf",
+      "status": "needs_clinic_confirmation",
+      "public_contact_policy": "Do not expose direct doctor phone numbers in Dr. Dia answers; route booking through Qəbul or operator."
+    },
+    {
+      "name_az": "Nəsi̇bov Eti̇bar Nəbi̇ Oğlu",
+      "specialty_az": "Şüa diaqnostikası üzrə həkim",
+      "public_focus_areas_az": [
+        "Abdominal ultrasəs müayinəsi (qaraciyər, öd kisəsi, dalaq, mədəaltı vəzi, böyrəklər)",
+        "Neyrosonoqrafiya (bir yaşa qədər uşaqlarda beynin ultrasəs müayinəsi)",
+        "Bud-çanaq oynağının müayinəsi",
+        "Hamiləliyin geniş ultrasəs müayinəsi",
+        "Süd vəzilərinin müayinəsi",
+        "Fetal ultrasonoqrafiya (dölün 3D, 4D texnologiyası ilə müayinəsi)"
+      ],
+      "source": "Doc1.pdf",
+      "status": "needs_clinic_confirmation",
+      "public_contact_policy": "Do not expose direct doctor phone numbers in Dr. Dia answers; route booking through Qəbul or operator."
+    },
+    {
+      "name_az": "Əli̇yeva Röya Si̇yab Qizi",
+      "specialty_az": "Həkim-nevropatoloq",
+      "public_focus_areas_az": [
+        "həkim nevropatoloq Neyrofizioloq. Elektroensofaloqramma üzrə mütəxəssis. 7"
+      ],
+      "source": "Doc1.pdf",
+      "status": "needs_clinic_confirmation",
+      "public_contact_policy": "Do not expose direct doctor phone numbers in Dr. Dia answers; route booking through Qəbul or operator."
+    },
+    {
+      "name_az": "Vəfa Cəbrayilova Nami̇q Qizi",
+      "specialty_az": "Həkim-kardioloq",
+      "public_focus_areas_az": [
+        "həkim kardioloq",
+        "Ürək xəstəlikləri Koronar arter xəstəliyi Ürək çatmamazlığı Ürək ritm pozğunluqları",
+        "Qan təzyiqi problemləri Hipertoniya Hipotoniya",
+        "Digər damar probləmləri Ateroskleroz Tromboz",
+        "Təcili vəziyyətlər Miokard infarktı Angina pektoris 8"
+      ],
+      "source": "Doc1.pdf",
+      "status": "needs_clinic_confirmation",
+      "public_contact_policy": "Do not expose direct doctor phone numbers in Dr. Dia answers; route booking through Qəbul or operator."
+    },
+    {
+      "name_az": "Səfurə Acalova Qəri̇b Qizi",
+      "specialty_az": "Həkim-oftalmoloq",
+      "public_focus_areas_az": [
+        "həkim oftalmoloq",
+        "Gözün ümumi müayinəsi (görmə itiliyi, ön hissənin biomikroskopik müayinəsi)",
+        "Refraksion dəyişikliklərin(miopiya, hipermetropiya, astiqmatizm, prestiopiya müayinəsi və koneksiyası)",
+        "Göz dibinin müayinəsi",
+        "Göz almasının iltihabi xəstəliklərinin müayinəsi və müalicəsi 9"
+      ],
+      "source": "Doc1.pdf",
+      "status": "needs_clinic_confirmation",
+      "public_contact_policy": "Do not expose direct doctor phone numbers in Dr. Dia answers; route booking through Qəbul or operator."
+    },
+    {
+      "name_az": "Gülnar Əzi̇zova Tahi̇r Qizi",
+      "specialty_az": "Şüa diaqnostikası üzrə həkim",
+      "public_focus_areas_az": [
+        "Abdominal ultrasəs müayinəsi (qaraciyər, öd kisəsi, dalaq, mədəaltı vəzi, böyrəklər)",
+        "Süd vəzilərinin müayinəsi",
+        "Kiçik çanaq orqanlarının ultrasəs müayinəsi (uşaqlıq, yumurtalıqlar, prostat vəzi, sidik kisəsi)",
+        "Qalxanabənzər vəzin müayinəsi",
+        "Səthi toxumaların müayinəsi 10"
+      ],
+      "source": "Doc1.pdf",
+      "status": "needs_clinic_confirmation",
+      "public_contact_policy": "Do not expose direct doctor phone numbers in Dr. Dia answers; route booking through Qəbul or operator."
+    },
+    {
+      "name_az": "Nərgi̇z Mehdi̇yeva Oruc Qizi",
+      "specialty_az": "Həkim-nevropatoloq",
+      "public_focus_areas_az": [
+        "NƏSİBOVA AFAQ NADİR QIZI",
+        "HƏZRƏTOVA XƏDİCƏ MƏMMƏD QIZI- .RAMAZANZADƏ REYHAN RAMAZAN QIZI",
+        "NƏSİBOV ETİBAR NƏBİ OĞLU -.ƏLİYEVA RÖYA SİYAB QIZI",
+        "VƏFA CƏBRAYILOVA NAMİQ QIZI",
+        "SƏFURƏ ACALOVA QƏRİB QIZI",
+        "GÜLNAR ƏZİZOVA TAHİR QIZI"
+      ],
+      "source": "Doc1.pdf",
+      "status": "needs_clinic_confirmation",
+      "public_contact_policy": "Do not expose direct doctor phone numbers in Dr. Dia answers; route booking through Qəbul or operator."
+    }
+  ],
+  "preparationPolicy": {
+    "source": "No dedicated preparation documents provided in this batch.",
+    "runtime_behavior": "For preparation questions, provide only confirmed general reminders if present; otherwise route to operator."
+  },
+  "contactsPolicy": {
+    "source": "Website footer/header and CMS settings, not Filehub documents.",
+    "branch_policy": "Single branch only unless user provides updated branch data.",
+    "hours_policy": "Standard hours must be confirmed from website/CMS before final runtime use."
+  }
+} as const satisfies {
+  metadata: {
+    name: string;
+    created_from: string;
+    language: string;
+    status: string;
+    runtime_policy: Record<string, string>;
+  };
+  navigationSections: readonly string[];
+  laboratoryPriceItems: readonly DrDiaPriceItem[];
+  diagnosticPriceItems: readonly DrDiaPriceItem[];
+  doctors: readonly DrDiaDoctorItem[];
+  preparationPolicy: Record<string, string>;
+  contactsPolicy: Record<string, string>;
+};
+
