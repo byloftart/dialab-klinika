@@ -4,9 +4,10 @@ Production website, CMS, and Dr. Dia assistant for DIALAB clinic.
 
 - Production site: [https://dialab.center](https://dialab.center)
 - Local repo: `/Users/iram/Projects/Dialab/dialab-klinika-repo-2`
-- Production VM: `diavm`
+- Production VM: AWS EC2 `diavm-aws-manual`
+- Production IP: `13.48.91.166`
 - Production app path: `/home/iram/apps/dialab`
-- Runtime: `GCP VM + Nginx + PM2 + Node/Express`
+- Runtime: `AWS EC2 + Nginx + PM2 + Node/Express`
 - Frontend: `React`, `Vite`, `Tailwind`
 - Backend: `Express`, `tRPC`, `Drizzle ORM`, `MySQL`
 - Assistant: `Dr. Dia` through `Hermes` with Mistral API
@@ -18,7 +19,7 @@ Browser
   -> Nginx
   -> Node / Express
   -> tRPC API
-  -> Cloud SQL MySQL / GCS / Hermes
+  -> Local MySQL / S3 / Hermes
 ```
 
 Assistant flow:
@@ -145,8 +146,10 @@ Core:
 
 - `DATABASE_URL`
 - `JWT_SECRET`
-- `GCS_BUCKET_NAME`
-- `GCS_PUBLIC_BASE_URL`
+- `STORAGE_PROVIDER=s3`
+- `AWS_REGION`
+- `S3_BUCKET_NAME`
+- `S3_PUBLIC_BASE_URL`
 - `PORT`
 
 Assistant:
@@ -187,28 +190,36 @@ pnpm vitest run server/_core/hermesAssistant.test.ts
 
 ## Production Operations
 
+Current production is on AWS. The older GCP VM may still exist temporarily as fallback, but it is no longer the active production target.
+
+SSH to AWS:
+
+```bash
+ssh -i /path/to/diavm-aws-manual-20260507.pem ubuntu@13.48.91.166
+```
+
 Check website process:
 
 ```bash
-gcloud compute ssh diavm --zone=europe-north1-c --command='sudo -u iram bash -lc "export PM2_HOME=/home/iram/.pm2; cd /home/iram/apps/dialab && pm2 status dialab"'
+sudo -iu iram bash -lc 'PM2_HOME=/home/iram/.pm2 pm2 status dialab'
 ```
 
 Check Hermes process:
 
 ```bash
-gcloud compute ssh diavm --zone=europe-north1-c --command='sudo -u iram env HOME=/home/iram PM2_HOME=/home/iram/.pm2 PATH=/home/iram/.local/bin:/usr/local/bin:/usr/bin:/bin bash -lc "pm2 status hermes-dr-dia"'
+sudo -iu iram bash -lc 'PM2_HOME=/home/iram/.pm2 pm2 status hermes-dr-dia'
 ```
 
 Build production app:
 
 ```bash
-gcloud compute ssh diavm --zone=europe-north1-c --command='sudo -u iram env HOME=/home/iram bash -lc "cd /home/iram/apps/dialab && pnpm check && pnpm build"'
+sudo -iu iram bash -lc 'cd /home/iram/apps/dialab && pnpm check && pnpm build'
 ```
 
 Restart website:
 
 ```bash
-gcloud compute ssh diavm --zone=europe-north1-c --command='sudo -u iram bash -lc "export PM2_HOME=/home/iram/.pm2; cd /home/iram/apps/dialab && pm2 restart dialab --update-env && pm2 status dialab"'
+sudo -iu iram bash -lc 'cd /home/iram/apps/dialab && PM2_HOME=/home/iram/.pm2 pm2 restart dialab --update-env && PM2_HOME=/home/iram/.pm2 pm2 save'
 ```
 
 Verify public site:
@@ -244,14 +255,14 @@ Do not deploy unrelated dirty worktree files accidentally.
 Typical file copy:
 
 ```bash
-gcloud compute scp path/to/file diavm:/home/iram/apps/dialab/path/to/file --zone=europe-north1-c
+scp -i /path/to/diavm-aws-manual-20260507.pem path/to/file ubuntu@13.48.91.166:/home/ubuntu/path/to/file
+ssh -i /path/to/diavm-aws-manual-20260507.pem ubuntu@13.48.91.166 'sudo cp /home/ubuntu/path/to/file /home/iram/apps/dialab/path/to/file && sudo chown iram:iram /home/iram/apps/dialab/path/to/file'
 ```
 
 Then:
 
 ```bash
-gcloud compute ssh diavm --zone=europe-north1-c --command='sudo -u iram env HOME=/home/iram bash -lc "cd /home/iram/apps/dialab && pnpm check && pnpm build"'
-gcloud compute ssh diavm --zone=europe-north1-c --command='sudo -u iram bash -lc "export PM2_HOME=/home/iram/.pm2; cd /home/iram/apps/dialab && pm2 restart dialab --update-env"'
+ssh -i /path/to/diavm-aws-manual-20260507.pem ubuntu@13.48.91.166 'sudo -iu iram bash -lc "cd /home/iram/apps/dialab && pnpm check && pnpm build && PM2_HOME=/home/iram/.pm2 pm2 restart dialab --update-env"'
 ```
 
 ## Documentation
@@ -262,9 +273,14 @@ Agent instructions:
 
 Current assistant handoffs:
 
+- `docs/project-handoff-2026-05-09-diavm-aws-migration.md`
 - `docs/project-handoff-2026-05-04-dr-dia-hermes-mistral-production.md`
 - `docs/project-handoff-2026-05-04-dr-dia-botpress-activation.md`
 - `docs/project-handoff-2026-05-02-dr-dia-widget.md`
+
+Production operations:
+
+- `docs/ops/aws-production-runbook.md`
 
 Knowledge/content map:
 
@@ -296,7 +312,7 @@ Recommended commit groups:
 If a future agent resumes this project:
 
 1. Read `AGENTS.md`.
-2. Read `docs/project-handoff-2026-05-04-dr-dia-hermes-mistral-production.md`.
+2. Read `docs/project-handoff-2026-05-09-diavm-aws-migration.md`.
 3. Run `git status --short`.
 4. Identify whether the requested change belongs to assistant, CMS/catalog, admin UI, or docs.
 5. Edit only the relevant files.

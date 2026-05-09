@@ -7,13 +7,17 @@ Use this file as the operating guide for AI coding agents working in this checko
 ## Project
 
 - Local repo: `/Users/iram/Projects/Dialab/dialab-klinika-repo-2`
-- Production VM: `diavm`
+- Production VM: AWS EC2 `diavm-aws-manual`
+- Production IP: `13.48.91.166`
 - Production app path: `/home/iram/apps/dialab`
 - Production PM2 app: `dialab`
 - Production PM2 user: `iram`
 - Active assistant: Dr. Dia
 - Current assistant runtime: Hermes gateway with Mistral API behind it
 - Hermes PM2 process: `hermes-dr-dia`
+- Active database: local MySQL on AWS EC2, `127.0.0.1:3306`
+- Active media storage: AWS S3 bucket `dialab-center-media-aws-293033346129`
+- GCP `diavm` is fallback only after the 2026-05-09 migration; do not delete it unless explicitly asked.
 
 ## Core Rules
 
@@ -62,25 +66,25 @@ PM2 must run as `iram`, not root.
 Check Dialab:
 
 ```bash
-gcloud compute ssh diavm --zone=europe-north1-c --command='sudo -u iram bash -lc "export PM2_HOME=/home/iram/.pm2; cd /home/iram/apps/dialab && pm2 status dialab"'
+sudo -iu iram bash -lc 'PM2_HOME=/home/iram/.pm2 pm2 status dialab'
 ```
 
 Check Hermes:
 
 ```bash
-gcloud compute ssh diavm --zone=europe-north1-c --command='sudo -u iram env HOME=/home/iram PM2_HOME=/home/iram/.pm2 PATH=/home/iram/.local/bin:/usr/local/bin:/usr/bin:/bin bash -lc "pm2 status hermes-dr-dia"'
+sudo -iu iram bash -lc 'PM2_HOME=/home/iram/.pm2 pm2 status hermes-dr-dia'
 ```
 
 Build on production:
 
 ```bash
-gcloud compute ssh diavm --zone=europe-north1-c --command='sudo -u iram env HOME=/home/iram bash -lc "cd /home/iram/apps/dialab && pnpm check && pnpm build"'
+sudo -iu iram bash -lc 'cd /home/iram/apps/dialab && pnpm check && pnpm build'
 ```
 
 Restart production:
 
 ```bash
-gcloud compute ssh diavm --zone=europe-north1-c --command='sudo -u iram bash -lc "export PM2_HOME=/home/iram/.pm2; cd /home/iram/apps/dialab && pm2 restart dialab --update-env && pm2 status dialab"'
+sudo -iu iram bash -lc 'cd /home/iram/apps/dialab && PM2_HOME=/home/iram/.pm2 pm2 restart dialab --update-env && PM2_HOME=/home/iram/.pm2 pm2 save'
 ```
 
 Verify public site:
@@ -114,6 +118,8 @@ pnpm vitest run server/_core/hermesAssistant.test.ts
 
 Important handoff docs:
 
+- `docs/project-handoff-2026-05-09-diavm-aws-migration.md`
+- `docs/ops/aws-production-runbook.md`
 - `docs/project-handoff-2026-05-04-dr-dia-hermes-mistral-production.md`
 - `docs/project-handoff-2026-05-04-dr-dia-botpress-activation.md`
 - `docs/project-handoff-2026-05-02-dr-dia-widget.md`
