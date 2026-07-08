@@ -95,6 +95,7 @@ Dr. Dia:
 - doctor guidance
 - appointment request direction
 - contact/operator direction
+- website voice input through Mistral transcription
 - same-language replies in Azerbaijani, Russian, or English
 - CMS/knowledge-aware guardrails
 
@@ -158,6 +159,15 @@ Assistant:
 - `HERMES_API_BASE_URL`
 - `HERMES_API_KEY`
 - `HERMES_MODEL`
+- `MISTRAL_API_KEY`
+- `MISTRAL_AUDIO_TRANSCRIPTION_MODEL=voxtral-mini-latest`
+
+Telegram:
+
+- `TELEGRAM_BOT_TOKEN`
+- `TELEGRAM_WEBHOOK_SECRET`
+- `TELEGRAM_OPERATOR_URL`
+- `TELEGRAM_MINI_APP_URL`
 
 Do not document or commit Mistral, DeepSeek, Hermes, Botpress, database, or JWT secrets.
 

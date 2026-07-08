@@ -678,6 +678,10 @@ export default function VirtualAssistant() {
                               setMessages={setChatMessages}
                               draft={chatDraft}
                               setDraft={setChatDraft}
+                              onOpenBooking={() => setActiveView("booking")}
+                              phoneHref={phoneHref}
+                              whatsappUrl={whatsappUrl}
+                              telegramUrl={telegramUrl}
                             />
                           ) : (
                             <>

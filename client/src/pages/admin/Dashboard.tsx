@@ -3,7 +3,7 @@ import AdminGuard from '@/components/admin/AdminGuard';
 import { trpc } from '@/lib/trpc';
 import {
   Calendar, MessageSquare, FlaskConical, Stethoscope,
-  Users, Image, TrendingUp, Clock, CheckCircle, AlertCircle
+  Users, Image, TrendingUp, CheckCircle, AlertCircle, MessageCircle
 } from 'lucide-react';
 import { Link } from 'wouter';
 
@@ -56,6 +56,7 @@ export default function Dashboard() {
   const { data: stats } = trpc.admin.stats.useQuery(undefined, { retry: false });
   const { data: appointments } = trpc.admin.appointments.list.useQuery(undefined, { retry: false });
   const { data: feedback } = trpc.admin.feedback.list.useQuery(undefined, { retry: false });
+  const { data: whatsapp } = trpc.admin.whatsapp.list.useQuery(undefined, { retry: false });
 
   const recentAppointments = appointments?.slice(0, 5) ?? [];
   const recentMessages = feedback?.slice(0, 5) ?? [];
@@ -95,17 +96,17 @@ export default function Dashboard() {
           />
           <StatCard
             icon={Users}
-            label="Cəmi qəbullar"
-            value={appointments?.length ?? 0}
+            label="WhatsApp"
+            value={stats?.unreadWhatsApp ?? 0}
             color="text-purple-600"
-            href="/admin/appointments"
+            href="/admin/whatsapp"
           />
           <StatCard
             icon={MessageSquare}
-            label="Cəmi mesajlar"
-            value={feedback?.length ?? 0}
+            label="Cəmi müraciətlər"
+            value={(appointments?.length ?? 0) + (feedback?.length ?? 0) + (whatsapp?.length ?? 0)}
             color="text-orange-500"
-            href="/admin/feedback"
+            href="/admin/whatsapp"
           />
         </div>
 
@@ -118,6 +119,7 @@ export default function Dashboard() {
             <QuickActionCard href="/admin/doctors" icon={Users} label="Həkimlər" description="Komanda" color="bg-purple-500" />
             <QuickActionCard href="/admin/gallery" icon={Image} label="Qalereya" description="Şəkillər" color="bg-orange-500" />
             <QuickActionCard href="/admin/appointments" icon={Calendar} label="Qəbullar" description="Pasient qeydləri" color="bg-blue-500" />
+            <QuickActionCard href="/admin/whatsapp" icon={MessageCircle} label="WhatsApp" description="Kanal mesajları" color="bg-green-600" />
             <QuickActionCard href="/admin/settings" icon={TrendingUp} label="Tənzimləmələr" description="Sayt məlumatları" color="bg-gray-600" />
           </div>
         </div>

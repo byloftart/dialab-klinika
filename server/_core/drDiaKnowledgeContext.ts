@@ -1,4 +1,4 @@
-import { drDiaKnowledgeBase, type DrDiaPriceItem } from "../../shared/drDiaKnowledgeBase";
+import { drDiaKnowledgeBase } from "../../shared/drDiaKnowledgeBase";
 
 type SettingRecord = {
   key: string;
@@ -30,28 +30,6 @@ function buildSettingsMap(settings: SettingRecord[]) {
 function formatSetting(settings: Record<string, string>, key: string, label: string) {
   const value = settings[key]?.trim();
   return value ? `${label}: ${value}` : null;
-}
-
-function groupPriceItems(items: readonly DrDiaPriceItem[]) {
-  return items.reduce<Record<string, DrDiaPriceItem[]>>((acc, item) => {
-    acc[item.category] ??= [];
-    acc[item.category].push(item);
-    return acc;
-  }, {});
-}
-
-function formatPriceGroups(title: string, items: readonly DrDiaPriceItem[]) {
-  const groups = groupPriceItems(items);
-  const lines = [title];
-
-  for (const category of Object.keys(groups).sort()) {
-    lines.push(`${category}:`);
-    for (const item of groups[category]) {
-      lines.push(`- ${item.name_az}: ${item.price}`);
-    }
-  }
-
-  return lines.join("\n");
 }
 
 function formatDoctors(cmsDoctors: RuntimeDoctor[]) {
@@ -97,11 +75,11 @@ export function buildDrDiaKnowledgeContext(input: BuildKnowledgeContextInput) {
 
   return [
     "Dr. Dia üçün təsdiqlənmiş cavab qaydaları:",
-    "- Qəbul və yazılış üçün istifadəçini widget altındakı Qəbul düyməsinə yönləndir.",
-    "- Operatorla dəqiqləşdirmə üçün WhatsApp və ya Telegram düymələrinə yönləndir.",
+    "- Qəbul və yazılış üçün istifadəçini cavabın altındakı Qəbul düyməsinə yönləndir.",
+    "- Operatorla dəqiqləşdirmə üçün cavabın altındakı WhatsApp və ya Telegram düymələrinə yönləndir.",
     "- Birbaşa həkim telefon nömrələrini cavabda yazma.",
     "- Hazırlıq qaydaları üçün ayrıca təsdiqlənmiş sənəd yoxdur; sual konkret hazırlıq tələb edirsə operatora yönləndir.",
-    "- Qiymətlər yalnız aşağıdakı siyahılarda varsa qeyd oluna bilər.",
+    "- Qiymət məlumatı Dr. Dia tərəfindən verilmir. Qiymət suallarında məbləğ yazma və istifadəçini canlı operatora yönləndir.",
     "",
     "Əlaqə, filial və iş saatları:",
     contactLines.length ? contactLines.join("\n") : "Əlaqə məlumatları CMS-də təsdiqlənməlidir.",
@@ -109,10 +87,6 @@ export function buildDrDiaKnowledgeContext(input: BuildKnowledgeContextInput) {
     "",
     "Əsas naviqasiya bölmələri:",
     drDiaKnowledgeBase.navigationSections.map((section) => `- ${section}`).join("\n"),
-    "",
-    formatPriceGroups("Laboratoriya qiymətləri:", drDiaKnowledgeBase.laboratoryPriceItems),
-    "",
-    formatPriceGroups("Diaqnostika və həkim qəbulu qiymətləri:", drDiaKnowledgeBase.diagnosticPriceItems),
     "",
     formatDoctors(input.cmsDoctors),
   ].join("\n");

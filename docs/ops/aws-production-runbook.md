@@ -71,6 +71,53 @@ Check local app response:
 curl -sS -o /dev/null -w 'local:%{http_code}\n' http://127.0.0.1:3000
 ```
 
+## WhatsApp Dr. Dia Channel
+
+The WhatsApp channel runs inside the existing `dialab` PM2 app. It does not use Telegram as an operator bridge.
+
+Meta webhook callback URL:
+
+```text
+https://dialab.center/api/whatsapp/webhook
+```
+
+Required production environment variables:
+
+```text
+WHATSAPP_ACCESS_TOKEN
+WHATSAPP_PHONE_NUMBER_ID
+WHATSAPP_BUSINESS_ACCOUNT_ID
+WHATSAPP_WEBHOOK_VERIFY_TOKEN
+WHATSAPP_GRAPH_API_VERSION
+WHATSAPP_WEB_APP_BASE_URL
+```
+
+Database migration to apply before enabling the webhook:
+
+```bash
+sudo -iu iram bash -lc 'cd /home/iram/apps/dialab && mysql --defaults-extra-file=/home/iram/.my.cnf dialab < drizzle/0007_add_whatsapp_channel.sql'
+```
+
+Meta webhook verification smoke test after env is configured:
+
+```bash
+curl -i "https://dialab.center/api/whatsapp/webhook?hub.mode=subscribe&hub.verify_token=$WHATSAPP_WEBHOOK_VERIFY_TOKEN&hub.challenge=healthcheck"
+```
+
+Expected response body:
+
+```text
+healthcheck
+```
+
+Admin inbox:
+
+```text
+https://dialab.center/admin/whatsapp
+```
+
+The admin inbox can list WhatsApp conversations, mark statuses, and send operator replies through the WhatsApp Cloud API. Do not put the API number into the regular WhatsApp mobile app after it is connected to Cloud API.
+
 ## Check Active Database And Storage
 
 Run on EC2:
@@ -185,3 +232,16 @@ Never commit:
 - webhook secrets
 - Hermes or LLM API keys
 - AWS access keys
+
+## Website Voice Input Env
+
+The website Dr. Dia voice input runs inside the existing `dialab` PM2 process. Store the Mistral STT secret only in the production environment file on AWS, not in git:
+
+```bash
+MISTRAL_API_KEY=<secret>
+MISTRAL_AUDIO_TRANSCRIPTION_MODEL=voxtral-mini-latest
+```
+
+After changing these values, rebuild and restart the existing app as user `iram`, then smoke-test from the public website by opening Dr. Dia, recording a short voice input, checking that the transcribed text appears in the input field, and sending it.
+
+Telegram voice input code exists locally, but Telegram production deployment is currently deferred. Do not deploy Telegram voice behavior unless that channel is explicitly resumed.

@@ -3,7 +3,7 @@ import { Link, useLocation } from 'wouter';
 import {
   LayoutDashboard, FlaskConical, Stethoscope, Users, Image,
   Calendar, MessageSquare, Settings, LogOut, Menu, X, FileText,
-  ChevronRight, Bell, Shield, Bot
+  ChevronRight, Bell, Shield, Bot, MessageCircle
 } from 'lucide-react';
 import { trpc } from '@/lib/trpc';
 
@@ -16,6 +16,7 @@ const navItems = [
   { href: '/admin/pages', label: 'Səhifələr', icon: FileText },
   { href: '/admin/appointments', label: 'Qəbullar', icon: Calendar },
   { href: '/admin/feedback', label: 'Mesajlar', icon: MessageSquare },
+  { href: '/admin/whatsapp', label: 'WhatsApp', icon: MessageCircle },
   { href: '/admin/assistant', label: 'Dr. Dia', icon: Bot },
   { href: '/admin/settings', label: 'Tənzimləmələr', icon: Settings },
 ];
@@ -83,6 +84,8 @@ export default function AdminLayout({ children, title }: AdminLayoutProps) {
                 ? stats.newAppointments
                 : item.href === '/admin/feedback' && stats?.unreadMessages
                 ? stats.unreadMessages
+                : item.href === '/admin/whatsapp' && stats?.unreadWhatsApp
+                ? stats.unreadWhatsApp
                 : null;
 
               return (
@@ -142,7 +145,7 @@ export default function AdminLayout({ children, title }: AdminLayoutProps) {
           </div>
 
           <div className="flex items-center gap-3">
-            {(stats?.newAppointments || stats?.unreadMessages) ? (
+            {(stats?.newAppointments || stats?.unreadMessages || stats?.unreadWhatsApp) ? (
               <div className="relative">
                 <Bell className="w-5 h-5 text-gray-500" />
                 <span className="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full" />

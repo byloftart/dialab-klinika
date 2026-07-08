@@ -1,4 +1,4 @@
-import { eq, asc, desc, and, like } from "drizzle-orm";
+import { eq, asc, desc, and, like, lt } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
 import {
   InsertUser, users,
@@ -12,6 +12,9 @@ import {
   feedbackMessages, InsertFeedbackMessage,
   siteSettings, InsertSiteSetting,
   staticPages, InsertStaticPage,
+  telegramChatMessages, InsertTelegramChatMessage,
+  whatsappConversations, InsertWhatsAppConversation,
+  whatsappChatMessages, InsertWhatsAppChatMessage,
 } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
@@ -402,6 +405,149 @@ export async function deleteStaticPage(id: number) {
   const db = await getDb();
   if (!db) throw new Error("Database not available");
   return db.delete(staticPages).where(eq(staticPages.id, id));
+}
+
+// ─── Dr. Dia Telegram Chat History ───────────────────────────────────────────
+
+export async function getTelegramChatMessages(chatId: string, limit = 18) {
+  const db = await getDb();
+  if (!db) return [];
+
+  const rows = await db
+    .select()
+    .from(telegramChatMessages)
+    .where(eq(telegramChatMessages.chatId, chatId))
+    .orderBy(desc(telegramChatMessages.id))
+    .limit(limit);
+
+  return rows.reverse();
+}
+
+export async function addTelegramChatMessage(chatId: string, role: InsertTelegramChatMessage["role"], content: string) {
+  const db = await getDb();
+  if (!db) {
+    console.warn("[Database] Cannot save Telegram chat message: database not available");
+    return;
+  }
+
+  await db.insert(telegramChatMessages).values({ chatId, role, content });
+}
+
+export async function pruneTelegramChatMessages(chatId: string, keep = 18) {
+  const db = await getDb();
+  if (!db) return;
+
+  const keptRows = await db
+    .select({ id: telegramChatMessages.id })
+    .from(telegramChatMessages)
+    .where(eq(telegramChatMessages.chatId, chatId))
+    .orderBy(desc(telegramChatMessages.id))
+    .limit(keep);
+
+  const cutoff = keptRows.at(-1)?.id;
+  if (!cutoff || keptRows.length < keep) return;
+
+  await db
+    .delete(telegramChatMessages)
+    .where(and(eq(telegramChatMessages.chatId, chatId), lt(telegramChatMessages.id, cutoff)));
+}
+
+// ─── Dr. Dia WhatsApp Channel ────────────────────────────────────────────────
+
+export async function getWhatsAppConversations() {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(whatsappConversations).orderBy(desc(whatsappConversations.updatedAt));
+}
+
+export async function getWhatsAppConversationByWaId(waId: string) {
+  const db = await getDb();
+  if (!db) return null;
+  const result = await db.select().from(whatsappConversations).where(eq(whatsappConversations.waId, waId)).limit(1);
+  return result.length > 0 ? result[0] : null;
+}
+
+export async function upsertWhatsAppConversation(data: InsertWhatsAppConversation) {
+  const db = await getDb();
+  if (!db) {
+    console.warn("[Database] Cannot save WhatsApp conversation: database not available");
+    return;
+  }
+
+  await db.insert(whatsappConversations).values(data).onDuplicateKeyUpdate({
+    set: {
+      displayName: data.displayName ?? null,
+      phoneNumber: data.phoneNumber ?? null,
+      lastUserMessage: data.lastUserMessage ?? null,
+      lastAssistantMessage: data.lastAssistantMessage ?? null,
+      status: data.status ?? "new",
+      isRead: data.isRead ?? false,
+      needsOperator: data.needsOperator ?? false,
+    },
+  });
+}
+
+export async function updateWhatsAppConversation(waId: string, data: Partial<InsertWhatsAppConversation>) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  return db.update(whatsappConversations).set(data).where(eq(whatsappConversations.waId, waId));
+}
+
+export async function deleteWhatsAppConversation(waId: string) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.delete(whatsappChatMessages).where(eq(whatsappChatMessages.waId, waId));
+  return db.delete(whatsappConversations).where(eq(whatsappConversations.waId, waId));
+}
+
+export async function countUnreadWhatsAppConversations() {
+  const db = await getDb();
+  if (!db) return 0;
+  const result = await db.select().from(whatsappConversations).where(eq(whatsappConversations.isRead, false));
+  return result.length;
+}
+
+export async function getWhatsAppChatMessages(waId: string, limit = 18) {
+  const db = await getDb();
+  if (!db) return [];
+
+  const rows = await db
+    .select()
+    .from(whatsappChatMessages)
+    .where(eq(whatsappChatMessages.waId, waId))
+    .orderBy(desc(whatsappChatMessages.id))
+    .limit(limit);
+
+  return rows.reverse();
+}
+
+export async function addWhatsAppChatMessage(waId: string, role: InsertWhatsAppChatMessage["role"], content: string) {
+  const db = await getDb();
+  if (!db) {
+    console.warn("[Database] Cannot save WhatsApp chat message: database not available");
+    return;
+  }
+
+  await db.insert(whatsappChatMessages).values({ waId, role, content });
+}
+
+export async function pruneWhatsAppChatMessages(waId: string, keep = 18) {
+  const db = await getDb();
+  if (!db) return;
+
+  const keptRows = await db
+    .select({ id: whatsappChatMessages.id })
+    .from(whatsappChatMessages)
+    .where(eq(whatsappChatMessages.waId, waId))
+    .orderBy(desc(whatsappChatMessages.id))
+    .limit(keep);
+
+  const cutoff = keptRows.at(-1)?.id;
+  if (!cutoff || keptRows.length < keep) return;
+
+  await db
+    .delete(whatsappChatMessages)
+    .where(and(eq(whatsappChatMessages.waId, waId), lt(whatsappChatMessages.id, cutoff)));
 }
 
 // ─── Local Auth Functions ────────────────────────────────────────────────────

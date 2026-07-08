@@ -19,8 +19,8 @@ export default function HeroSection() {
   };
 
   const badge = getSetting('hero.badge', 'Dialab Tibb Mərkəzi');
-  const title1 = getSetting('hero.title1', 'Sağlamlığınız —');
-  const title2 = getSetting('hero.title2', 'Bizim Prioritet');
+  const title1 = getSetting('hero.title1', 'Dəqiqlik.');
+  const title2 = getSetting('hero.title2', 'Etibar. Qayğı.');
   const subtitle = getSetting('hero.subtitle', '500+ növ laboratoriya testi və müasir diaqnostika avadanlıqları ilə sağlamlığınızı dəqiq və etibarlı şəkildə qiymətləndiririk.');
 
   const heroSlides = [
@@ -84,14 +84,14 @@ export default function HeroSection() {
             </span>
 
             {/* Heading — dark text on light overlay */}
-            <h1 className="text-4xl sm:text-5xl md:text-6xl xl:text-7xl font-light leading-[1.1] text-gray-900 mb-2">
+            <h1 className="text-3xl sm:text-5xl md:text-6xl xl:text-7xl font-light leading-[1.1] text-gray-900 mb-2">
               {title1}
             </h1>
-            <h1 className="text-4xl sm:text-5xl md:text-6xl xl:text-7xl font-extrabold leading-[1.1] text-gray-900 mb-6">
+            <h1 className="text-3xl sm:text-5xl md:text-6xl xl:text-7xl font-extrabold leading-[1.1] text-gray-900 mb-6">
               <span className="text-[#00b982]">{title2.split(' ')[0]}</span> {title2.split(' ').slice(1).join(' ')}
             </h1>
 
-            <p className="text-gray-600 text-base md:text-lg leading-relaxed max-w-lg mb-6">
+            <p className="text-gray-600 text-sm sm:text-base md:text-lg leading-relaxed max-w-[18rem] sm:max-w-lg mb-6">
               {subtitle}
             </p>
 

@@ -17,6 +17,8 @@ import SiteSettings from "./pages/admin/SiteSettings";
 import Pages from "./pages/admin/Pages";
 import ContentPage from "./pages/ContentPage";
 import AssistantAdminPage from "./pages/admin/Assistant";
+import TelegramMiniApp from "./pages/TelegramMiniApp";
+import WhatsApp from "./pages/admin/WhatsApp";
 
 function Router() {
   return (
@@ -25,6 +27,7 @@ function Router() {
       <Route path={"/"} component={Home} />
       <Route path={"/login"} component={Login} />
       <Route path={"/pages/:slug"} component={ContentPage} />
+      <Route path={"/telegram/dr-dia"} component={TelegramMiniApp} />
 
       {/* Admin routes */}
       <Route path={"/admin"} component={Dashboard} />
@@ -34,6 +37,7 @@ function Router() {
       <Route path={"/admin/gallery"} component={Gallery} />
       <Route path={"/admin/appointments"} component={Appointments} />
       <Route path={"/admin/feedback"} component={Feedback} />
+      <Route path={"/admin/whatsapp"} component={WhatsApp} />
       <Route path={"/admin/pages"} component={Pages} />
       <Route path={"/admin/assistant"} component={AssistantAdminPage} />
       <Route path={"/admin/settings"} component={SiteSettings} />

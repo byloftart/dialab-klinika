@@ -14,6 +14,8 @@ Use this file as the operating guide for AI coding agents working in this checko
 - Production PM2 user: `iram`
 - Active assistant: Dr. Dia
 - Current assistant runtime: Hermes gateway with Mistral API behind it
+- Website voice input: browser `MediaRecorder` plus Mistral `audio/transcriptions`
+- Telegram voice input: code helper exists, but production deployment is deferred unless explicitly resumed
 - Hermes PM2 process: `hermes-dr-dia`
 - Active database: local MySQL on AWS EC2, `127.0.0.1:3306`
 - Active media storage: AWS S3 bucket `dialab-center-media-aws-293033346129`
@@ -112,6 +114,12 @@ For Hermes-specific backend helper changes:
 
 ```bash
 pnpm vitest run server/_core/hermesAssistant.test.ts
+```
+
+For Telegram channel changes:
+
+```bash
+pnpm vitest run server/telegramAdapter.test.ts
 ```
 
 ## Documentation

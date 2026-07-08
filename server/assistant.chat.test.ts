@@ -3,6 +3,7 @@ import type { TrpcContext } from "./_core/context";
 import type { HermesChatMessage } from "./_core/hermesAssistant";
 
 const callHermesChatMock = vi.hoisted(() => vi.fn());
+const transcribeMistralAudioMock = vi.hoisted(() => vi.fn());
 
 vi.mock("./_core/env", () => ({
   ENV: {
@@ -10,6 +11,8 @@ vi.mock("./_core/env", () => ({
     hermesApiBaseUrl: "http://127.0.0.1:8642/v1",
     hermesApiKey: "test-hermes-key",
     hermesModel: "dr-dia-hermes-test",
+    mistralApiKey: "test-mistral-key",
+    mistralAudioTranscriptionModel: "voxtral-mini-latest",
     botpressClientId: "",
     botpressApiUrl: "",
     botpressStylesheetUrl: "",
@@ -22,6 +25,15 @@ vi.mock("./_core/hermesAssistant", async () => {
   return {
     ...actual,
     callHermesChat: callHermesChatMock,
+  };
+});
+
+vi.mock("./_core/mistralTranscription", async () => {
+  const actual = await vi.importActual<typeof import("./_core/mistralTranscription")>("./_core/mistralTranscription");
+
+  return {
+    ...actual,
+    transcribeMistralAudio: transcribeMistralAudioMock,
   };
 });
 
@@ -123,6 +135,97 @@ describe("assistant.chat", () => {
   beforeEach(() => {
     callHermesChatMock.mockReset();
     callHermesChatMock.mockResolvedValue({ content: "Hermes cavabı" });
+    transcribeMistralAudioMock.mockReset();
+    transcribeMistralAudioMock.mockResolvedValue("Qanın ümumi analizi neçəyədir?");
+  });
+
+  it("transcribes web voice input through Mistral", async () => {
+    callHermesChatMock.mockResolvedValue({ content: "Qanın ümumi analizi neçəyədir?" });
+    const { appRouter } = await import("./routers");
+    const caller = appRouter.createCaller(createPublicContext());
+
+    const result = await caller.assistant.transcribeVoice({
+      audioBase64: Buffer.from("fake-webm-audio").toString("base64"),
+      mimeType: "audio/webm",
+      fileName: "dr-dia-voice.webm",
+    });
+
+    expect(result).toEqual({ text: "Qanın ümumi analizi neçəyədir?" });
+    expect(transcribeMistralAudioMock).toHaveBeenCalledWith(expect.any(Uint8Array), {
+      contentType: "audio/webm",
+      fileName: "dr-dia-voice.webm",
+      language: undefined,
+    });
+  });
+
+  it("cleans Azerbaijani voice transcription into readable Latin script before showing it", async () => {
+    transcribeMistralAudioMock.mockResolvedValue("Салам! Сизде клиники анализлерене тахыдыр.");
+    callHermesChatMock.mockResolvedValue({ content: "Salam! Sizdə klinik analizlərə nə daxildir?" });
+    const { appRouter } = await import("./routers");
+    const caller = appRouter.createCaller(createPublicContext());
+
+    const result = await caller.assistant.transcribeVoice({
+      audioBase64: Buffer.from("fake-webm-audio").toString("base64"),
+      mimeType: "audio/webm",
+      fileName: "dr-dia-voice.webm",
+    });
+
+    expect(result.text).toBe("Salam! Sizdə klinik analizlərə nə daxildir?");
+    expect(result.text).not.toMatch(/[А-Яа-яЁё]/);
+    expect(callHermesChatMock).toHaveBeenCalledWith(expect.objectContaining({
+      messages: expect.arrayContaining([
+        expect.objectContaining({
+          role: "system",
+          content: expect.stringContaining("clean Azerbaijani Latin text"),
+        }),
+        expect.objectContaining({
+          role: "system",
+          content: expect.stringContaining("Do not introduce new topics"),
+        }),
+        expect.objectContaining({
+          role: "system",
+          content: expect.stringContaining("Sizdə klinik analizlərə nə daxildir?"),
+        }),
+        expect.objectContaining({
+          role: "user",
+          content: "Салам! Сизде клиники анализлерене тахыдыр.",
+        }),
+      ]),
+    }));
+  });
+
+  it("does not translate Russian voice transcription into Azerbaijani", async () => {
+    transcribeMistralAudioMock.mockResolvedValue("Сколько стоит анализ крови?");
+    callHermesChatMock.mockResolvedValue({ content: "Qan analizi neçəyədir?" });
+    const { appRouter } = await import("./routers");
+    const caller = appRouter.createCaller(createPublicContext());
+
+    const result = await caller.assistant.transcribeVoice({
+      audioBase64: Buffer.from("fake-webm-audio").toString("base64"),
+      mimeType: "audio/webm",
+      fileName: "dr-dia-voice.webm",
+    });
+
+    expect(result.text).toBe("Сколько стоит анализ крови?");
+    expect(result.text).toMatch(/[А-Яа-яЁё]/);
+    expect(callHermesChatMock).not.toHaveBeenCalled();
+  });
+
+  it("does not translate English voice transcription into Azerbaijani", async () => {
+    transcribeMistralAudioMock.mockResolvedValue("How much is a blood test?");
+    callHermesChatMock.mockResolvedValue({ content: "Qan analizi neçəyədir?" });
+    const { appRouter } = await import("./routers");
+    const caller = appRouter.createCaller(createPublicContext());
+
+    const result = await caller.assistant.transcribeVoice({
+      audioBase64: Buffer.from("fake-webm-audio").toString("base64"),
+      mimeType: "audio/webm",
+      fileName: "dr-dia-voice.webm",
+    });
+
+    expect(result.text).toBe("How much is a blood test?");
+    expect(result.text).not.toMatch(/[əöüğşçı]/i);
+    expect(callHermesChatMock).not.toHaveBeenCalled();
   });
 
   it("trims long chat history before sending it to Hermes", async () => {
@@ -139,9 +242,9 @@ describe("assistant.chat", () => {
 
     expect(sentMessages).toHaveLength(19);
     expect(sentMessages[0]?.role).toBe("system");
-    expect(sentMessages[0]?.content).toContain("Laboratoriya qiymətləri:");
-    expect(sentMessages[0]?.content).toContain("Qanın ümumi analizi");
-    expect(sentMessages[0]?.content).toContain("16.00 AZN");
+    expect(sentMessages[0]?.content).not.toContain("Laboratoriya qiymətləri:");
+    expect(sentMessages[0]?.content).toContain("Qiymət məlumatı Dr. Dia tərəfindən verilmir");
+    expect(sentMessages[0]?.content).not.toContain("16.00 AZN");
     expect(sentMessages[0]?.content).toContain("Birbaşa həkim telefon nömrələrini cavabda yazma");
     expect(sentMessages[0]?.content).not.toContain("+994 50 735 26 92");
     expect(sentMessages.slice(1).map((message) => message.content)).toEqual(
@@ -185,7 +288,7 @@ describe("assistant.chat", () => {
 
     expect(result.content).toContain("həftəiçi 09:00 - 18:00");
     expect(result.content).toContain("Şənbə: 09:00 - 14:00");
-    expect(result.content).toContain("Qəbul düyməsindən istifadə edin");
+    expect(result.content).toContain("Qəbul");
     expect(callHermesChatMock).not.toHaveBeenCalled();
   });
 
@@ -202,7 +305,7 @@ describe("assistant.chat", () => {
     expect(callHermesChatMock).not.toHaveBeenCalled();
   });
 
-  it("answers known price questions deterministically without calling Hermes", async () => {
+  it("routes price questions to the operator without exposing prices or calling Hermes", async () => {
     const { appRouter } = await import("./routers");
     const caller = appRouter.createCaller(createPublicContext());
 
@@ -210,14 +313,14 @@ describe("assistant.chat", () => {
       messages: [{ role: "user", content: "Histerosalpinqoqrafiya qiyməti nə qədərdir?" }],
     });
 
-    expect(result.content).toContain("Histerosalpinqoqrafiya");
-    expect(result.content).toContain("50.00 AZN");
+    expect(result.content).toContain("qiymət");
+    expect(result.content).toContain("operator");
+    expect(result.content).not.toContain("50.00 AZN");
     expect(result.content).not.toContain("Exohisterosalpinqoqrafiya");
-    expect(result.content).toContain("Qəbul düyməsindən istifadə edin");
     expect(callHermesChatMock).not.toHaveBeenCalled();
   });
 
-  it("prefers the exact longer service name for similar price items", async () => {
+  it("does not expose exact prices for similar price items", async () => {
     const { appRouter } = await import("./routers");
     const caller = appRouter.createCaller(createPublicContext());
 
@@ -225,13 +328,14 @@ describe("assistant.chat", () => {
       messages: [{ role: "user", content: "Exohisterosalpinqoqrafiya qiyməti nə qədərdir?" }],
     });
 
-    expect(result.content).toContain("Exohisterosalpinqoqrafiya");
-    expect(result.content).toContain("40.00 AZN");
-    expect(result.content).not.toContain("Histerosalpinqoqrafiya - 50.00 AZN");
+    expect(result.content).toContain("qiymət");
+    expect(result.content).toContain("operator");
+    expect(result.content).not.toContain("40.00 AZN");
+    expect(result.content).not.toContain("50.00 AZN");
     expect(callHermesChatMock).not.toHaveBeenCalled();
   });
 
-  it("answers exact laboratory price questions without broad extra matches", async () => {
+  it("routes exact laboratory price questions to the operator", async () => {
     const { appRouter } = await import("./routers");
     const caller = appRouter.createCaller(createPublicContext());
 
@@ -239,13 +343,15 @@ describe("assistant.chat", () => {
       messages: [{ role: "user", content: "Qanın ümumi analizi neçəyədir?" }],
     });
 
-    expect(result.content).toContain("Qanın ümumi analizi");
-    expect(result.content).toContain("16.00 AZN");
+    expect(result.content).toContain("qiymət");
+    expect(result.content).toContain("operator");
+    expect(result.content).not.toContain("Qanın ümumi analizi");
+    expect(result.content).not.toContain("16.00 AZN");
     expect(result.content).not.toContain("Ümumi zülal");
     expect(callHermesChatMock).not.toHaveBeenCalled();
   });
 
-  it("answers common diagnostic price aliases deterministically", async () => {
+  it("routes common diagnostic price aliases to the operator", async () => {
     const { appRouter } = await import("./routers");
     const caller = appRouter.createCaller(createPublicContext());
 
@@ -253,8 +359,10 @@ describe("assistant.chat", () => {
       messages: [{ role: "user", content: "EKQ qiyməti nə qədərdir?" }],
     });
 
-    expect(result.content).toContain("Ürəyin elektrokardioqramması");
-    expect(result.content).toContain("20.00 AZN");
+    expect(result.content).toContain("qiymət");
+    expect(result.content).toContain("operator");
+    expect(result.content).not.toContain("Ürəyin elektrokardioqramması");
+    expect(result.content).not.toContain("20.00 AZN");
     expect(callHermesChatMock).not.toHaveBeenCalled();
   });
 

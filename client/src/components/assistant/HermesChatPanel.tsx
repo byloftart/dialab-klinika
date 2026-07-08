@@ -1,5 +1,5 @@
-import { useEffect, useMemo, useRef, type Dispatch, type SetStateAction } from "react";
-import { Loader2, MessageCircle, RotateCcw, Send } from "lucide-react";
+import { useEffect, useMemo, useRef, useState, type Dispatch, type SetStateAction } from "react";
+import { CalendarDays, Loader2, MessageCircle, Mic, Phone, RotateCcw, Send, Square } from "lucide-react";
 import type { AssistantChatContext, AssistantChatMessage, AssistantProvider } from "@/lib/assistant";
 import { trpc } from "@/lib/trpc";
 
@@ -10,6 +10,10 @@ type HermesChatPanelProps = {
   setMessages: Dispatch<SetStateAction<AssistantChatMessage[]>>;
   draft: string;
   setDraft: Dispatch<SetStateAction<string>>;
+  onOpenBooking?: () => void;
+  phoneHref?: string;
+  whatsappUrl?: string;
+  telegramUrl?: string;
 };
 
 const contextCopy: Record<string, { message: string; suggestion: string }> = {
@@ -89,6 +93,55 @@ function renderAssistantText(content: string) {
   );
 }
 
+function getSupportedAudioMimeType() {
+  if (typeof MediaRecorder === "undefined") {
+    return "";
+  }
+
+  const candidates = [
+    "audio/webm;codecs=opus",
+    "audio/webm",
+    "audio/ogg;codecs=opus",
+    "audio/ogg",
+    "audio/mp4",
+  ];
+
+  return candidates.find((type) => MediaRecorder.isTypeSupported(type)) || "";
+}
+
+async function blobToBase64(blob: Blob) {
+  const buffer = await blob.arrayBuffer();
+  let binary = "";
+  const bytes = new Uint8Array(buffer);
+  const chunkSize = 0x8000;
+
+  for (let index = 0; index < bytes.length; index += chunkSize) {
+    const chunk = bytes.slice(index, index + chunkSize);
+    for (let chunkIndex = 0; chunkIndex < chunk.length; chunkIndex += 1) {
+      binary += String.fromCharCode(chunk[chunkIndex]);
+    }
+  }
+
+  return btoa(binary);
+}
+
+function normalizeMimeType(mimeType: string) {
+  return (mimeType.split(";")[0] || "audio/webm") as "audio/webm" | "audio/ogg" | "audio/mpeg" | "audio/mp4" | "audio/wav";
+}
+
+function getMessageActions(content: string) {
+  const normalized = content.toLowerCase();
+  const hasBookingAction = /(qəbul|qebul|randevu|запис|при[её]м|appointment|book)/i.test(content);
+  const hasOperatorAction = /(operator|оператор|whatsapp|telegram|dəqiqləş|deqiqləş|уточн|связ|contact|əlaqə|elaqe)/i.test(content);
+  const hasCallAction = /(zəng|zeng|звон|позвон|телефон|call|phone)/i.test(content);
+
+  return {
+    booking: hasBookingAction,
+    call: hasCallAction,
+    operator: hasOperatorAction || normalized.includes("canlı operator"),
+  };
+}
+
 export default function HermesChatPanel({
   provider,
   chatContext,
@@ -96,12 +149,23 @@ export default function HermesChatPanel({
   setMessages,
   draft,
   setDraft,
+  onOpenBooking,
+  phoneHref,
+  whatsappUrl,
+  telegramUrl,
 }: HermesChatPanelProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+  const mediaStreamRef = useRef<MediaStream | null>(null);
+  const audioChunksRef = useRef<Blob[]>([]);
+  const [isRecordingVoice, setIsRecordingVoice] = useState(false);
+  const [voiceError, setVoiceError] = useState("");
   const chatMutation = trpc.assistant.chat.useMutation();
+  const voiceMutation = trpc.assistant.transcribeVoice.useMutation();
   const quickActionId = chatContext.quickActionId ?? "";
   const activeCopy = contextCopy[quickActionId];
   const isHermesReady = provider.type === "hermes";
+  const isVoiceBusy = isRecordingVoice || voiceMutation.isPending;
 
   useEffect(() => {
     if (messages.length === 0) {
@@ -114,9 +178,71 @@ export default function HermesChatPanel({
       top: scrollRef.current.scrollHeight,
       behavior: "smooth",
     });
-  }, [messages, chatMutation.isPending]);
+  }, [messages, chatMutation.isPending, voiceMutation.isPending]);
+
+  useEffect(() => () => {
+    mediaRecorderRef.current?.stop();
+    mediaStreamRef.current?.getTracks().forEach((track) => track.stop());
+  }, []);
 
   const visibleMessages = useMemo(() => messages.slice(-12), [messages]);
+
+  const renderAssistantActions = (content: string) => {
+    const actions = getMessageActions(content);
+
+    if (!actions.booking && !actions.call && !actions.operator) {
+      return null;
+    }
+
+    return (
+      <div className="mt-3 flex flex-wrap gap-2">
+        {actions.booking && onOpenBooking ? (
+          <button
+            type="button"
+            onClick={onOpenBooking}
+            className="inline-flex min-h-[36px] items-center gap-1.5 rounded-2xl border border-[#00b982]/25 bg-[#f3fffb] px-3 text-xs font-semibold text-[#1a365d] transition-colors hover:border-[#00b982]/45 hover:bg-white"
+          >
+            <CalendarDays className="h-3.5 w-3.5 text-[#00b982]" />
+            Qəbul
+          </button>
+        ) : null}
+
+        {actions.call && phoneHref ? (
+          <a
+            href={phoneHref}
+            className="inline-flex min-h-[36px] items-center gap-1.5 rounded-2xl border border-[#00b982]/25 bg-[#f3fffb] px-3 text-xs font-semibold text-[#1a365d] transition-colors hover:border-[#00b982]/45 hover:bg-white"
+          >
+            <Phone className="h-3.5 w-3.5 text-[#00b982]" />
+            Zəng
+          </a>
+        ) : null}
+
+        {actions.operator && whatsappUrl ? (
+          <a
+            href={whatsappUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex min-h-[36px] items-center gap-1.5 rounded-2xl border border-[#00b982]/25 bg-[#f3fffb] px-3 text-xs font-semibold text-[#1a365d] transition-colors hover:border-[#00b982]/45 hover:bg-white"
+          >
+            <MessageCircle className="h-3.5 w-3.5 text-[#00b982]" />
+            WhatsApp
+          </a>
+        ) : null}
+
+        {actions.operator && telegramUrl ? (
+          <a
+            href={telegramUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex min-h-[36px] items-center gap-1.5 rounded-2xl border border-[#00b982]/25 bg-[#f3fffb] px-3 text-xs font-semibold text-[#1a365d] transition-colors hover:border-[#00b982]/45 hover:bg-white"
+          >
+            <Send className="h-3.5 w-3.5 text-[#00b982]" />
+            Telegram
+          </a>
+        ) : null}
+      </div>
+    );
+  };
 
   const sendMessage = async (content: string) => {
     const trimmedContent = content.trim();
@@ -165,6 +291,85 @@ export default function HermesChatPanel({
     setMessages([getInitialAssistantMessage(chatContext)]);
     setDraft("");
     chatMutation.reset();
+    voiceMutation.reset();
+    setVoiceError("");
+  };
+
+  const transcribeVoiceBlob = async (blob: Blob) => {
+    if (!blob.size) {
+      setVoiceError("Səs yazısı boşdur. Yenidən cəhd edin.");
+      return;
+    }
+
+    try {
+      setVoiceError("");
+      const audioBase64 = await blobToBase64(blob);
+      const mimeType = normalizeMimeType(blob.type);
+      const result = await voiceMutation.mutateAsync({
+        audioBase64,
+        mimeType,
+        fileName: `dr-dia-voice.${mimeType.split("/")[1] || "webm"}`,
+      });
+
+      setDraft(result.text);
+    } catch {
+      setVoiceError("Səsi mətnə çevirmək mümkün olmadı. Zəhmət olmasa yenidən cəhd edin.");
+    }
+  };
+
+  const stopVoiceRecording = () => {
+    const recorder = mediaRecorderRef.current;
+    if (recorder && recorder.state !== "inactive") {
+      recorder.stop();
+    }
+  };
+
+  const startVoiceRecording = async () => {
+    if (!navigator.mediaDevices?.getUserMedia || typeof MediaRecorder === "undefined") {
+      setVoiceError("Brauzeriniz səsli giriş funksiyasını dəstəkləmir.");
+      return;
+    }
+
+    try {
+      setVoiceError("");
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const mimeType = getSupportedAudioMimeType();
+      const recorder = mimeType ? new MediaRecorder(stream, { mimeType }) : new MediaRecorder(stream);
+
+      audioChunksRef.current = [];
+      mediaStreamRef.current = stream;
+      mediaRecorderRef.current = recorder;
+
+      recorder.addEventListener("dataavailable", (event) => {
+        if (event.data.size > 0) {
+          audioChunksRef.current.push(event.data);
+        }
+      });
+
+      recorder.addEventListener("stop", () => {
+        const audioBlob = new Blob(audioChunksRef.current, { type: recorder.mimeType || "audio/webm" });
+        stream.getTracks().forEach((track) => track.stop());
+        mediaRecorderRef.current = null;
+        mediaStreamRef.current = null;
+        setIsRecordingVoice(false);
+        void transcribeVoiceBlob(audioBlob);
+      });
+
+      recorder.start();
+      setIsRecordingVoice(true);
+    } catch {
+      setIsRecordingVoice(false);
+      setVoiceError("Mikrofona giriş alınmadı. Brauzer icazəsini yoxlayın.");
+    }
+  };
+
+  const toggleVoiceRecording = () => {
+    if (isRecordingVoice) {
+      stopVoiceRecording();
+      return;
+    }
+
+    void startVoiceRecording();
   };
 
   if (!isHermesReady) {
@@ -210,7 +415,14 @@ export default function HermesChatPanel({
                   : "border border-[#dcefeb] bg-white text-[#1a365d]",
               ].join(" ")}
             >
-              {message.role === "assistant" ? renderAssistantText(message.content) : message.content}
+              {message.role === "assistant" ? (
+                <>
+                  {renderAssistantText(message.content)}
+                  {renderAssistantActions(message.content)}
+                </>
+              ) : (
+                message.content
+              )}
             </div>
           </div>
         ))}
@@ -220,6 +432,15 @@ export default function HermesChatPanel({
             <div className="inline-flex items-center gap-2 rounded-2xl border border-[#dcefeb] bg-white px-4 py-3 text-sm text-gray-600 shadow-sm">
               <Loader2 className="h-4 w-4 animate-spin text-[#00b982]" />
               Dr. Dia cavab hazırlayır...
+            </div>
+          </div>
+        ) : null}
+
+        {voiceMutation.isPending ? (
+          <div className="flex justify-start">
+            <div className="inline-flex items-center gap-2 rounded-2xl border border-[#dcefeb] bg-white px-4 py-3 text-sm text-gray-600 shadow-sm">
+              <Loader2 className="h-4 w-4 animate-spin text-[#00b982]" />
+              Səs mətnə çevrilir...
             </div>
           </div>
         ) : null}
@@ -238,29 +459,46 @@ export default function HermesChatPanel({
         </div>
       ) : null}
 
-      <form
-        className="flex gap-2 border-t border-[#e1f3ef] bg-white p-3"
-        onSubmit={(event) => {
-          event.preventDefault();
-          void sendMessage(draft);
-        }}
-      >
-        <input
-          value={draft}
-          onChange={(event) => setDraft(event.target.value)}
-          disabled={chatMutation.isPending}
-          className="min-w-0 flex-1 rounded-2xl border border-[#dcefeb] bg-white px-4 py-3 text-sm text-[#1a365d] outline-none transition-colors placeholder:text-gray-400 focus:border-[#00b982]"
-          placeholder="Sualınızı yazın..."
-        />
-        <button
-          type="submit"
-          disabled={!draft.trim() || chatMutation.isPending}
-          className="inline-flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-2xl bg-[#00b982] text-white transition-colors hover:bg-[#00a572] disabled:cursor-not-allowed disabled:opacity-60"
-          aria-label="Mesaj göndər"
+      <div className="border-t border-[#e1f3ef] bg-white p-3">
+        {voiceError ? <p className="mb-2 text-xs font-medium text-red-600">{voiceError}</p> : null}
+        <form
+          className="flex gap-2"
+          onSubmit={(event) => {
+            event.preventDefault();
+            void sendMessage(draft);
+          }}
         >
-          <Send className="h-4 w-4" />
-        </button>
-      </form>
+          <input
+            value={draft}
+            onChange={(event) => setDraft(event.target.value)}
+            disabled={chatMutation.isPending || voiceMutation.isPending}
+            className="min-w-0 flex-1 rounded-2xl border border-[#dcefeb] bg-white px-4 py-3 text-sm text-[#1a365d] outline-none transition-colors placeholder:text-gray-400 focus:border-[#00b982]"
+            placeholder={isRecordingVoice ? "Danışın..." : "Sualınızı yazın və ya səsli daxil edin..."}
+          />
+          <button
+            type="button"
+            onClick={toggleVoiceRecording}
+            disabled={chatMutation.isPending || voiceMutation.isPending}
+            className={[
+              "inline-flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-2xl border transition-colors disabled:cursor-not-allowed disabled:opacity-60",
+              isRecordingVoice
+                ? "border-red-200 bg-red-50 text-red-600 hover:bg-red-100"
+                : "border-[#dcefeb] bg-white text-[#00b982] hover:border-[#00b982]/40 hover:bg-[#f7fffb]",
+            ].join(" ")}
+            aria-label={isRecordingVoice ? "Səs yazısını dayandır" : "Səsli giriş"}
+          >
+            {isRecordingVoice ? <Square className="h-4 w-4 fill-current" /> : <Mic className="h-4 w-4" />}
+          </button>
+          <button
+            type="submit"
+            disabled={!draft.trim() || chatMutation.isPending || isVoiceBusy}
+            className="inline-flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-2xl bg-[#00b982] text-white transition-colors hover:bg-[#00a572] disabled:cursor-not-allowed disabled:opacity-60"
+            aria-label="Mesaj göndər"
+          >
+            <Send className="h-4 w-4" />
+          </button>
+        </form>
+      </div>
     </div>
   );
 }

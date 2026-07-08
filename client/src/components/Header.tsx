@@ -43,8 +43,6 @@ export default function Header() {
   });
   const phone = getSetting(settingsMap, 'header.phone', '+994 12 345 67 89');
   const ctaLabel = getSetting(settingsMap, 'header.ctaLabel', 'Randevu Al');
-  const logoTitle = getSetting(settingsMap, 'header.logoTitle', 'DIALAB');
-  const logoSubtitle = getSetting(settingsMap, 'header.logoSubtitle', 'KLİNİKA');
 
   useEffect(() => {
     const handleScroll = () => {
@@ -99,27 +97,19 @@ export default function Header() {
               e.preventDefault();
               navigateToTarget('#hero');
             }}
-            className="flex items-center gap-3 group"
+            className="flex items-center group shrink-0"
             whileHover={{ scale: 1.02 }}
             transition={{ type: 'spring', stiffness: 400, damping: 17 }}
           >
             <div className="relative">
               <motion.img
-                src="/images/dia_logo_symbol.png"
+                src="/images/dia_logo_text.png"
                 alt="DIALAB Logo"
-                className="h-16 w-16 object-contain"
+                className={`${isScrolled ? 'h-12 sm:h-16' : 'h-14 sm:h-20'} w-auto max-w-[145px] sm:max-w-[220px] object-contain transition-all duration-500`}
                 whileHover={{ filter: 'drop-shadow(0 0 12px rgba(0, 185, 130, 0.6))' }}
                 transition={{ duration: 0.3 }}
               />
               <div className="absolute inset-0 bg-[#00b982]/20 rounded-full blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-            </div>
-            <div className="flex flex-col">
-              <span className="font-extrabold text-2xl text-[#dc2626] leading-tight tracking-tight">
-                {logoTitle}
-              </span>
-              <span className="font-semibold text-base text-[#14b8a6] -mt-1">
-                {logoSubtitle}
-              </span>
             </div>
           </motion.a>
 
@@ -183,7 +173,7 @@ export default function Header() {
           </div>
 
           <motion.button
-            className="lg:hidden p-2 rounded-lg text-gray-600 hover:text-[#00b982] hover:bg-[#00b982]/10 transition-colors"
+            className="absolute right-4 top-1/2 z-10 -translate-y-1/2 lg:hidden p-2 rounded-lg text-gray-600 hover:text-[#00b982] hover:bg-[#00b982]/10 transition-colors"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             whileTap={{ scale: 0.95 }}
           >

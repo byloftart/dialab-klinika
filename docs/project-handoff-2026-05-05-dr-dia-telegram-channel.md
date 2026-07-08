@@ -136,3 +136,29 @@ Remaining UI limitation:
 
 - native Telegram client controls such as sticker/emoji/voice buttons cannot be hidden by the bot
 - a truly branded “same as widget” interface requires Telegram Web App / Mini App as a separate next phase
+
+## Telegram Voice Input
+
+Date: 2026-05-16
+
+Implemented:
+
+- Telegram `voice` and `audio` messages now use the Telegram Bot API `getFile` flow to download the audio file.
+- The downloaded audio is sent to Mistral `POST /v1/audio/transcriptions` with `MISTRAL_AUDIO_TRANSCRIPTION_MODEL`, defaulting to `voxtral-mini-latest`.
+- The transcribed text enters the same shared Dr. Dia Telegram reply pipeline as typed messages, including history persistence, deterministic guards, Hermes fallback, formatting cleanup, and inline buttons.
+- If transcription fails or returns empty text, Telegram receives: `Səsli mesajı mətnə çevirmək mümkün olmadı. Zəhmət olmasa, sualınızı mətn kimi yazın.`
+
+Required production env:
+
+- `MISTRAL_API_KEY`
+- `MISTRAL_AUDIO_TRANSCRIPTION_MODEL=voxtral-mini-latest`
+
+Do not commit the raw Mistral key. Put it only into the production `.env` on the server and restart the existing `dialab` PM2 app under user `iram`.
+
+Verified locally:
+
+```bash
+pnpm vitest run server/telegramAdapter.test.ts
+pnpm check
+pnpm build
+```

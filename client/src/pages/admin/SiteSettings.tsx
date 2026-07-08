@@ -63,8 +63,8 @@ const SETTINGS_SCHEMA = [
     label: 'Hero bölməsi',
     fields: [
       { key: 'hero.badge', label: 'Badge mətni', placeholder: 'DIALAB TİBB MƏRKƏZİ' },
-      { key: 'hero.title1', label: 'Başlıq sətri 1', placeholder: 'Sağlamlığınız —' },
-      { key: 'hero.title2', label: 'Başlıq sətri 2 (qalın)', placeholder: 'Bizim Prioritet' },
+      { key: 'hero.title1', label: 'Başlıq sətri 1', placeholder: 'Dəqiqlik.' },
+      { key: 'hero.title2', label: 'Başlıq sətri 2 (qalın)', placeholder: 'Etibar. Qayğı.' },
       { key: 'hero.subtitle', label: 'Alt başlıq', placeholder: '500+ növ laboratoriya testi...' },
     ],
     imageFields: [

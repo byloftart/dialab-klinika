@@ -152,13 +152,7 @@ export default function Footer() {
 
         <div className="border-t border-white/10 pt-8">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-            <div className="flex items-center gap-3">
-              <img src="/images/dia_logo_symbol.png" alt="DIALAB" className="h-10 w-10 object-contain" />
-              <div>
-                <span className="font-extrabold text-lg text-[#F87171]">DIALAB</span>
-                <span className="font-semibold text-sm text-[#00b982] block -mt-1">KLİNİKA</span>
-              </div>
-            </div>
+            <img src="/images/dia_logo_text.png" alt="DIALAB Klinika" className="h-14 w-auto max-w-[170px] object-contain" />
 
             <p className="text-gray-500 text-sm text-center">© {new Date().getFullYear()} DIALAB Klinika. Bütün hüquqlar qorunur.</p>
 
