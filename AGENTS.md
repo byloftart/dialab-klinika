@@ -6,9 +6,10 @@ Use this file as the operating guide for AI coding agents working in this checko
 
 ## Project
 
+- Current status: AWS is stopped for migration. The verified 2026-11-05 snapshot and restore instructions are in `backups/aws-2026-11-05/` and `docs/handoffs/2026-11-05-aws-migration-snapshot.md`. Earlier hosting references below are historical where they conflict with this snapshot. Do not resume deployment without Ram's instruction.
 - Local repo: `/Users/iram/Projects/Dialab/dialab-klinika-repo-2`
-- Production VM: AWS EC2 `diavm-aws-manual`
-- Production IP: `13.48.91.166`
+- Production VM: AWS EC2 `i-0f2c581b1e92cb913`, account `350480401714`, region `eu-north-1`
+- Production IP: `16.192.22.57`
 - Production app path: `/home/iram/apps/dialab`
 - Production PM2 app: `dialab`
 - Production PM2 user: `iram`
@@ -18,7 +19,7 @@ Use this file as the operating guide for AI coding agents working in this checko
 - Telegram voice input: code helper exists, but production deployment is deferred unless explicitly resumed
 - Hermes PM2 process: `hermes-dr-dia`
 - Active database: local MySQL on AWS EC2, `127.0.0.1:3306`
-- Active media storage: AWS S3 bucket `dialab-center-media-aws-293033346129`
+- Active media storage: AWS S3 bucket `dialab-center-media-aws-350480401714` (all current objects are in the migration snapshot)
 - GCP `diavm` is fallback only after the 2026-05-09 migration; do not delete it unless explicitly asked.
 
 ## Core Rules

@@ -1,330 +1,479 @@
-# DIALAB Klinika
+# DIALAB Klinika - Медицинский центр диагностики
 
-Production website, CMS, and Dr. Dia assistant for DIALAB clinic.
+Современный веб-сайт медицинского центра "DIALAB Klinika" с полным функционалом для записи на прием, информации об услугах и контактов.
 
-- Production site: [https://dialab.center](https://dialab.center)
-- Local repo: `/Users/iram/Projects/Dialab/dialab-klinika-repo-2`
-- Production VM: AWS EC2 `diavm-aws-manual`
-- Production IP: `13.48.91.166`
-- Production app path: `/home/iram/apps/dialab`
-- Runtime: `AWS EC2 + Nginx + PM2 + Node/Express`
-- Frontend: `React`, `Vite`, `Tailwind`
-- Backend: `Express`, `tRPC`, `Drizzle ORM`, `MySQL`
-- Assistant: `Dr. Dia` through `Hermes` with Mistral API
+## 📋 Описание проекта
 
-## Current Production Architecture
+DIALAB Klinika - это профессиональный веб-сайт медицинского диагностического центра, расположенного в Баку. Сайт предоставляет пациентам возможность:
 
-```text
-Browser
-  -> Nginx
-  -> Node / Express
-  -> tRPC API
-  -> Local MySQL / S3 / Hermes
+- Узнать о предоставляемых услугах (лабораторные анализы, медицинская диагностика)
+- Записаться на прием через онлайн-форму
+- Просмотреть информацию о клинике и ее инфраструктуре
+- Связаться с клиникой через форму обратной связи
+- Получить ответы на часто задаваемые вопросы
+
+## 🏗️ Архитектура проекта
+
+Проект построен на современном стеке технологий:
+
+```
+dialab-klinika/
+├── client/                          # React фронтенд приложение
+│   ├── src/
+│   │   ├── components/             # React компоненты
+│   │   │   ├── Header.tsx          # Навигационная шапка
+│   │   │   ├── HeroSection.tsx     # Герой секция с формой записи
+│   │   │   ├── MediaGallery.tsx    # Галерея с информацией о клинике
+│   │   │   ├── LaboratorySection.tsx # Услуги лаборатории
+│   │   │   ├── DiagnosticsSection.tsx # Услуги диагностики
+│   │   │   ├── AppointmentSection.tsx # Секция с FAQ и обратной связью
+│   │   │   ├── Footer.tsx          # Подвал сайта
+│   │   │   ├── CompactAppointmentForm.tsx # Форма записи в герое
+│   │   │   ├── FeedbackForm.tsx    # Форма обратной связи
+│   │   │   └── ...
+│   │   ├── pages/                  # Страницы приложения
+│   │   ├── lib/                    # Утилиты и библиотеки
+│   │   ├── App.tsx                 # Главный компонент приложения
+│   │   ├── main.tsx                # Точка входа приложения
+│   │   └── index.css               # Глобальные стили
+│   └── public/                     # Статические активы
+├── server/                          # Express бэкенд
+│   ├── routers.ts                  # tRPC маршруты
+│   ├── db.ts                       # Помощники для работы с БД
+│   ├── storage.ts                  # S3 хранилище
+│   └── _core/                      # Ядро сервера (OAuth, LLM и т.д.)
+├── drizzle/                        # Миграции и схема БД
+│   ├── schema.ts                   # Определение таблиц БД
+│   └── migrations/                 # История миграций
+├── shared/                         # Общий код для клиента и сервера
+└── package.json                    # Зависимости проекта
 ```
 
-Assistant flow:
+## 🎨 Дизайн и стиль
 
-```text
-Dr. Dia widget
-  -> Dialab tRPC assistant.chat
-  -> Hermes gateway on diavm
-  -> Mistral API
-  -> Dialab response formatter and guards
-  -> Dr. Dia chat UI
-```
+### Цветовая схема
 
-Production PM2 processes:
+- **Основной цвет**: `#00b982` (зеленый) - используется для кнопок, ссылок и акцентов
+- **Вторичный цвет**: `#1a365d` (темно-синий) - используется для заголовков
+- **Красный акцент**: `#dc2626` - используется для логотипа "DIALAB"
+- **Фон**: белый с легкими градиентами
 
-- `dialab`: website and backend
-- `hermes-dr-dia`: local Hermes gateway
+### Типография
 
-Important: PM2 production commands must run under the `iram` user, not root.
+- **Заголовки**: Font Weight 700-900, размеры от text-3xl до text-8xl
+- **Основной текст**: Font Weight 400-600, размеры text-base до text-lg
+- **Навигация**: Font Weight 500-600, размер text-base
 
-## Repository Structure
+### Компоненты
 
-```text
-dialab-klinika-repo-2/
-├── AGENTS.md
-├── README.md
-├── client/
-│   ├── src/components/
-│   ├── src/components/assistant/
-│   ├── src/pages/
-│   └── src/lib/
-├── server/
-│   ├── _core/
-│   ├── db.ts
-│   ├── routers.ts
-│   └── storage.ts
-├── shared/
-├── drizzle/
-├── scripts/
-├── docs/
-└── ecosystem.config.cjs
-```
+Проект использует **shadcn/ui** компоненты для консистентного дизайна:
+- Button, Card, Dialog, Input, Select, Tabs
+- Все компоненты стилизованы с Tailwind CSS 4
 
-## Main Capabilities
+## 🚀 Технологический стек
 
-Public website:
+### Фронтенд
 
-- homepage sections
-- services
-- laboratory
-- diagnostics
-- doctors
-- media/gallery
-- feedback/contact
-- static content pages
+- **React 19** - UI библиотека
+- **Tailwind CSS 4** - утилит-ориентированный CSS фреймворк
+- **Vite** - быстрый сборщик
+- **Framer Motion** - анимации и переходы
+- **Lucide React** - иконки
+- **React Router (Wouter)** - маршрутизация
 
-Admin CMS:
+### Бэкенд
 
-- site settings
-- homepage content
-- laboratory services and sub-tests
-- diagnostic services and sub-services
-- doctors
-- appointments
-- feedback
-- media uploads
-- static pages
+- **Express 4** - веб-фреймворк
+- **tRPC 11** - типобезопасный RPC
+- **Drizzle ORM** - работа с БД
+- **MySQL/TiDB** - база данных
+- **AWS S3** - облачное хранилище файлов
 
-Dr. Dia:
+### Инструменты разработки
 
-- clinic navigation
-- service guidance
-- doctor guidance
-- appointment request direction
-- contact/operator direction
-- website voice input through Mistral transcription
-- same-language replies in Azerbaijani, Russian, or English
-- CMS/knowledge-aware guardrails
+- **TypeScript 5.9** - типизация
+- **Vitest** - тестирование
+- **Prettier** - форматирование кода
+- **pnpm** - менеджер пакетов
 
-## Dr. Dia Rules
+## 📦 Установка и запуск
 
-Allowed:
+### Предварительные требования
 
-- services
-- doctors
-- prices when confirmed
-- preparation when confirmed
-- clinic contacts
-- working hours
-- appointment request help
-- operator escalation
+- Node.js 22+
+- pnpm (или npm/yarn)
+- Доступ к MySQL/TiDB базе данных
 
-Not allowed:
-
-- diagnosis
-- treatment prescription
-- interpretation of lab results as medical conclusion
-- invented services
-- invented prices
-- invented slots
-- invented doctors
-
-If a service or detail is not confirmed in CMS/knowledge context, Dr. Dia should not present it as available. The assistant should recommend clarifying through the operator using `WhatsApp` or `Telegram` below the chat.
-
-CTA rules:
-
-- appointment or booking: use `Qəbul`
-- operator clarification: use `WhatsApp` or `Telegram`
-
-## Important Assistant Files
-
-- `client/src/components/VirtualAssistant.tsx`
-- `client/src/components/assistant/HermesChatPanel.tsx`
-- `client/src/lib/assistant.ts`
-- `server/_core/hermesAssistant.ts`
-- `server/_core/hermesAssistant.test.ts`
-- `server/_core/env.ts`
-- `server/routers.ts`
-
-## Environment Variables
-
-Use `.env.example` as the public template. Never commit real secrets.
-
-Core:
-
-- `DATABASE_URL`
-- `JWT_SECRET`
-- `STORAGE_PROVIDER=s3`
-- `AWS_REGION`
-- `S3_BUCKET_NAME`
-- `S3_PUBLIC_BASE_URL`
-- `PORT`
-
-Assistant:
-
-- `ASSISTANT_PROVIDER=hermes`
-- `HERMES_API_BASE_URL`
-- `HERMES_API_KEY`
-- `HERMES_MODEL`
-- `MISTRAL_API_KEY`
-- `MISTRAL_AUDIO_TRANSCRIPTION_MODEL=voxtral-mini-latest`
-
-Telegram:
-
-- `TELEGRAM_BOT_TOKEN`
-- `TELEGRAM_WEBHOOK_SECRET`
-- `TELEGRAM_OPERATOR_URL`
-- `TELEGRAM_MINI_APP_URL`
-
-Do not document or commit Mistral, DeepSeek, Hermes, Botpress, database, or JWT secrets.
-
-## Local Development
-
-Install:
+### Установка зависимостей
 
 ```bash
 pnpm install
 ```
 
-Run locally:
+### Переменные окружения
+
+Создайте файл `.env.local` в корне проекта с необходимыми переменными:
+
+```env
+# Database
+DATABASE_URL=mysql://user:password@host:port/database
+
+# OAuth (Manus)
+VITE_APP_ID=your_app_id
+OAUTH_SERVER_URL=https://api.manus.im
+VITE_OAUTH_PORTAL_URL=https://portal.manus.im
+
+# JWT
+JWT_SECRET=your_jwt_secret_key
+
+# Owner info
+OWNER_NAME=Your Name
+OWNER_OPEN_ID=your_open_id
+
+# Manus APIs
+BUILT_IN_FORGE_API_URL=https://api.manus.im
+BUILT_IN_FORGE_API_KEY=your_api_key
+VITE_FRONTEND_FORGE_API_URL=https://api.manus.im
+VITE_FRONTEND_FORGE_API_KEY=your_frontend_key
+
+# Analytics
+VITE_ANALYTICS_ENDPOINT=https://analytics.example.com
+VITE_ANALYTICS_WEBSITE_ID=your_website_id
+
+# App branding
+VITE_APP_TITLE=DIALAB Klinika
+VITE_APP_LOGO=/images/dia_logo_symbol.png
+```
+
+### Запуск в режиме разработки
 
 ```bash
+# Запустить dev сервер (фронтенд + бэкенд)
 pnpm dev
 ```
 
-Check:
+Приложение будет доступно по адресу `http://localhost:3000`
+
+### Сборка для production
 
 ```bash
-pnpm check
 pnpm build
 ```
 
-Hermes helper test:
+### Запуск тестов
 
 ```bash
-pnpm vitest run server/_core/hermesAssistant.test.ts
+pnpm test
 ```
 
-## Production Operations
+## 🗄️ Работа с базой данных
 
-Current production is on AWS. The older GCP VM may still exist temporarily as fallback, but it is no longer the active production target.
+### Создание миграций
 
-SSH to AWS:
+Все изменения схемы БД должны быть определены в `drizzle/schema.ts`:
+
+```typescript
+export const appointments = mysqlTable('appointments', {
+  id: int().primaryKey().autoincrement(),
+  patientName: varchar('patient_name', { length: 255 }).notNull(),
+  phone: varchar('phone', { length: 20 }).notNull(),
+  service: varchar('service', { length: 255 }).notNull(),
+  appointmentDate: datetime('appointment_date').notNull(),
+  createdAt: timestamp('created_at').defaultNow(),
+});
+```
+
+### Применение миграций
 
 ```bash
-ssh -i /path/to/diavm-aws-manual-20260507.pem ubuntu@13.48.91.166
+pnpm db:push
 ```
 
-Check website process:
+Эта команда:
+1. Генерирует миграции на основе схемы (`drizzle-kit generate`)
+2. Применяет миграции к БД (`drizzle-kit migrate`)
 
-```bash
-sudo -iu iram bash -lc 'PM2_HOME=/home/iram/.pm2 pm2 status dialab'
+## 🔌 API (tRPC)
+
+### Структура маршрутов
+
+Все tRPC процедуры определены в `server/routers.ts`:
+
+```typescript
+export const appRouter = router({
+  // Публичные процедуры
+  public: {
+    getServices: publicProcedure.query(async () => {
+      // Получить список услуг
+    }),
+  },
+  
+  // Защищенные процедуры (требуют аутентификации)
+  protected: {
+    getUserAppointments: protectedProcedure.query(async ({ ctx }) => {
+      // Получить записи текущего пользователя
+    }),
+  },
+  
+  // Админ процедуры
+  admin: {
+    getAllAppointments: adminProcedure.query(async () => {
+      // Получить все записи (только для админов)
+    }),
+  },
+});
 ```
 
-Check Hermes process:
+### Использование на фронтенде
 
-```bash
-sudo -iu iram bash -lc 'PM2_HOME=/home/iram/.pm2 pm2 status hermes-dr-dia'
+```typescript
+// Запрос данных
+const { data, isLoading } = trpc.public.getServices.useQuery();
+
+// Мутация данных
+const { mutate } = trpc.protected.bookAppointment.useMutation({
+  onSuccess: () => {
+    console.log('Запись создана');
+  },
+});
 ```
 
-Build production app:
+## 🔐 Аутентификация
 
-```bash
-sudo -iu iram bash -lc 'cd /home/iram/apps/dialab && pnpm check && pnpm build'
-```
+Проект использует **Manus OAuth** для аутентификации:
 
-Restart website:
+1. Пользователь нажимает кнопку входа
+2. Перенаправляется на портал Manus
+3. После успешного входа возвращается на `/api/oauth/callback`
+4. Создается сессионная cookie
+5. Пользователь получает доступ к защищенным процедурам
 
-```bash
-sudo -iu iram bash -lc 'cd /home/iram/apps/dialab && PM2_HOME=/home/iram/.pm2 pm2 restart dialab --update-env && PM2_HOME=/home/iram/.pm2 pm2 save'
-```
+### Проверка аутентификации на фронтенде
 
-Verify public site:
+```typescript
+import { useAuth } from '@/_core/hooks/useAuth';
 
-```bash
-curl -I https://dialab.center
-```
-
-Verify active assistant provider:
-
-```bash
-curl -s 'https://dialab.center/api/trpc/assistant.config?batch=1&input=%7B%220%22%3A%7B%22json%22%3Anull%7D%7D'
-```
-
-Expected assistant provider:
-
-```json
-{
-  "provider": {
-    "type": "hermes",
-    "isConfigured": true,
-    "model": "dr-dia-hermes"
+export function MyComponent() {
+  const { user, isAuthenticated, logout } = useAuth();
+  
+  if (!isAuthenticated) {
+    return <LoginButton />;
   }
+  
+  return <div>Добро пожаловать, {user.name}!</div>;
 }
 ```
 
-## Deployment Style
+## 📝 Основные компоненты
 
-The current production app path is not treated as a clean git checkout during active Codex sessions. For focused updates, copy only reviewed files to the VM, then run production check/build/restart.
+### HeroSection
 
-Do not deploy unrelated dirty worktree files accidentally.
+Главная секция с заголовком "Dialab Tibb Mərkəzi" и формой записи на прием. Содержит:
+- Основной заголовок с описанием
+- Поле поиска услуг
+- Две кнопки действия
+- Форма записи на прием (справа)
 
-Typical file copy:
+**Файл**: `client/src/components/HeroSection.tsx`
 
-```bash
-scp -i /path/to/diavm-aws-manual-20260507.pem path/to/file ubuntu@13.48.91.166:/home/ubuntu/path/to/file
-ssh -i /path/to/diavm-aws-manual-20260507.pem ubuntu@13.48.91.166 'sudo cp /home/ubuntu/path/to/file /home/iram/apps/dialab/path/to/file && sudo chown iram:iram /home/iram/apps/dialab/path/to/file'
+### MediaGallery (Haqqımızda)
+
+Полноэкранная галерея с информацией о клинике. Содержит:
+- Слайдер изображений (fullscreen)
+- Информацию о клинике
+- Описание услуг
+
+**Файл**: `client/src/components/MediaGallery.tsx`
+
+### LaboratorySection
+
+Секция с услугами лаборатории. Содержит:
+- Название секции "Laboratoriya Xidmətləri"
+- Описание услуг
+- Вкладки с различными анализами
+- Детальное описание каждого анализа
+
+**Файл**: `client/src/components/LaboratorySection.tsx`
+
+### DiagnosticsSection
+
+Секция с услугами диагностики. Содержит:
+- Название секции "Tibbi Diaqnostika"
+- Описание услуг
+- Вкладки с различными диагностическими услугами
+- Информацию о каждой услуге
+
+**Файл**: `client/src/components/DiagnosticsSection.tsx`
+
+### AppointmentSection
+
+Секция с формой обратной связи и FAQ. Содержит:
+- Название секции "Məlumat"
+- Форму обратной связи "Bizə Yazın"
+- Раздел часто задаваемых вопросов (6 вопросов)
+
+**Файл**: `client/src/components/AppointmentSection.tsx`
+
+### Footer
+
+Подвал сайта. Содержит:
+- Название секции "Əlaqə"
+- Контактную информацию
+- Рабочие часы
+- Ссылки на социальные сети
+
+**Файл**: `client/src/components/Footer.tsx`
+
+## 🎯 Особенности реализации
+
+### Компактная форма записи в Hero
+
+Форма записи на прием в hero секции оптимизирована для компактного отображения:
+- Уменьшенная ширина (max-w-sm/md)
+- Одноколоночный макет для даты и времени
+- Яркий градиент фона (зеленый → голубой)
+- Светящийся эффект (shadow-2xl)
+
+**Файл**: `client/src/components/CompactAppointmentForm.tsx`
+
+### Форма обратной связи
+
+Отдельная форма для обратной связи в секции Appointment:
+- Поля: имя, email, сообщение
+- Валидация на клиенте
+- Отправка на сервер через tRPC
+
+**Файл**: `client/src/components/FeedbackForm.tsx`
+
+### Анимации
+
+Все компоненты используют **Framer Motion** для плавных переходов:
+- Появление элементов при загрузке
+- Эффекты наведения (hover)
+- Переходы между секциями
+- Анимация вкладок и аккордеонов
+
+## 🔄 Workflow разработки
+
+### Добавление новой функции
+
+1. **Обновить схему БД** (если нужно)
+   ```bash
+   # Отредактировать drizzle/schema.ts
+   pnpm db:push
+   ```
+
+2. **Добавить помощник БД** в `server/db.ts`
+   ```typescript
+   export async function getAppointments() {
+     return db.select().from(appointments);
+   }
+   ```
+
+3. **Создать tRPC процедуру** в `server/routers.ts`
+   ```typescript
+   getAppointments: publicProcedure.query(async () => {
+     return getAppointments();
+   }),
+   ```
+
+4. **Создать UI компонент** в `client/src/components/`
+   ```typescript
+   const { data } = trpc.getAppointments.useQuery();
+   ```
+
+5. **Написать тесты** в `server/*.test.ts`
+   ```typescript
+   describe('getAppointments', () => {
+     it('should return appointments', async () => {
+       // тест
+     });
+   });
+   ```
+
+6. **Запустить тесты**
+   ```bash
+   pnpm test
+   ```
+
+### Стиль кода
+
+- Используйте **TypeScript** для всех файлов
+- Следуйте **Prettier** форматированию (`pnpm format`)
+- Используйте **shadcn/ui** компоненты для UI
+- Комбинируйте **Tailwind CSS** утилиты для стилей
+- Добавляйте **Framer Motion** для анимаций
+
+## 📱 Адаптивность
+
+Сайт полностью адаптивен для всех устройств:
+
+- **Мобильные** (< 640px): Одноколоночный макет, увеличенные кнопки
+- **Планшеты** (640px - 1024px): Двухколоночный макет где нужно
+- **Десктопы** (> 1024px): Полный многоколоночный макет
+
+Используйте Tailwind breakpoints: `sm:`, `md:`, `lg:`, `xl:`, `2xl:`
+
+## 🐛 Отладка
+
+### Логирование
+
+Используйте `console.log` для отладки (будет удалено при сборке):
+
+```typescript
+console.log('Debug info:', data);
 ```
 
-Then:
+### React DevTools
 
-```bash
-ssh -i /path/to/diavm-aws-manual-20260507.pem ubuntu@13.48.91.166 'sudo -iu iram bash -lc "cd /home/iram/apps/dialab && pnpm check && pnpm build && PM2_HOME=/home/iram/.pm2 pm2 restart dialab --update-env"'
-```
+Установите расширение React DevTools для браузера для отладки компонентов.
 
-## Documentation
+### Network Tab
 
-Agent instructions:
+Используйте вкладку Network в DevTools для проверки запросов к API.
 
-- `AGENTS.md`
+## 📚 Дополнительные ресурсы
 
-Current assistant handoffs:
+- [React документация](https://react.dev)
+- [Tailwind CSS документация](https://tailwindcss.com)
+- [tRPC документация](https://trpc.io)
+- [Drizzle ORM документация](https://orm.drizzle.team)
+- [Framer Motion документация](https://www.framer.com/motion)
 
-- `docs/project-handoff-2026-05-09-diavm-aws-migration.md`
-- `docs/project-handoff-2026-05-04-dr-dia-hermes-mistral-production.md`
-- `docs/project-handoff-2026-05-04-dr-dia-botpress-activation.md`
-- `docs/project-handoff-2026-05-02-dr-dia-widget.md`
+## 🤝 Разработка и улучшение
 
-Production operations:
+### Планируемые функции
 
-- `docs/ops/aws-production-runbook.md`
+- [ ] Интеграция с email для отправки подтверждений записей
+- [ ] Система управления врачами и расписанием
+- [ ] Онлайн платежи через Stripe
+- [ ] Личный кабинет пациента
+- [ ] Система рейтингов и отзывов
+- [ ] Мобильное приложение
+- [ ] Интеграция с SMS уведомлениями
+- [ ] Многоязычная поддержка
 
-Knowledge/content map:
+### Контрибьютинг
 
-- `docs/dr-dia-botpress-content-map.md`
+При добавлении новых функций:
 
-Older historical snapshots:
+1. Создайте ветку: `git checkout -b feature/название-функции`
+2. Сделайте коммиты: `git commit -am 'Добавить функцию'`
+3. Отправьте ветку: `git push origin feature/название-функции`
+4. Создайте Pull Request
 
-- `docs/project-handoff-2026-04-06.md`
-- `docs/project-handoff-2026-04-10.md`
+## 📄 Лицензия
 
-## Git Hygiene
+Проект разработан для DIALAB Klinika. Все права защищены.
 
-Current working rule:
+## 📞 Контакты
 
-- keep feature changes grouped
-- do not mix assistant runtime, CMS catalog, admin UI, and media/font changes in one commit
-- do not reset unrelated local changes without review
+**DIALAB Klinika**
+- Телефон: +994 12 345 67 89
+- Email: info@dialab.az
+- Адрес: Баку, Азербайджан
 
-Recommended commit groups:
+---
 
-1. Dr. Dia Hermes/Mistral backend integration
-2. Dr. Dia widget UX and chat persistence
-3. CMS/service/doctor catalog updates
-4. Admin/media/font/site UI updates
-5. Documentation and project operations files
-
-## Recovery Checklist
-
-If a future agent resumes this project:
-
-1. Read `AGENTS.md`.
-2. Read `docs/project-handoff-2026-05-09-diavm-aws-migration.md`.
-3. Run `git status --short`.
-4. Identify whether the requested change belongs to assistant, CMS/catalog, admin UI, or docs.
-5. Edit only the relevant files.
-6. Run local checks.
-7. If deploying, use the `iram` PM2 workflow above.
+**Последнее обновление**: 2026-02-23
+**Версия**: 1.0.0

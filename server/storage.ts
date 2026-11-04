@@ -1,12 +1,18 @@
 import { Storage } from "@google-cloud/storage";
+import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { ENV } from "./_core/env";
 
 type LegacyStorageConfig = { baseUrl: string; apiKey: string };
 
 let gcsStorage: Storage | null = null;
+let s3Storage: S3Client | null = null;
 
 function hasGcsConfig() {
   return Boolean(ENV.gcsBucketName);
+}
+
+function hasS3Config() {
+  return Boolean(ENV.s3BucketName);
 }
 
 function getGcsStorage() {
@@ -16,13 +22,20 @@ function getGcsStorage() {
   return gcsStorage;
 }
 
+function getS3Storage() {
+  if (!s3Storage) {
+    s3Storage = new S3Client({ region: ENV.awsRegion });
+  }
+  return s3Storage;
+}
+
 function getLegacyStorageConfig(): LegacyStorageConfig {
   const baseUrl = ENV.forgeApiUrl;
   const apiKey = ENV.forgeApiKey;
 
   if (!baseUrl || !apiKey) {
     throw new Error(
-      "Storage is not configured: set GCS_BUCKET_NAME or BUILT_IN_FORGE_API_URL and BUILT_IN_FORGE_API_KEY"
+        "Storage is not configured: set S3_BUCKET_NAME, GCS_BUCKET_NAME, or BUILT_IN_FORGE_API_URL and BUILT_IN_FORGE_API_KEY"
     );
   }
 
@@ -51,6 +64,18 @@ function buildGcsPublicUrl(key: string) {
   }
 
   return `https://storage.googleapis.com/${ENV.gcsBucketName}/${key}`;
+}
+
+function buildS3PublicUrl(key: string) {
+  if (!ENV.s3BucketName) {
+    throw new Error("S3_BUCKET_NAME is not configured");
+  }
+
+  if (ENV.s3PublicBaseUrl) {
+    return `${ENV.s3PublicBaseUrl.replace(/\/+$/, "")}/${key}`;
+  }
+
+  return `https://${ENV.s3BucketName}.s3.${ENV.awsRegion}.amazonaws.com/${key}`;
 }
 
 function buildUploadUrl(baseUrl: string, relKey: string): URL {
@@ -97,6 +122,29 @@ export async function storagePut(
 ): Promise<{ key: string; url: string }> {
   const key = normalizeKey(relKey);
 
+  if (hasS3Config() && ENV.storageProvider.toLowerCase() === "s3") {
+    const buffer = Buffer.isBuffer(data)
+      ? data
+      : typeof data === "string"
+        ? Buffer.from(data)
+        : Buffer.from(data);
+
+    await getS3Storage().send(
+      new PutObjectCommand({
+        Bucket: ENV.s3BucketName,
+        Key: key,
+        Body: buffer,
+        ContentType: contentType,
+        CacheControl: "public, max-age=31536000, immutable",
+      })
+    );
+
+    return {
+      key,
+      url: buildS3PublicUrl(key),
+    };
+  }
+
   if (hasGcsConfig()) {
     const bucket = getGcsStorage().bucket(ENV.gcsBucketName);
     const file = bucket.file(key);
@@ -142,6 +190,10 @@ export async function storageGet(
   relKey: string
 ): Promise<{ key: string; url: string }> {
   const key = normalizeKey(relKey);
+
+  if (hasS3Config() && ENV.storageProvider.toLowerCase() === "s3") {
+    return { key, url: buildS3PublicUrl(key) };
+  }
 
   if (hasGcsConfig()) {
     return { key, url: buildGcsPublicUrl(key) };

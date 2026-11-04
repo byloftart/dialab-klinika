@@ -5,7 +5,6 @@ import { createDrDiaReply } from "./_core/drDiaReplyService";
 import { ENV } from "./_core/env";
 import { callHermesChat } from "./_core/hermesAssistant";
 import { normalizeAzerbaijaniLatinTranscription, transcribeMistralAudio } from "./_core/mistralTranscription";
-import { sendWhatsAppTextMessage } from "./_core/whatsappAdapter";
 import { systemRouter } from "./_core/systemRouter";
 import { validateTelegramMiniAppInitData } from "./_core/telegramMiniAppAuth";
 import { uploadRouter } from "./_core/uploadRouter";
@@ -23,8 +22,6 @@ import {
   getGalleryImages, createGalleryImage, updateGalleryImage, deleteGalleryImage,
   getAppointments, getAppointmentById, createAppointment, updateAppointment, deleteAppointment, countNewAppointments,
   getFeedbackMessages, getFeedbackMessageById, createFeedbackMessage, updateFeedbackMessage, deleteFeedbackMessage, countUnreadMessages,
-  getWhatsAppConversations, getWhatsAppConversationByWaId, updateWhatsAppConversation, deleteWhatsAppConversation, countUnreadWhatsAppConversations,
-  getWhatsAppChatMessages, addWhatsAppChatMessage,
   getSiteSettings, getSiteSettingByKey, upsertSiteSetting,
   getStaticPages, getStaticPageById, getStaticPageBySlug, createStaticPage, updateStaticPage, deleteStaticPage,
 } from "./db";
@@ -55,7 +52,7 @@ function detectVoiceTranscriptionLanguage(text: string): VoiceTranscriptionLangu
     return "Azerbaijani";
   }
 
-  if (/\b(hello|hi|what|which|where|when|how|can|could|do|does|have|need|price|cost|service|doctor|appointment|diagnostic|analysis|test|clinic|blood)\b/.test(normalized)) {
+  if (/(hello|hi|what|which|where|when|how|can|could|do|does|have|need|price|cost|service|doctor|appointment|diagnostic|analysis|test|clinic|blood)/.test(normalized)) {
     return "English";
   }
 
@@ -73,7 +70,7 @@ function buildVoiceTranscriptionFallback(rawText: string, language: VoiceTranscr
 }
 
 function looksLikeAzerbaijaniTranslation(text: string) {
-  return /[əöüğşçı]/i.test(text) || /\b(qan|analiz|neçəyə|neceye|qəbul|qebul|həkim|hekim|sizdə|sizde|klinikada|daxildir)\b/i.test(text);
+  return /[əöüğşçı]/i.test(text) || /(qan|analiz|neçəyə|neceye|qəbul|qebul|həkim|hekim|sizdə|sizde|klinikada|daxildir)/i.test(text);
 }
 
 function shouldRejectCleanedTranscription(
@@ -413,12 +410,11 @@ export const appRouter = router({
   admin: router({
     // Dashboard stats
     stats: adminProcedure.query(async () => {
-      const [newAppointments, unreadMessages, unreadWhatsApp] = await Promise.all([
+      const [newAppointments, unreadMessages] = await Promise.all([
         countNewAppointments(),
         countUnreadMessages(),
-        countUnreadWhatsAppConversations(),
       ]);
-      return { newAppointments, unreadMessages, unreadWhatsApp };
+      return { newAppointments, unreadMessages };
     }),
 
     // Diagnostic Services CRUD
@@ -680,47 +676,6 @@ export const appRouter = router({
       }),
       delete: adminProcedure.input(z.object({ id: z.number() })).mutation(async ({ input }) => {
         await deleteFeedbackMessage(input.id);
-        return { success: true };
-      }),
-    }),
-
-    whatsapp: router({
-      list: adminProcedure.query(async () => getWhatsAppConversations()),
-      getByWaId: adminProcedure.input(z.object({ waId: z.string().min(1) })).query(async ({ input }) => {
-        const [conversation, messages] = await Promise.all([
-          getWhatsAppConversationByWaId(input.waId),
-          getWhatsAppChatMessages(input.waId, 80),
-        ]);
-
-        return { conversation, messages };
-      }),
-      updateStatus: adminProcedure.input(z.object({
-        waId: z.string().min(1),
-        status: z.enum(["new", "open", "resolved"]),
-        isRead: z.boolean().optional(),
-        needsOperator: z.boolean().optional(),
-      })).mutation(async ({ input }) => {
-        const { waId, ...data } = input;
-        await updateWhatsAppConversation(waId, data);
-        return { success: true };
-      }),
-      reply: adminProcedure.input(z.object({
-        waId: z.string().min(1),
-        text: z.string().min(1).max(1200),
-      })).mutation(async ({ input }) => {
-        await sendWhatsAppTextMessage(input.waId, input.text);
-        await addWhatsAppChatMessage(input.waId, "admin", input.text);
-        await updateWhatsAppConversation(input.waId, {
-          lastAssistantMessage: input.text,
-          status: "open",
-          isRead: true,
-          needsOperator: false,
-        });
-
-        return { success: true };
-      }),
-      delete: adminProcedure.input(z.object({ waId: z.string().min(1) })).mutation(async ({ input }) => {
-        await deleteWhatsAppConversation(input.waId);
         return { success: true };
       }),
     }),

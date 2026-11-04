@@ -1,7 +1,6 @@
 import type { Express, Request, Response } from "express";
 import { ENV } from "./env";
 import { createDrDiaReply, type DrDiaReplyMessage } from "./drDiaReplyService";
-import { transcribeTelegramVoice } from "./mistralTranscription";
 import {
   addTelegramChatMessage,
   getTelegramChatMessages,
@@ -13,8 +12,8 @@ type TelegramUpdate = {
     message_id?: number;
     chat?: { id?: number | string };
     text?: string;
-    voice?: { file_id?: string };
-    audio?: { file_id?: string; file_name?: string };
+    voice?: unknown;
+    audio?: unknown;
   };
   callback_query?: {
     id?: string;
@@ -37,7 +36,6 @@ const TELEGRAM_INLINE_BUTTONS = [
 ];
 
 const TEXT_ONLY_FALLBACK = "Zəhmət olmasa, sualınızı mətn kimi yazın.";
-const VOICE_TRANSCRIPTION_FALLBACK = "Səsli mesajı mətnə çevirmək mümkün olmadı. Zəhmət olmasa, sualınızı mətn kimi yazın.";
 const START_COMMAND_PATTERN = /^\/start(?:\s|$)/i;
 
 function normalizeButtonText(text: string) {
@@ -51,8 +49,6 @@ function getTelegramMessage(update: TelegramUpdate) {
   const chatId = update.message?.chat?.id ?? update.callback_query?.message?.chat?.id;
   const rawText = update.message?.text ?? update.callback_query?.data;
   const text = rawText?.trim();
-  const voiceFileId = update.message?.voice?.file_id;
-  const audioFileId = update.message?.audio?.file_id;
 
   if (chatId == null) {
     return null;
@@ -62,10 +58,8 @@ function getTelegramMessage(update: TelegramUpdate) {
     chatId: String(chatId),
     telegramChatId: chatId,
     text,
-    voiceFileId: voiceFileId || audioFileId,
-    voiceFileName: update.message?.audio?.file_name || (voiceFileId ? "telegram-voice.ogg" : "telegram-audio"),
     callbackQueryId: update.callback_query?.id,
-    isTextOnlyUnsupported: !text && Boolean(update.message?.voice || update.message?.audio) && !voiceFileId && !audioFileId,
+    isTextOnlyUnsupported: !text && Boolean(update.message?.voice || update.message?.audio),
   };
 }
 
@@ -196,31 +190,19 @@ export function registerTelegramWebhook(app: Express) {
       await removeReplyKeyboard(telegramMessage.telegramChatId);
       await answerCallbackQuery(telegramMessage.callbackQueryId);
 
-      let messageText = telegramMessage.text;
-      if (!messageText && telegramMessage.voiceFileId) {
-        messageText = await transcribeTelegramVoice(telegramMessage.voiceFileId, {
-          fileName: telegramMessage.voiceFileName,
-          language: undefined,
-        }).catch((error) => {
-          console.warn("[Telegram] Voice transcription failed:", error);
-          return "";
-        });
-      }
-
-      if (telegramMessage.isTextOnlyUnsupported || !messageText) {
-        const fallback = telegramMessage.voiceFileId ? VOICE_TRANSCRIPTION_FALLBACK : TEXT_ONLY_FALLBACK;
-        await sendTelegramMessage(telegramMessage.telegramChatId, fallback);
+      if (telegramMessage.isTextOnlyUnsupported || !telegramMessage.text) {
+        await sendTelegramMessage(telegramMessage.telegramChatId, TEXT_ONLY_FALLBACK);
         res.json({ ok: true });
         return;
       }
 
-      if (START_COMMAND_PATTERN.test(messageText)) {
+      if (START_COMMAND_PATTERN.test(telegramMessage.text)) {
         await sendMiniAppStartMessage(telegramMessage.telegramChatId);
         res.json({ ok: true });
         return;
       }
 
-      const normalizedText = normalizeButtonText(messageText);
+      const normalizedText = normalizeButtonText(telegramMessage.text);
       const history = await getTelegramChatMessages(telegramMessage.chatId, 17);
       const messages: DrDiaReplyMessage[] = [
         ...history.map((message) => ({
@@ -230,14 +212,14 @@ export function registerTelegramWebhook(app: Express) {
         { role: "user", content: normalizedText },
       ];
 
-      const reply = messageText === "Operator"
+      const reply = telegramMessage.text === "Operator"
         ? { content: buildOperatorReply() }
         : await createDrDiaReply({
           messages,
           channel: "telegram",
           context: {
             entryPoint: "telegram",
-            label: messageText,
+            label: telegramMessage.text,
           },
         });
 

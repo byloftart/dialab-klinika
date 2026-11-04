@@ -6,7 +6,6 @@ import { createExpressMiddleware } from "@trpc/server/adapters/express";
 import cookieParser from "cookie-parser";
 import { registerLocalAuthRoutes } from "./localAuth";
 import { registerTelegramWebhook } from "./telegramAdapter";
-import { registerWhatsAppWebhook } from "./whatsappAdapter";
 import { appRouter } from "../routers";
 import { createContext } from "./context";
 import { serveStatic, setupVite } from "./vite";
@@ -45,7 +44,6 @@ async function startServer() {
   // Local email+password auth routes
   registerLocalAuthRoutes(app);
   registerTelegramWebhook(app);
-  registerWhatsAppWebhook(app);
   // tRPC API
   app.use(
     "/api/trpc",

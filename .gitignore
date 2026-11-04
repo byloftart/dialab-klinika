@@ -105,3 +105,10 @@ temp/
 *.db
 *.sqlite
 *.sqlite3
+
+# Private migration state (encrypted recovery copies are tracked separately)
+.migration-private/
+.env*
+!.env.example
+*.sql.gz
+*.pre-*

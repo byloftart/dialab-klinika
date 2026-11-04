@@ -198,33 +198,3 @@ export const telegramChatMessages = mysqlTable("telegramChatMessages", {
 
 export type TelegramChatMessage = typeof telegramChatMessages.$inferSelect;
 export type InsertTelegramChatMessage = typeof telegramChatMessages.$inferInsert;
-
-// ─── Dr. Dia WhatsApp Channel ───────────────────────────────────────────────
-
-export const whatsappConversations = mysqlTable("whatsappConversations", {
-  id: int("id").autoincrement().primaryKey(),
-  waId: varchar("waId", { length: 64 }).notNull().unique(),
-  displayName: varchar("displayName", { length: 255 }),
-  phoneNumber: varchar("phoneNumber", { length: 64 }),
-  lastUserMessage: text("lastUserMessage"),
-  lastAssistantMessage: text("lastAssistantMessage"),
-  status: mysqlEnum("status", ["new", "open", "resolved"]).default("new").notNull(),
-  isRead: boolean("isRead").default(false).notNull(),
-  needsOperator: boolean("needsOperator").default(false).notNull(),
-  createdAt: timestamp("createdAt").defaultNow().notNull(),
-  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
-});
-
-export type WhatsAppConversation = typeof whatsappConversations.$inferSelect;
-export type InsertWhatsAppConversation = typeof whatsappConversations.$inferInsert;
-
-export const whatsappChatMessages = mysqlTable("whatsappChatMessages", {
-  id: int("id").autoincrement().primaryKey(),
-  waId: varchar("waId", { length: 64 }).notNull(),
-  role: mysqlEnum("role", ["user", "assistant", "admin"]).notNull(),
-  content: text("content").notNull(),
-  createdAt: timestamp("createdAt").defaultNow().notNull(),
-});
-
-export type WhatsAppChatMessage = typeof whatsappChatMessages.$inferSelect;
-export type InsertWhatsAppChatMessage = typeof whatsappChatMessages.$inferInsert;

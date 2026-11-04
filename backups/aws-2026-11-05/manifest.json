@@ -1,0 +1,120 @@
+{
+  "project": "dialab",
+  "created_at_utc": "2026-11-04T22:02:40.638754+00:00",
+  "captured_at_utc": "2026-11-04T21:57:49.410332+00:00",
+  "format": "gzip tar encrypted with GnuPG symmetric AES256 and integrity protection",
+  "plaintext_archive_sha256": "451e5e2ca87dfe4c6c37480a6893b1c7c7a828b30303fb0c1323aa3d5a6b4ade",
+  "plaintext_archive_bytes": 244890911,
+  "encrypted_archive_sha256": "46a8e2ffccc091c2fec37bf345ff254e6d211f16d7eeafbac0a4bb4a5b102c48",
+  "chunks": [
+    {
+      "name": "snapshot.tar.gz.gpg.part-001",
+      "bytes": 50331648,
+      "sha256": "79b5767b781d92c46c68923e4bddedf70dd262f1b077a8e1585740c9e5f8b8e2"
+    },
+    {
+      "name": "snapshot.tar.gz.gpg.part-002",
+      "bytes": 50331648,
+      "sha256": "d84b0e3026a14910ae683b31e32b8caeac444eb6f3c8da73e00f580cc2af97e6"
+    },
+    {
+      "name": "snapshot.tar.gz.gpg.part-003",
+      "bytes": 50331648,
+      "sha256": "6fa934061ad733988d135a04ab93caa360361e464b40d9f05de98edb690fb89d"
+    },
+    {
+      "name": "snapshot.tar.gz.gpg.part-004",
+      "bytes": 50331648,
+      "sha256": "7d0b253338a328f0c32f6a4080f1c5c5c356ba5dad5a9ab8c99dfd9184da3806"
+    },
+    {
+      "name": "snapshot.tar.gz.gpg.part-005",
+      "bytes": 43564407,
+      "sha256": "37e36d930dc93ce824d58782a37547eb7696b03d8c8fb97e52781d9e93111bca"
+    }
+  ],
+  "source_branch": "codex/gcp-deploy",
+  "pre_sync_archive_branch": "archive/pre-aws-sync-2026-11-05",
+  "pre_sync_commit": "bcad001de8429f561e812303e9dd18fbd8760a72",
+  "original_files_verified": 3959,
+  "mysql": {
+    "database": "dialab",
+    "restore_test": "passed",
+    "canonical_data_sha256": "7af3a0108fa4c23ac485daf6f4d75cee4f283cbc67721c6cd671b20d6d7ce16e",
+    "tables": {
+      "__drizzle_migrations": 4,
+      "appointments": 9,
+      "diagnosticServices": 26,
+      "diagnosticSubServices": 134,
+      "doctors": 8,
+      "feedbackMessages": 3,
+      "galleryImages": 0,
+      "laboratoryAnalysisTypes": 28,
+      "laboratorySubTests": 179,
+      "siteSettings": 31,
+      "staticPages": 0,
+      "telegramChatMessages": 30,
+      "users": 1
+    },
+    "version": "8.0.46-0ubuntu0.24.04.4"
+  },
+  "sqlite": {
+    "hermes/kanban.db": {
+      "integrity_check": "ok",
+      "tables": {
+        "kanban_notify_subs": 0,
+        "task_comments": 0,
+        "task_events": 0,
+        "task_links": 0,
+        "task_runs": 0,
+        "tasks": 0
+      }
+    },
+    "hermes/state.db": {
+      "integrity_check": "ok",
+      "tables": {
+        "messages": 303,
+        "messages_fts": 303,
+        "messages_fts_config": 1,
+        "messages_fts_content": 303,
+        "messages_fts_data": 23,
+        "messages_fts_docsize": 303,
+        "messages_fts_idx": 21,
+        "messages_fts_trigram": 303,
+        "messages_fts_trigram_config": 1,
+        "messages_fts_trigram_content": 303,
+        "messages_fts_trigram_data": 88,
+        "messages_fts_trigram_docsize": 303,
+        "messages_fts_trigram_idx": 86,
+        "schema_version": 1,
+        "sessions": 111,
+        "state_meta": 0
+      }
+    },
+    "hermes/response_store.db": {
+      "integrity_check": "ok",
+      "tables": {
+        "conversations": 0,
+        "responses": 0
+      }
+    }
+  },
+  "excluded_reproducible_directories": [
+    ".git",
+    "node_modules",
+    ".venv",
+    "venv",
+    "__pycache__",
+    ".cache",
+    ".npm",
+    ".pnpm-store",
+    "logs",
+    "backups",
+    "releases"
+  ],
+  "s3": {
+    "bucket": "dialab-center-media-aws-350480401714",
+    "objects": 41,
+    "bytes": 6688286
+  }
+}
